@@ -20,7 +20,7 @@ public sealed class AuthApiTests : IClassFixture<WebApplicationFactory<Program>>
     public AuthApiTests(WebApplicationFactory<Program> factory) =>
         _http = factory.WithWebHostBuilder(b =>
         {
-            b.UseEnvironment("Development");
+            b.UseSetting("environment", "Development");
             b.UseSetting("Auth:CheckBreachedPasswords", "false"); // no outbound calls in tests
             b.UseSetting("RateLimiting:AuthPermitPerMinute", "1000");
             b.ConfigureServices(s => s.Replace(ServiceDescriptor.Singleton<IEmailQueue>(_mail)));

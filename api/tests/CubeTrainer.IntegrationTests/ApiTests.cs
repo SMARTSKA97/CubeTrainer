@@ -14,7 +14,7 @@ public sealed class ApiTests : IClassFixture<WebApplicationFactory<Program>>
     private readonly HttpClient _http;
 
     public ApiTests(WebApplicationFactory<Program> factory) =>
-        _http = factory.WithWebHostBuilder(b => b.UseEnvironment("Development")).CreateClient();
+        _http = factory.WithWebHostBuilder(b => b.UseSetting("environment", "Development")).CreateClient();
 
     private static object NewSolve(Guid id, int timeMs = 12345, string penalty = "none") =>
         new { id, at = 1_700_000_000_000L, timeMs, penalty, scramble = "R U R' U'", mode = "random" };
