@@ -15,3 +15,20 @@ services:
         sync: false
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      - key: Proxy__TrustForwardedHeaders
+        value: "true"
+      - key: Jwt__SigningKey       # openssl rand -base64 64
+        sync: false
+      - key: Totp__EncryptionKey   # openssl rand -base64 32 (keep a copy: losing it locks 2FA users out)
+        sync: false
+      - key: Email__Provider
+        value: Brevo
+      - key: Email__BrevoApiKey
+        sync: false
+      - key: Email__FromAddress    # a sender on YOUR domain, authenticated in Brevo
+        sync: false
+      - key: Email__FromName
+        value: CubeTrainer
+      - key: Web__BaseUrl          # your web app's public URL; used in email links
+        sync: false
+      # Social login is optional: add ExternalAuth__Providers__<google|microsoft|github|facebook>__ClientId / __ClientSecret in the dashboard.

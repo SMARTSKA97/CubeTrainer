@@ -38,8 +38,21 @@ services:
       context: ../api
     restart: unless-stopped
     environment:
-      ASPNETCORE_ENVIRONMENT: Production
+      # Development: emails are printed to the API log (docker compose logs api) instead of being sent, and OpenAPI is on.
+      ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__Postgres: Host=db;Port=5432;Database=cubetrainer;Username=cube;Password=${POSTGRES_PASSWORD:-cube};SSL Mode=Disable
+      Web__BaseUrl: http://localhost:8080
+      ExternalAuth__CallbackBaseUrl: http://localhost:8080
+      Cors__Origins__0: http://localhost:8080
+      Auth__CheckBreachedPasswords: ${CHECK_BREACHED_PASSWORDS:-false}
+      # Optional keys: without them the Development fallbacks are used. See .env.example.
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:-}
+      Totp__EncryptionKey: ${TOTP_ENCRYPTION_KEY:-}
+      # Optional social login: leave empty to hide the button.
+      ExternalAuth__Providers__google__ClientId: ${GOOGLE_CLIENT_ID:-}
+      ExternalAuth__Providers__google__ClientSecret: ${GOOGLE_CLIENT_SECRET:-}
+      ExternalAuth__Providers__github__ClientId: ${GITHUB_CLIENT_ID:-}
+      ExternalAuth__Providers__github__ClientSecret: ${GITHUB_CLIENT_SECRET:-}
     depends_on:
       flyway:
         condition: service_completed_successfully

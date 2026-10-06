@@ -1,4 +1,4 @@
-# Deploying CubeTrainer: Neon (database) + Render (API) + Cloudflare Pages (web app)
+# Deploying CubeTrainer: Neon (database) + Render (API) + Cloudflare Pages (web app) + Brevo (email)
 
 Order matters: **database → API → web app → tell the API the web app's address.**
 Everything below can be done from the browser; you only need a GitHub repository.
@@ -8,6 +8,53 @@ Everything below can be done from the browser; you only need a GitHub repository
 > request takes up to about a minute to wake it), and Neon's free compute suspends when idle (wakes in a
 > second or two). CubeTrainer is built for this: it works from the browser's own storage while the server
 > sleeps and pushes everything up when the server answers.
+
+---------------------------------------------------------------------------------------------------
+
+## Checklist: accounts and what each one gives you
+
+| # | Account | You need from it | Section |
+|---|---|---|---|
+| 1 | GitHub | the repository, Actions secrets | 0, 6 |
+| 2 | Neon | `DATABASE_URL` (app role), direct URL + owner login for Flyway | 1 |
+| 3 | Render | the API service, a deploy hook URL | 2 |
+| 4 | Cloudflare | Pages project (web), optionally DNS | 3 |
+| 5 | Brevo | an API key and a verified sender on your domain | 8c |
+| 6 | Domain registrar | `app.` and `api.` subdomains, mail DNS records | 8d |
+| 7 | Google / Microsoft / GitHub / Facebook (optional) | OAuth client id + secret each | 8b |
+
+Generate two secrets first and store them in a password manager:
+```bash
+openssl rand -base64 64   # Jwt__SigningKey
+openssl rand -base64 32   # Totp__EncryptionKey  (losing it locks 2FA users out; keep a backup)
+```
+
+### Every setting in one place
+
+**Render (API)**
+
+| Variable | Required | Value |
+|---|---|---|
+| `DATABASE_URL` | yes | Neon string for the `cubetrainer_app` role (section 1) |
+| `ASPNETCORE_ENVIRONMENT` | yes | `Production` |
+| `Proxy__TrustForwardedHeaders` | yes | `true` (Render terminates TLS) |
+| `Jwt__SigningKey` | yes | 64+ random characters |
+| `Totp__EncryptionKey` | yes | 32 random bytes, base64 |
+| `Email__Provider` / `Email__BrevoApiKey` / `Email__FromAddress` / `Email__FromName` | yes | `Brevo` / key / sender on your domain / `CubeTrainer` |
+| `Web__BaseUrl` | yes | public web URL, no trailing slash (email links) |
+| `CORS_ORIGINS` | yes | the same web URL (comma-separate several) |
+| `Auth__Cookie__SameSite` | no | `Lax` when web and API share a domain (section 8d); otherwise `None` |
+| `Auth__MinimumAge` | no | `13` default; your policy (see README age note) |
+| `ExternalAuth__CallbackBaseUrl` | no | public API URL if the API cannot tell (section 8b) |
+| `ExternalAuth__Providers__<id>__ClientId` / `__ClientSecret` | no | per provider, switches its button on |
+
+**Cloudflare Pages (web)**: `NODE_VERSION=24`, `API_URL=https://<api host>` (rebuild after changing it).
+
+**GitHub Actions** (environment `production`): secrets `NEON_FLYWAY_URL`, `NEON_FLYWAY_USER`, `NEON_FLYWAY_PASSWORD`, `RENDER_DEPLOY_HOOK_URL`;
+variables `API_BASE_URL`, `DEPLOY_ENABLED=true` (the deploy job stays off until you set it).
+
+> This guide has not been run end to end against live accounts yet. Expect to adjust labels as the dashboards change, and test
+> the first deploy with `/health/ready`, a registration email and a social login before telling anyone.
 
 ---------------------------------------------------------------------------------------------------
 
@@ -229,6 +276,34 @@ and connects the provider in Settings. Accounts without a password delete themse
 Data Protection keys (used for the short-lived sign-in state) live in memory, so a redeploy during a sign-in just asks the
 person to try again. No action needed.
 
+## 8c. Brevo: transactional email
+
+1. Sign up at **brevo.com**. **Senders, domains & dedicated IPs -> Domains -> Add a domain** (your own, e.g. `example.com`).
+2. Brevo shows DNS records (a Brevo verification code, **DKIM**, and a recommended **DMARC**). Add them at your DNS provider, then **Authenticate**.
+   Also publish one **SPF** record covering Brevo: `v=spf1 include:spf.brevo.com ~all` (merge into an existing SPF record, only one is allowed).
+3. **Senders -> Add a sender**: e.g. `no-reply@example.com`, name `CubeTrainer`. This is `Email__FromAddress` / `Email__FromName`.
+4. **SMTP & API -> API keys -> Generate**: this is `Email__BrevoApiKey` (the API uses Brevo's HTTPS API, not SMTP).
+5. Set `Email__Provider=Brevo` on Render. Register a test account: the confirmation email should arrive within seconds and not in spam.
+
+Without a verified domain, mail goes out from a shared address and is likely to be filtered. Free-plan sending limits change; check Brevo's pricing page.
+
+## 8d. Custom domain and DNS
+
+Recommended: **one registrable domain** so the sign-in cookie is first-party.
+
+| Name | Type | Points to |
+|---|---|---|
+| `app.example.com` | CNAME | your Pages project (`<project>.pages.dev`), added in Pages -> Custom domains |
+| `api.example.com` | CNAME | `<service>.onrender.com`, added in Render -> Settings -> Custom Domains (Render issues the certificate) |
+| Brevo records | TXT / CNAME | from section 8c |
+
+Then update: Cloudflare `API_URL=https://api.example.com` (rebuild), Render `Web__BaseUrl=https://app.example.com`, `CORS_ORIGINS=https://app.example.com`,
+`Auth__Cookie__SameSite=Lax`, GitHub variable `API_BASE_URL=https://api.example.com`, and the redirect URL in each OAuth app
+(`https://api.example.com/api/v1/auth/external/<provider>/callback`).
+
+Using the default `*.pages.dev` + `*.onrender.com` hosts instead works only with `Auth__Cookie__SameSite=None`, and browsers that block third-party
+cookies (Safari, some Chrome settings) will keep asking people to sign in again. Use a custom domain for anything beyond testing.
+
 ## 9. Troubleshooting
 
 | Symptom | Cause / fix |
@@ -238,6 +313,10 @@ person to try again. No action needed.
 | Render log: `password authentication failed` | wrong `DATABASE_URL`; copy it again from Neon → Connect. |
 | `/health/ready` is `Unhealthy` | Database asleep/unreachable, or Flyway has not run: check the `deploy` job in GitHub Actions. |
 | API exits at start: `No database configured` | `DATABASE_URL` missing on Render. |
+| API exits at start mentioning `Jwt` or `Totp` | `Jwt__SigningKey` / `Totp__EncryptionKey` missing or malformed (the Totp key must be 32 bytes base64). |
+| No confirmation email | `Email__Provider` not `Brevo`, wrong key, or the sender/domain is not verified in Brevo; check Render logs for the Brevo response. |
+| Signed out again on every visit | web and API on different domains with `SameSite=Lax`, or third-party cookies blocked: use section 8d. |
+| Social login: `redirect_uri_mismatch` | the callback URL in the provider console must match section 8b exactly (set `ExternalAuth__CallbackBaseUrl` behind a proxy). |
 | 404 on refresh of `/trainer` | `_redirects` missing from the deployed output; it lives in `web/public/`. |
 | Old version still showing after a deploy | The service worker serves the cached copy once, then updates; reload twice. |
 

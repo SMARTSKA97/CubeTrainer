@@ -22,31 +22,102 @@ Rubik's cube timer + exact-case algorithm trainer. Angular 22 front end, ASP.NET
 
 Hold the cube any way you like for a case scramble: the last layer is whichever face you hold on top.
 
-## Run
+## Local setup
 
-### Everything with Docker
+### Prerequisites
+| Tool | Version | Needed for |
+|---|---|---|
+| Node.js | 24 LTS (>= 22.18 runs the tests) | web app |
+| .NET SDK | 10 | API |
+| Docker + Docker Compose | recent | the all-in-one route and local Postgres (optional) |
+| PostgreSQL | 18 (16+ works) | only if you do not use Docker (optional) |
+
+Clone, then pick **one** of the three routes.
+
+### Route 1: fastest, nothing to install but the SDKs (in-memory API)
+Data is lost when the API stops; good for UI work.
 ```
+# terminal 1: API on http://localhost:8080
+cd api/src/CubeTrainer.Api
+ASPNETCORE_ENVIRONMENT=Development ASPNETCORE_URLS=http://localhost:8080 dotnet run
+
+# terminal 2: web on http://localhost:4200 (proxies /api to :8080)
+cd web && npm ci && npm start
+```
+Development mode uses built-in dev keys for tokens and 2FA, prints every email (confirmation and reset links) to the API console,
+and exposes the OpenAPI document at `/openapi/v1.json`. Register in the app, copy the confirmation link from the API console, open it, sign in.
+(`-p:OfflineBuild=true` only exists for sandboxes without NuGet access; you do not need it.)
+
+### Route 2: your own Postgres, like production
+```
+docker run -d --name ct-pg -e POSTGRES_DB=cubetrainer -e POSTGRES_USER=cube -e POSTGRES_PASSWORD=cube -p 5432:5432 postgres:18-alpine
+docker run --rm --network host -v "$PWD/db/migrations:/flyway/sql:ro" flyway/flyway:13-alpine \
+  -url=jdbc:postgresql://localhost:5432/cubetrainer -user=cube -password=cube -locations=filesystem:/flyway/sql migrate
+
+cd api/src/CubeTrainer.Api
+ASPNETCORE_ENVIRONMENT=Development ASPNETCORE_URLS=http://localhost:8080 \
+ConnectionStrings__Postgres="Host=localhost;Database=cubetrainer;Username=cube;Password=cube" dotnet run
+```
+The schema changes **only** through `db/migrations` (Flyway). The API never creates tables; `/health/ready` reports unhealthy until the migrations ran.
+Add a migration as `db/migrations/V<next>__what_it_does.sql`, re-run the Flyway command, restart the API.
+
+### Route 3: everything in Docker
+```
+cp .env.example .env            # optional: keys, social login, Postgres password
 docker compose -f infra/docker-compose.yml up --build
 ```
-Open http://localhost:8080. Data lives in the `pgdata` volume. Set `POSTGRES_PASSWORD` in a `.env` file to change the default.
+Open http://localhost:8080. Postgres, Flyway, API and the web app start in that order. Confirmation emails appear in `docker compose -f infra/docker-compose.yml logs -f api`.
+Data lives in the `pgdata` volume (`docker compose ... down -v` wipes it).
 
-### Development
-```
-# API  (in-memory, nothing to install):
-cd api/src/CubeTrainer.Api && dotnet run -p:OfflineBuild=true     # OfflineBuild skips NuGet-only parts (Postgres, OpenAPI)
-# API against Postgres (apply db/migrations with Flyway first; infra/docker-compose.yml does it for you):
-ConnectionStrings__Postgres="Host=localhost;Database=cubetrainer;Username=cube;Password=cube" dotnet run
+### Configuration you may want locally
+All settings are ASP.NET Core configuration: environment variables use `__` for nesting (`Auth__MinimumAge=18`).
 
-# Front end (proxies /api to http://localhost:8080):
-cd web && npm install && npm start
-```
-The front end works without the API too: solves are kept in the browser (localStorage) and are pushed to the server the next time the API is reachable. The badge in the header shows which mode you are in.
+| Setting | Local default | Notes |
+|---|---|---|
+| `ConnectionStrings__Postgres` or `DATABASE_URL` | empty = in-memory store | `DATABASE_URL` accepts the `postgresql://...` form Neon gives you |
+| `Jwt__SigningKey` | dev key (Development only) | required in Production: `openssl rand -base64 64` |
+| `Totp__EncryptionKey` | dev key (Development only) | required in Production: `openssl rand -base64 32` |
+| `Email__Provider` | `Log` | prints emails; `Brevo` + `Email__BrevoApiKey` + `Email__FromAddress` sends them |
+| `Auth__CheckBreachedPasswords` | `true` | set `false` offline (calls the Have I Been Pwned range API) |
+| `Auth__MinimumAge` | `13` | see the age note below |
+| `Web__BaseUrl` | `http://localhost:4200` | used in email links |
+| `Cors__Origins__0` / `CORS_ORIGINS` | `http://localhost:4200` | allowed browser origins |
+| `ExternalAuth__Providers__<google\|microsoft\|github\|facebook>__ClientId/ClientSecret` | off | a button appears once both are set; redirect URL `http://localhost:4200/api/v1/auth/external/<provider>/callback` |
+| `RateLimiting__AuthPermitPerMinute` | `20` | raise it for automated tests |
+
+Two-step verification needs no setup locally: Settings -> Two-step verification shows a QR code; any authenticator app works.
+
+The web app also works without the API: solves stay in the browser and sync once you sign in.
 
 ### Tests
 ```
-cd web && npm test                                  # cube engine, stats, plan, cross solver (Node >= 22.18)
-dotnet test api/CubeTrainer.sln                     # unit + integration (DATABASE_URL set = against Postgres)
+cd web && npm test                                  # cube engine, stats, plan, sync logic (Node >= 22.18)
+cd web && npm run lint && npm run format:check      # what CI checks
+dotnet test api/CubeTrainer.sln                     # unit + integration; set DATABASE_URL to run against Postgres
 ```
+
+## Production (multiple SaaS platforms)
+
+| Concern | Service | Why |
+|---|---|---|
+| Source + CI/CD | **GitHub** + Actions | build, test, run Flyway on the production DB, then trigger the API deploy |
+| Database | **Neon** (Postgres) | serverless Postgres; Flyway migrates it from CI |
+| API | **Render** (Docker web service) | runs `api/Dockerfile`; health check `/health/ready` |
+| Web app | **Cloudflare Pages** | static Angular build, global CDN, installable PWA |
+| Email | **Brevo** | confirmation, password reset and security notices, sent from your own domain |
+| DNS / domain | your registrar or **Cloudflare DNS** | `app.<domain>` -> Pages, `api.<domain>` -> Render, Brevo SPF/DKIM/DMARC records |
+| Sign-in providers (optional) | Google, Microsoft, GitHub, Facebook developer consoles | OAuth client id + secret per provider |
+
+```
+browser --> Cloudflare Pages (app.example.com)
+   |             |
+   |             +--> /config.json tells the app where the API is
+   +--> Render API (api.example.com) --> Neon Postgres
+                         +--> Brevo (email)       +--> OAuth providers
+GitHub Actions: build/test -> Flyway on Neon -> Render deploy hook
+```
+The full click-by-click guide, every environment variable, DNS records and troubleshooting are in **[DEPLOY.md](DEPLOY.md)**.
+`.env.example` and `render.yaml` list the same variables for local Docker and the Render Blueprint.
 
 ## Regenerating the algorithm data
 `web/public/algs/algs.json` and the case pictures come from the J-Perm pages you saved:
