@@ -66,7 +66,12 @@ public sealed class ApiHost
         public OAuthStart BuildStart(string provider, string redirectUri) => new($"https://idp.test/authorize?redirect_uri={Uri.EscapeDataString(redirectUri)}", "state-123", "verifier-456");
 
         public Task<ExternalProfile?> ExchangeAsync(string provider, string code, string redirectUri, string codeVerifier, CancellationToken ct) =>
-            Task.FromResult<ExternalProfile?>(code == "good" && codeVerifier == "verifier-456" ? new ExternalProfile("google", "sub-it-1", "social@example.com", true, "Social Person") : null);
+            Task.FromResult<ExternalProfile?>(codeVerifier != "verifier-456" ? null : code switch
+            {
+                "good" => new ExternalProfile("google", "sub-it-1", "social@example.com", true, "Social Person"),
+                "good-app" => new ExternalProfile("google", "sub-it-app", "app-social@example.com", true, "App Social"), // the Android-app test uses its own person so tests do not interfere
+                _ => null,
+            });
     }
 
     private sealed class Mailbox : IEmailQueue

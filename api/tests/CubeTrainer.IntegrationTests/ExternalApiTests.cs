@@ -76,7 +76,7 @@ public sealed class ExternalApiTests : IClassFixture<WebApplicationFactory<Progr
         {
             var browser = _host.Browser(); // the phone's browser: its own cookie jar, no native header
             await browser.GetAsync($"/api/v1/auth/external/google/start?challenge={challenge}");
-            var cb = await browser.GetAsync("/api/v1/auth/external/google/callback?code=good&state=state-123");
+            var cb = await browser.GetAsync("/api/v1/auth/external/google/callback?code=good-app&state=state-123");
             Assert.Equal(HttpStatusCode.Redirect, cb.StatusCode);
             Assert.False(cb.Headers.Contains("Set-Cookie") && cb.Headers.GetValues("Set-Cookie").Any(c => c.StartsWith("ct_rt=", StringComparison.Ordinal)), "the app flow must not set the browser cookie");
             return cb.Headers.Location!;
@@ -116,7 +116,7 @@ public sealed class ExternalApiTests : IClassFixture<WebApplicationFactory<Progr
         var body = await ok.Content.ReadFromJsonAsync<JsonElement>();
         Assert.False(string.IsNullOrEmpty(body.GetProperty("accessToken").GetString()));
         Assert.False(string.IsNullOrEmpty(body.GetProperty("refreshToken").GetString()));
-        Assert.Equal("social@example.com", body.GetProperty("user").GetProperty("email").GetString());
+        Assert.Equal("app-social@example.com", body.GetProperty("user").GetProperty("email").GetString());
     }
 
     [Fact]
