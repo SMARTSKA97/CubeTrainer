@@ -176,6 +176,9 @@ Schema changes are a new `db/migrations/V<n>__name.sql` file in the same commit 
 * Neon keeps point-in-time history on its free plan for a limited window; for a copy of your own:
   `pg_dump "<DATABASE_URL>" > cubetrainer.sql`.
 
+> The CI `deploy` job is skipped until you set the repository variable `DEPLOY_ENABLED` to `true`
+> (GitHub -> Settings -> Secrets and variables -> Actions -> Variables) after adding the Neon/Render secrets.
+
 ## 8. Accounts (Phase 1): extra settings
 
 Set these on the Render service (Environment):
