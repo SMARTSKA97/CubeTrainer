@@ -111,6 +111,7 @@ public static class DependencyInjection
         services.AddSingleton<ChannelEmailQueue>();
         services.AddSingleton<IEmailQueue>(sp => sp.GetRequiredService<ChannelEmailQueue>());
         services.AddHostedService<EmailDispatcher>();
+        services.AddOptions<RetentionOptions>().Bind(config.GetSection(RetentionOptions.Section)).Validate(o => o.TombstoneDays is >= 7 and <= 3650, "Retention:TombstoneDays must be between 7 and 3650.");
         services.AddHostedService<TokenCleanupService>();
 
         // ---- Breached-password check (Have I Been Pwned range API).

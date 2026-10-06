@@ -23,6 +23,9 @@ public interface ISolveRepository
     /// <summary>Delete every solve, or only those of one mode. Returns how many were removed.</summary>
     Task<int> DeleteAllAsync(Guid userId, string? mode, CancellationToken ct);
 
+    /// <summary>Maintenance, across ALL users: permanently removes tombstones deleted before <paramref name="before"/>. Returns how many.</summary>
+    Task<int> PurgeTombstonesAsync(DateTimeOffset before, CancellationToken ct);
+
     /// <summary>Rows (including tombstones) with Rev greater than <paramref name="since"/>, oldest change first.</summary>
     Task<IReadOnlyList<Solve>> ChangesSinceAsync(Guid userId, long since, int limit, CancellationToken ct);
 }

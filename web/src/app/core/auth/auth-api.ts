@@ -133,6 +133,11 @@ export class AuthApi {
     return this.http.delete<void>(this.url('/me'), { body: { password, confirmHandle } });
   }
 
+  /** Everything stored about the account, as a JSON file body. */
+  exportData(): Observable<Blob> {
+    return this.http.get(this.url('/me/export'), { responseType: 'blob' });
+  }
+
   sessions(): Observable<SessionInfo[]> {
     return this.http.get<SessionInfo[]>(this.url('/me/sessions'));
   }

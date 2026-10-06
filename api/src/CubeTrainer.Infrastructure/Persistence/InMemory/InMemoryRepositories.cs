@@ -90,6 +90,16 @@ public sealed class InMemorySolveRepository : ISolveRepository
         }
     }
 
+    public Task<int> PurgeTombstonesAsync(DateTimeOffset before, CancellationToken ct)
+    {
+        lock (_gate)
+        {
+            var keys = _solves.Where(kv => kv.Value.DeletedAt < before).Select(kv => kv.Key).ToList();
+            foreach (var k in keys) _solves.Remove(k);
+            return Task.FromResult(keys.Count);
+        }
+    }
+
     public Task<IReadOnlyList<Solve>> ChangesSinceAsync(Guid userId, long since, int limit, CancellationToken ct)
     {
         lock (_gate)

@@ -13,6 +13,20 @@ import { PasswordField } from '@shared/password-field';
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './settings.css',
   template: `
+    <section class="card">
+      <h2>Your data</h2>
+      <p class="muted">
+        Download a copy of everything we store about you: profile, solves, case progress and linked
+        accounts. Passwords and security secrets are never included.
+      </p>
+      @if (exportError(); as e) {
+        <p class="banner error" role="alert">{{ e }}</p>
+      }
+      <button class="btn" type="button" (click)="download()" [disabled]="exporting()">
+        {{ exporting() ? 'Preparing…' : 'Download my data' }}
+      </button>
+    </section>
+
     <section class="card danger">
       <h2>Delete account</h2>
       <p class="muted">
@@ -52,6 +66,8 @@ export class DangerSection {
   private readonly auth = inject(AuthStore);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder).nonNullable;
+  protected readonly exporting = signal(false);
+  protected readonly exportError = signal<string | null>(null);
   protected readonly open = signal(false);
   protected readonly busy = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -64,6 +80,23 @@ export class DangerSection {
     void firstValueFrom(this.api.identities())
       .then((v) => this.hasPassword.set(v.hasPassword))
       .catch(() => undefined);
+  }
+
+  protected async download(): Promise<void> {
+    this.exporting.set(true);
+    this.exportError.set(null);
+    try {
+      const url = URL.createObjectURL(await firstValueFrom(this.api.exportData()));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'cubetrainer-data.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      this.exportError.set(toProblem(err).message);
+    } finally {
+      this.exporting.set(false);
+    }
   }
 
   protected async remove(): Promise<void> {

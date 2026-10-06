@@ -87,6 +87,9 @@ public sealed class PostgresSolveRepository(CubeDbContext db) : ISolveRepository
         return await q.ExecuteUpdateAsync(u => u.SetProperty(s => s.DeletedAt, now), ct);
     }
 
+    public async Task<int> PurgeTombstonesAsync(DateTimeOffset before, CancellationToken ct) =>
+        await db.Solves.Where(s => s.DeletedAt != null && s.DeletedAt < before).ExecuteDeleteAsync(ct);
+
     public async Task<IReadOnlyList<Solve>> ChangesSinceAsync(Guid userId, long since, int limit, CancellationToken ct) =>
         await db.Solves.AsNoTracking().Where(s => s.UserId == userId && s.Rev > since).OrderBy(s => s.Rev).Take(limit).ToListAsync(ct);
 

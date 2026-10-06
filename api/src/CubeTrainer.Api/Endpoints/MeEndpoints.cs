@@ -1,3 +1,4 @@
+using CubeTrainer.Application.Account;
 using CubeTrainer.Application.Auth;
 using CubeTrainer.Api.Hosting;
 
@@ -21,6 +22,16 @@ internal static class MeEndpoints
             var result = await auth.DeleteAccountAsync(ctx.User.UserId()!.Value, body.Password, body.ConfirmHandle, ct);
             if (result.IsSuccess) ctx.ClearRefreshCookie();
             return result.ToHttp(_ => Results.NoContent());
+        });
+
+        // "Download my data": a JSON file with the profile, solves, case statuses and linked accounts. No secrets or hashes.
+        g.MapGet("/export", async (HttpContext ctx, AccountExportService export, CancellationToken ct) =>
+        {
+            var result = await export.ExportAsync(ctx.User.UserId()!.Value, ct);
+            if (!result.IsSuccess) return result.ToHttp();
+            ctx.Response.Headers.CacheControl = "no-store";
+            ctx.Response.Headers.ContentDisposition = "attachment; filename=\"cubetrainer-data.json\"";
+            return Results.Json(result.Value, contentType: "application/json");
         });
 
         g.MapGet("/sessions", async (HttpContext ctx, AuthService auth, CancellationToken ct) =>

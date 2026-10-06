@@ -84,6 +84,7 @@ All settings are ASP.NET Core configuration: environment variables use `__` for 
 | `Cors__Origins__0` / `CORS_ORIGINS` | `http://localhost:4200` | allowed browser origins |
 | `ExternalAuth__Providers__<google\|microsoft\|github\|facebook>__ClientId/ClientSecret` | off | a button appears once both are set; redirect URL `http://localhost:4200/api/v1/auth/external/<provider>/callback` |
 | `RateLimiting__AuthPermitPerMinute` | `20` | raise it for automated tests |
+| `Retention__TombstoneDays` | `90` | how long deleted solves are remembered so other devices can learn of the delete |
 
 Two-step verification needs no setup locally: Settings -> Two-step verification shows a QR code; any authenticator app works.
 
@@ -138,7 +139,7 @@ tools/   J-Perm HTML -> algs.json
 ```
 
 ## API
-Everything is under `/api/v1`: `GET/POST /solves`, `POST /solves/bulk`, `PATCH /solves/{id}` (penalty, tags), `DELETE /solves/{id}`, `DELETE /solves?mode=`, `GET /stats?mode=&caseId=&from=&to=&cube=&method=&stage=`, `GET /cases/stats`, `GET /cases/status`, `PUT /cases/{id}/status`, `GET /summary?tz=`.
+Everything is under `/api/v1`: `GET/POST /solves`, `POST /solves/bulk`, `PATCH /solves/{id}` (penalty, tags), `DELETE /solves/{id}`, `DELETE /solves?mode=`, `GET /stats?mode=&caseId=&from=&to=&cube=&method=&stage=`, `GET /cases/stats`, `GET /cases/status`, `PUT /cases/{id}/status`, `GET /summary?tz=`, `GET /me/export`.
 Health: `/health/live`, `/health/ready`. Errors are RFC 9457 `application/problem+json`. OpenAPI document at `/openapi/v1.json` in Development (full build).
 The schema comes only from `db/migrations` (Flyway); see `docs/ARCHITECTURE.md`.
 
@@ -192,6 +193,11 @@ appears once its keys are configured, see DEPLOY.md). See ADR 0005.
 
 Register with email confirmation, sign in (JWT + rotating refresh cookie), forgot/reset password, change password,
 active sessions, sign out everywhere, profile and account deletion. Guest mode still works.
+
+## Phase 5: privacy and housekeeping (done)
+
+Settings -> Your data -> **Download my data** (`GET /me/export`: profile, solves, case progress, linked accounts; no secrets). Deleted solves are purged for good after
+`Retention__TombstoneDays` (default 90). See ADR 0009.
 
 ## Phase 4: filtered personal stats (done)
 
