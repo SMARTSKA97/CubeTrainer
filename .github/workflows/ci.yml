@@ -37,7 +37,7 @@ jobs:
           --health-cmd "pg_isready -U cube -d cubetrainer" --health-interval 5s --health-timeout 3s --health-retries 10
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v6
         with: { dotnet-version: 10.0.x }
       - name: Build (warnings are errors)
         shell: bash
