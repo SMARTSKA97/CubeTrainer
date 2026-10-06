@@ -2,6 +2,7 @@ import { HttpErrorResponse, HttpInterceptorFn, HttpRequest } from '@angular/comm
 import { inject } from '@angular/core';
 import { catchError, from, switchMap, throwError } from 'rxjs';
 import { apiBase } from '@core/config';
+import { isNative } from '@core/native';
 import { AuthStore } from './auth-store';
 
 const isOurApi = (url: string) => url.startsWith(apiBase());
@@ -17,6 +18,8 @@ const withToken = (req: HttpRequest<unknown>, token: string | null) =>
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   if (!isOurApi(req.url)) return next(req);
   const auth = inject(AuthStore);
+  // Tells the API to return the refresh token in the response body instead of setting a cookie.
+  if (isNative()) req = req.clone({ setHeaders: { 'X-Client-Type': 'native' } });
 
   return next(withToken(req, auth.token())).pipe(
     catchError((err: unknown) => {

@@ -19,6 +19,8 @@ export interface AuthResponse {
   /** ISO timestamp */
   expiresAt: string;
   user: UserProfile;
+  /** only sent to the native app (browsers get an HttpOnly cookie instead) */
+  refreshToken?: string;
 }
 
 export interface AuthPolicy {

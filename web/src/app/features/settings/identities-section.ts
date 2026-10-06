@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { AuthApi } from '@core/auth/auth-api';
+import { isNative } from '@core/native';
 import { IdentitiesView, ProviderInfo } from '@core/auth/auth.models';
 import { externalErrorMessage, toProblem } from '@core/auth/auth-utils';
 
@@ -72,7 +73,8 @@ export class IdentitiesSection {
 
   private async load(): Promise<void> {
     try {
-      this.providers.set(await firstValueFrom(this.api.providers()));
+      // Linking ends in a browser redirect, which the native app does not do yet.
+      this.providers.set(isNative() ? [] : await firstValueFrom(this.api.providers()));
       this.view.set(await firstValueFrom(this.api.identities()));
     } catch {
       /* section stays hidden */

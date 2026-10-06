@@ -1,0 +1,8 @@
+{
+  "appId": "app.cubetrainer.android",
+  "appName": "CubeTrainer",
+  "webDir": "../web/dist/web/browser",
+  "backgroundColor": "#0b0d12",
+  "server": { "androidScheme": "https" },
+  "android": { "allowMixedContent": false }
+}

@@ -1,11 +1,89 @@
-name: Android (placeholder)
+name: Android APK
 
-# Phase 7 adds the Capacitor build and the signed APK artifact here.
+# Builds the Capacitor Android app from the Angular app in /web.
+#   - manually (Actions -> Android APK -> Run workflow)
+#   - on a tag like android-v1.2.0
+#   - on pushes to main that touch mobile/ (to catch a broken native build early)
+# Needs the repository variable API_BASE_URL (your public API, e.g. https://api.example.com).
+# Optional signing secrets for a release APK: ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD.
 on:
   workflow_dispatch:
+  push:
+    tags: ['android-v*']
+    branches: [main]
+    paths: ['mobile/**', '.github/workflows/android.yml']
 
 jobs:
-  placeholder:
+  apk:
     runs-on: ubuntu-latest
+    env:
+      API_URL: ${{ vars.API_BASE_URL }}
     steps:
-      - run: echo "Android build arrives in Phase 7."
+      - uses: actions/checkout@v4
+
+      - name: API_BASE_URL must be set
+        run: |
+          if [ -z "$API_URL" ]; then
+            echo "::error::Set the repository variable API_BASE_URL (Settings -> Secrets and variables -> Actions -> Variables). The app cannot find the server without it."
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            web/package-lock.json
+            mobile/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Build the web app (API_URL is baked into config.json)
+        working-directory: web
+        run: |
+          npm ci
+          node scripts/write-config.mjs
+          npx ng build
+
+      - name: Sync into the Android project
+        working-directory: mobile
+        run: |
+          npm ci
+          npx cap sync android
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Version
+        id: ver
+        run: |
+          name="1.0.${{ github.run_number }}"
+          case "$GITHUB_REF_NAME" in android-v*) name="${GITHUB_REF_NAME#android-v}";; esac
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+
+      - name: Build debug APK (installable, debug-signed)
+        working-directory: mobile/android
+        run: ./gradlew assembleDebug -PversionCode=${{ github.run_number }} -PversionName=${{ steps.ver.outputs.name }}
+
+      - name: Build signed release APK (only when signing secrets exist)
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        working-directory: mobile/android
+        run: |
+          if [ -z "$KEYSTORE_B64" ]; then echo "No keystore secret: skipping the signed release build."; exit 0; fi
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
+          export ANDROID_KEYSTORE_FILE="$RUNNER_TEMP/release.jks"
+          ./gradlew assembleRelease -PversionCode=${{ github.run_number }} -PversionName=${{ steps.ver.outputs.name }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cubetrainer-apk-${{ steps.ver.outputs.name }}
+          path: |
+            mobile/android/app/build/outputs/apk/debug/*.apk
+            mobile/android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error

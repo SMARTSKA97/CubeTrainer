@@ -304,6 +304,22 @@ Then update: Cloudflare `API_URL=https://api.example.com` (rebuild), Render `Web
 Using the default `*.pages.dev` + `*.onrender.com` hosts instead works only with `Auth__Cookie__SameSite=None`, and browsers that block third-party
 cookies (Safari, some Chrome settings) will keep asking people to sign in again. Use a custom domain for anything beyond testing.
 
+## 11. Android app (sideloaded APK)
+
+1. Render: add `https://localhost` to `CORS_ORIGINS` (comma separated with your web URL). The app runs from that origin inside the phone.
+2. GitHub: repository **variable** `API_BASE_URL` = your public API URL (same one the deploy job uses).
+3. GitHub -> Actions -> **Android APK** -> Run workflow. Download the `cubetrainer-apk-<version>` artifact (a zip containing the APK).
+   The debug APK installs on any phone that allows unknown apps. It is signed with a debug key, which is fine for your own use.
+4. Optional, for a properly signed release APK (needed later for the Play Store): create a keystore once and keep it safe, losing it means you can never update the app:
+   ```bash
+   keytool -genkeypair -v -keystore cubetrainer-release.jks -alias cubetrainer -keyalg RSA -keysize 2048 -validity 10000
+   base64 -w0 cubetrainer-release.jks      # paste into the secret below
+   ```
+   Secrets: `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`. The workflow then also builds `app-release.apk`.
+5. Before a Play Store release change `appId` in `mobile/capacitor.config.json` (and the `applicationId`/`namespace` in `mobile/android/app/build.gradle`) to an id on your own domain; it cannot be changed after publishing.
+
+Signing in works with email and password (and two-step codes). Social login is web-only for now. Confirmation and reset links in emails open in the phone's browser; confirm there, then sign in in the app.
+
 ## 9. Troubleshooting
 
 | Symptom | Cause / fix |
@@ -316,6 +332,7 @@ cookies (Safari, some Chrome settings) will keep asking people to sign in again.
 | API exits at start mentioning `Jwt` or `Totp` | `Jwt__SigningKey` / `Totp__EncryptionKey` missing or malformed (the Totp key must be 32 bytes base64). |
 | No confirmation email | `Email__Provider` not `Brevo`, wrong key, or the sender/domain is not verified in Brevo; check Render logs for the Brevo response. |
 | Signed out again on every visit | web and API on different domains with `SameSite=Lax`, or third-party cookies blocked: use section 8d. |
+| Android app: sign-in fails with a network/CORS error | `https://localhost` missing from `CORS_ORIGINS`, or the APK was built without `API_BASE_URL`. |
 | Social login: `redirect_uri_mismatch` | the callback URL in the provider console must match section 8b exactly (set `ExternalAuth__CallbackBaseUrl` behind a proxy). |
 | 404 on refresh of `/trainer` | `_redirects` missing from the deployed output; it lives in `web/public/`. |
 | Old version still showing after a deploy | The service worker serves the cached copy once, then updates; reload twice. |

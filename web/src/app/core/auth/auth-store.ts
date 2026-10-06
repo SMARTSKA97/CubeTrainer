@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { AuthApi } from './auth-api';
 import { AuthResponse, UserProfile } from './auth.models';
 import { toProblem } from './auth-utils';
+import { isNative, nativeRefreshToken } from '@core/native';
 
 const HINT_KEY = 'ct.session'; // "a refresh cookie probably exists": avoids a pointless refresh call for guests
 
@@ -39,7 +40,7 @@ export class AuthStore {
   }
 
   private async resume(): Promise<void> {
-    if (!hasHint()) {
+    if (isNative() ? !(await nativeRefreshToken.get()) : !hasHint()) {
       this._status.set('guest');
       return;
     }
@@ -71,7 +72,7 @@ export class AuthStore {
 
   async logout(): Promise<void> {
     try {
-      await firstValueFrom(this.api.logout());
+      await firstValueFrom(this.api.logout((await this.storedToken()) ?? undefined));
     } catch {
       /* the cookie is cleared server-side when reachable; locally we sign out regardless */
     }
@@ -96,7 +97,9 @@ export class AuthStore {
   private async doRefresh(): Promise<boolean> {
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
-        this.accept(await firstValueFrom(this.api.refresh()));
+        this.accept(
+          await firstValueFrom(this.api.refresh((await this.storedToken()) ?? undefined)),
+        );
         return true;
       } catch (err) {
         const problem = toProblem(err);
@@ -112,7 +115,13 @@ export class AuthStore {
     return false;
   }
 
+  private async storedToken(): Promise<string | null> {
+    return isNative() ? nativeRefreshToken.get() : null;
+  }
+
   private accept(res: AuthResponse): void {
+    // Save the rotated token before anything else: if the app dies now, the next start must still hold the newest one.
+    if (isNative() && res.refreshToken) void nativeRefreshToken.set(res.refreshToken);
     this.accessToken = res.accessToken;
     this._user.set(res.user);
     this._status.set('signedIn');
@@ -121,6 +130,7 @@ export class AuthStore {
   }
 
   private clear(): void {
+    if (isNative()) void nativeRefreshToken.clear();
     this.accessToken = null;
     clearTimeout(this.refreshTimer);
     this._user.set(null);

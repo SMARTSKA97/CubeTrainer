@@ -91,15 +91,20 @@ export class AuthApi {
     return this.http.post<RecoveryCodeSet>(this.url('/auth/2fa/recovery-codes'), { code });
   }
 
-  refresh(): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(this.url('/auth/refresh'), null, {
+  /** Browsers rely on the cookie; the native app sends its stored refresh token in the body. */
+  refresh(refreshToken?: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(
+      this.url('/auth/refresh'),
+      refreshToken ? { refreshToken } : null,
+      { ...this.cookies, headers: CSRF },
+    );
+  }
+
+  logout(refreshToken?: string): Observable<void> {
+    return this.http.post<void>(this.url('/auth/logout'), refreshToken ? { refreshToken } : null, {
       ...this.cookies,
       headers: CSRF,
     });
-  }
-
-  logout(): Observable<void> {
-    return this.http.post<void>(this.url('/auth/logout'), null, { ...this.cookies, headers: CSRF });
   }
 
   logoutEverywhere(): Observable<void> {

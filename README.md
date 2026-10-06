@@ -195,6 +195,13 @@ appears once its keys are configured, see DEPLOY.md). See ADR 0005.
 Register with email confirmation, sign in (JWT + rotating refresh cookie), forgot/reset password, change password,
 active sessions, sign out everywhere, profile and account deletion. Guest mode still works.
 
+## Phase 7: Android app (done, sideload)
+
+A Capacitor wrapper around the same Angular app: offline-first, installable as an APK. Build it in GitHub: **Actions -> Android APK -> Run workflow**
+(needs the repository variable `API_BASE_URL`), then download the `cubetrainer-apk-*` artifact, copy it to the phone and install it
+("install unknown apps" must be allowed). Also add `https://localhost` to the API's `CORS_ORIGINS`. Email/password sign-in and 2FA work in the app;
+social login does not yet. Details and local build steps: `mobile/README.md`, ADR 0011, DEPLOY.md section 11.
+
 ## Phase 6: leaderboards (done)
 
 Opt in on the Leaderboards page or in Settings. Best single / Ao5 / Ao12, all time or last 30 days, filter by country and method. Only opted-in people appear
