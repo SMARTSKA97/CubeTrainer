@@ -1,0 +1,23 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.{json,yml,yaml,md,ts,html,css,csproj,props,sql}]
+indent_size = 2
+
+[*.cs]
+csharp_style_namespace_declarations = file_scoped:warning
+dotnet_sort_system_directives_first = true
+csharp_style_var_for_built_in_types = true:suggestion
+dotnet_diagnostic.CA1707.severity = none       # test names use underscores
+dotnet_diagnostic.CA1848.severity = none       # LoggerMessage delegates: not worth it here
+dotnet_diagnostic.CA2007.severity = none       # ASP.NET Core has no sync context
+dotnet_diagnostic.CA1062.severity = none       # nullable reference types already guard this
+dotnet_diagnostic.CA1812.severity = none       # types created by DI / serializers
+dotnet_diagnostic.CA1819.severity = none       # string[] Tags is part of the wire contract

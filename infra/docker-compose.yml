@@ -1,0 +1,57 @@
+# Local full stack:  docker compose -f infra/docker-compose.yml up --build
+# Order: db -> flyway (applies db/migrations, then exits) -> api -> web
+services:
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: cubetrainer
+      POSTGRES_USER: cube
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cube}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cube -d cubetrainer"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  flyway:
+    image: flyway/flyway:13-alpine
+    command: -configFiles=/flyway/conf/flyway.conf migrate
+    environment:
+      FLYWAY_URL: jdbc:postgresql://db:5432/cubetrainer
+      FLYWAY_USER: cube
+      FLYWAY_PASSWORD: ${POSTGRES_PASSWORD:-cube}
+      FLYWAY_LOCATIONS: filesystem:/flyway/sql
+    volumes:
+      - ../db/migrations:/flyway/sql:ro
+      - ../db/flyway.conf:/flyway/conf/flyway.conf:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    build:
+      context: ../api
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Postgres: Host=db;Port=5432;Database=cubetrainer;Username=cube;Password=${POSTGRES_PASSWORD:-cube};SSL Mode=Disable
+    depends_on:
+      flyway:
+        condition: service_completed_successfully
+
+  web:
+    build:
+      context: ../web
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:

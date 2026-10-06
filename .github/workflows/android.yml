@@ -1,0 +1,11 @@
+name: Android (placeholder)
+
+# Phase 7 adds the Capacitor build and the signed APK artifact here.
+on:
+  workflow_dispatch:
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Android build arrives in Phase 7."

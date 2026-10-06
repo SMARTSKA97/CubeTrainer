@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: web } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: npm, cache-dependency-path: web/package-lock.json }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm test
+      - run: npx ng build
+
+  api:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env: { POSTGRES_DB: cubetrainer, POSTGRES_USER: cube, POSTGRES_PASSWORD: cube }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U cube -d cubetrainer" --health-interval 5s --health-timeout 3s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with: { dotnet-version: 10.0.x }
+      - name: Build (warnings are errors)
+        run: dotnet build api/CubeTrainer.sln -c Release
+      - name: Unit tests
+        run: dotnet test api/tests/CubeTrainer.UnitTests -c Release --no-build
+      - name: Migrate a fresh database from nothing but db/migrations
+        run: |
+          docker run --rm --network host -v "$PWD/db/migrations:/flyway/sql:ro" flyway/flyway:13-alpine \
+            -url=jdbc:postgresql://localhost:5432/cubetrainer -user=cube -password=cube \
+            -locations=filesystem:/flyway/sql -validateMigrationNaming=true migrate validate
+      - name: Integration tests (real Postgres through the real HTTP pipeline)
+        env:
+          DATABASE_URL: postgresql://cube:cube@localhost:5432/cubetrainer?sslmode=disable
+        run: dotnet test api/tests/CubeTrainer.IntegrationTests -c Release --no-build
+      - name: Integration tests (in-memory store)
+        run: dotnet test api/tests/CubeTrainer.IntegrationTests -c Release --no-build
+      - name: Docker image builds
+        run: docker build -t cubetrainer-api api
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [web, api]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      # 1. Schema first. Use Neon's DIRECT (non-pooled) host: Flyway takes advisory locks.
+      - name: Flyway migrate (Neon)
+        run: |
+          docker run --rm -v "$PWD/db/migrations:/flyway/sql:ro" flyway/flyway:13-alpine \
+            -url="${{ secrets.NEON_FLYWAY_URL }}" -user="${{ secrets.NEON_FLYWAY_USER }}" -password="${{ secrets.NEON_FLYWAY_PASSWORD }}" \
+            -locations=filesystem:/flyway/sql -connectRetries=10 -cleanDisabled=true migrate
+      # 2. Then the API. Migrations are backward compatible (expand, then contract) so the old API keeps working until this lands.
+      - name: Deploy API (Render deploy hook)
+        run: curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+      - name: Wait for the new API to be ready
+        run: |
+          for i in $(seq 1 40); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "${{ vars.API_BASE_URL }}/health/ready" || true)
+            [ "$code" = "200" ] && echo "ready" && exit 0
+            sleep 15
+          done
+          echo "API did not become ready in 10 minutes" && exit 1
+      # The web app is built and deployed by Cloudflare Pages' Git integration (see DEPLOY.md).

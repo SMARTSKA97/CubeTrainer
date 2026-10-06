@@ -1,0 +1,10 @@
+node_modules/
+web/dist/
+web/.angular/
+api/**/bin/
+api/**/obj/
+*.log
+api/**/TestResults/
+.env
+*.user
+.vs/

@@ -1,0 +1,17 @@
+# Render Blueprint for the API (optional: you can also create the service by hand, see DEPLOY.md).
+services:
+  - type: web
+    name: cubetrainer-api
+    runtime: docker
+    plan: free
+    autoDeploy: false          # CI migrates the database first, then calls the deploy hook
+    dockerfilePath: ./api/Dockerfile
+    dockerContext: ./api
+    healthCheckPath: /health/ready
+    envVars:
+      - key: DATABASE_URL        # Neon connection string (set it in the Render dashboard)
+        sync: false
+      - key: CORS_ORIGINS        # your Cloudflare Pages URL, e.g. https://cubetrainer.pages.dev
+        sync: false
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production

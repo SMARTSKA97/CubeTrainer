@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup>
+    <ProjectReference Include="..\CubeTrainer.Application\CubeTrainer.Application.csproj" />
+    <ProjectReference Include="..\CubeTrainer.Infrastructure\CubeTrainer.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(OfflineBuild)' != 'true'">
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(OfflineBuild)' != 'true'">
+    <DefineConstants>$(DefineConstants);OPENAPI</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="CubeTrainer.IntegrationTests" />
+  </ItemGroup>
+</Project>

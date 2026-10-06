@@ -1,0 +1,7123 @@
+{
+ "sets": [
+  {
+   "id": "2lookoll",
+   "label": "2-Look OLL",
+   "kind": "oll",
+   "count": 10
+  },
+  {
+   "id": "2lookpll",
+   "label": "2-Look PLL",
+   "kind": "pll",
+   "count": 6
+  },
+  {
+   "id": "oll",
+   "label": "Full OLL",
+   "kind": "oll",
+   "count": 57
+  },
+  {
+   "id": "pll",
+   "label": "Full PLL",
+   "kind": "pll",
+   "count": 21
+  },
+  {
+   "id": "coll",
+   "label": "COLL",
+   "kind": "coll",
+   "count": 28
+  },
+  {
+   "id": "wv",
+   "label": "Winter Variation",
+   "kind": "wv",
+   "count": 27
+  },
+  {
+   "id": "oholl",
+   "label": "One-Handed OLL",
+   "kind": "oll",
+   "count": 57
+  },
+  {
+   "id": "ohpll",
+   "label": "One-Handed PLL",
+   "kind": "pll",
+   "count": 21
+  },
+  {
+   "id": "f2l-basic",
+   "label": "F2L – Basic",
+   "kind": "f2l",
+   "count": 43
+  },
+  {
+   "id": "f2l-adv",
+   "label": "F2L – Advanced",
+   "kind": "f2l",
+   "count": 62
+  },
+  {
+   "id": "f2l-expert",
+   "label": "F2L – Expert",
+   "kind": "f2l",
+   "count": 33
+  },
+  {
+   "id": "beginner",
+   "label": "Beginner method",
+   "kind": "beginner",
+   "count": 11
+  },
+  {
+   "id": "ollpll",
+   "label": "Last layer: OLL + PLL",
+   "kind": "ll",
+   "count": 57
+  },
+  {
+   "id": "f2l-chain",
+   "label": "F2L: several pairs",
+   "kind": "f2l",
+   "count": 40
+  }
+ ],
+ "cases": [
+  {
+   "id": "2lookoll-01",
+   "set": "2lookoll",
+   "name": "Dot Shape",
+   "group": "1: Edges",
+   "alg": "F R U R' U' F' f R U R' U' f'",
+   "img": "img/2lookoll-01.png"
+  },
+  {
+   "id": "2lookoll-02",
+   "set": "2lookoll",
+   "name": "I-Shape",
+   "group": "1: Edges",
+   "alg": "F R U R' U' F'",
+   "img": "img/2lookoll-02.png"
+  },
+  {
+   "id": "2lookoll-03",
+   "set": "2lookoll",
+   "name": "L-Shape",
+   "group": "1: Edges",
+   "alg": "f R U R' U' f'",
+   "img": "img/2lookoll-03.png"
+  },
+  {
+   "id": "2lookoll-04",
+   "set": "2lookoll",
+   "name": "Antisune",
+   "group": "2: Corners",
+   "alg": "R U2 R' U' R U' R'",
+   "img": "img/2lookoll-04.png"
+  },
+  {
+   "id": "2lookoll-05",
+   "set": "2lookoll",
+   "name": "H",
+   "group": "2: Corners",
+   "alg": "R U R' U R U' R' U R U2 R'",
+   "img": "img/2lookoll-05.png"
+  },
+  {
+   "id": "2lookoll-06",
+   "set": "2lookoll",
+   "name": "L",
+   "group": "2: Corners",
+   "alg": "F R' F' r U R U' r'",
+   "img": "img/2lookoll-06.png"
+  },
+  {
+   "id": "2lookoll-07",
+   "set": "2lookoll",
+   "name": "Pi",
+   "group": "2: Corners",
+   "alg": "R U2 R2 U' R2 U' R2 U2 R",
+   "img": "img/2lookoll-07.png"
+  },
+  {
+   "id": "2lookoll-08",
+   "set": "2lookoll",
+   "name": "Sune",
+   "group": "2: Corners",
+   "alg": "R U R' U R U2 R'",
+   "img": "img/2lookoll-08.png"
+  },
+  {
+   "id": "2lookoll-09",
+   "set": "2lookoll",
+   "name": "T",
+   "group": "2: Corners",
+   "alg": "r U R' U' r' F R F'",
+   "img": "img/2lookoll-09.png"
+  },
+  {
+   "id": "2lookoll-10",
+   "set": "2lookoll",
+   "name": "U",
+   "group": "2: Corners",
+   "alg": "R2 D R' U2 R D' R' U2 R'",
+   "img": "img/2lookoll-10.png"
+  },
+  {
+   "id": "2lookpll-01",
+   "set": "2lookpll",
+   "name": "Diagonal",
+   "group": "1: Corners",
+   "alg": "F R U' R' U' R U R' F' R U R' U' R' F R F'",
+   "img": "img/2lookpll-01.png"
+  },
+  {
+   "id": "2lookpll-02",
+   "set": "2lookpll",
+   "name": "Headlights",
+   "group": "1: Corners",
+   "alg": "R U R' U' R' F R2 U' R' U' R U R' F'",
+   "img": "img/2lookpll-02.png"
+  },
+  {
+   "id": "2lookpll-03",
+   "set": "2lookpll",
+   "name": "PLL (H)",
+   "group": "2: Edges",
+   "alg": "M2 U M2 U2 M2 U M2",
+   "img": "img/2lookpll-03.png"
+  },
+  {
+   "id": "2lookpll-04",
+   "set": "2lookpll",
+   "name": "PLL (Ua)",
+   "group": "2: Edges",
+   "alg": "R U' R U R U R U' R' U' R2",
+   "img": "img/2lookpll-04.png"
+  },
+  {
+   "id": "2lookpll-05",
+   "set": "2lookpll",
+   "name": "PLL (Ub)",
+   "group": "2: Edges",
+   "alg": "R2 U R U R' U' R' U' R' U R'",
+   "img": "img/2lookpll-05.png"
+  },
+  {
+   "id": "2lookpll-06",
+   "set": "2lookpll",
+   "name": "PLL (Z)",
+   "group": "2: Edges",
+   "alg": "M' U M2 U M2 U M' U2 M2",
+   "img": "img/2lookpll-06.png"
+  },
+  {
+   "id": "oll-01",
+   "set": "oll",
+   "name": "OLL 29 – Awkward Shape",
+   "group": "Awkward Shape",
+   "alg": "R U R' U' R U' R' F' U' F R U R'",
+   "img": "img/oll-01.png"
+  },
+  {
+   "id": "oll-02",
+   "set": "oll",
+   "name": "OLL 30 – Awkward Shape",
+   "group": "Awkward Shape",
+   "alg": "F R' F R2 U' R' U' R U R' F2",
+   "img": "img/oll-02.png"
+  },
+  {
+   "id": "oll-03",
+   "set": "oll",
+   "name": "OLL 41 – Awkward Shape",
+   "group": "Awkward Shape",
+   "alg": "R U R' U R U2 R' F R U R' U' F'",
+   "img": "img/oll-03.png"
+  },
+  {
+   "id": "oll-04",
+   "set": "oll",
+   "name": "OLL 42 – Awkward Shape",
+   "group": "Awkward Shape",
+   "alg": "R' U' R U' R' U2 R F R U R' U' F'",
+   "img": "img/oll-04.png"
+  },
+  {
+   "id": "oll-05",
+   "set": "oll",
+   "name": "OLL 39 – Big Lightning Bolt",
+   "group": "Big Lightning Bolt",
+   "alg": "L F' L' U' L U F U' L'",
+   "img": "img/oll-05.png"
+  },
+  {
+   "id": "oll-06",
+   "set": "oll",
+   "name": "OLL 40 – Big Lightning Bolt",
+   "group": "Big Lightning Bolt",
+   "alg": "R' F R U R' U' F' U R",
+   "img": "img/oll-06.png"
+  },
+  {
+   "id": "oll-07",
+   "set": "oll",
+   "name": "OLL 34 – C Shape",
+   "group": "C Shape",
+   "alg": "R U R2 U' R' F R U R U' F'",
+   "img": "img/oll-07.png"
+  },
+  {
+   "id": "oll-08",
+   "set": "oll",
+   "name": "OLL 46 – C Shape",
+   "group": "C Shape",
+   "alg": "R' U' R' F R F' U R",
+   "img": "img/oll-08.png"
+  },
+  {
+   "id": "oll-09",
+   "set": "oll",
+   "name": "OLL 28 – Corners Oriented",
+   "group": "Corners Oriented",
+   "alg": "r U R' U' r' R U R U' R'",
+   "img": "img/oll-09.png"
+  },
+  {
+   "id": "oll-10",
+   "set": "oll",
+   "name": "OLL 57 – Corners Oriented",
+   "group": "Corners Oriented",
+   "alg": "R U R' U' M' U R U' r'",
+   "img": "img/oll-10.png"
+  },
+  {
+   "id": "oll-11",
+   "set": "oll",
+   "name": "OLL 21 – Cross",
+   "group": "Cross",
+   "alg": "R U2 R' U' R U R' U' R U' R'",
+   "img": "img/oll-11.png"
+  },
+  {
+   "id": "oll-12",
+   "set": "oll",
+   "name": "OLL 22 – Cross",
+   "group": "Cross",
+   "alg": "R U2 R2 U' R2 U' R2 U2 R",
+   "img": "img/oll-12.png"
+  },
+  {
+   "id": "oll-13",
+   "set": "oll",
+   "name": "OLL 23 – Cross",
+   "group": "Cross",
+   "alg": "R2 D' R U2 R' D R U2 R",
+   "img": "img/oll-13.png"
+  },
+  {
+   "id": "oll-14",
+   "set": "oll",
+   "name": "OLL 24 – Cross",
+   "group": "Cross",
+   "alg": "r U R' U' r' F R F'",
+   "img": "img/oll-14.png"
+  },
+  {
+   "id": "oll-15",
+   "set": "oll",
+   "name": "OLL 25 – Cross",
+   "group": "Cross",
+   "alg": "F' r U R' U' r' F R",
+   "img": "img/oll-15.png"
+  },
+  {
+   "id": "oll-16",
+   "set": "oll",
+   "name": "OLL 26 – Cross",
+   "group": "Cross",
+   "alg": "R U2 R' U' R U' R'",
+   "img": "img/oll-16.png"
+  },
+  {
+   "id": "oll-17",
+   "set": "oll",
+   "name": "OLL 27 – Cross",
+   "group": "Cross",
+   "alg": "R U R' U R U2 R'",
+   "img": "img/oll-17.png"
+  },
+  {
+   "id": "oll-18",
+   "set": "oll",
+   "name": "OLL 1 – Dot",
+   "group": "Dot",
+   "alg": "R U2 R2 F R F' U2 R' F R F'",
+   "img": "img/oll-18.png"
+  },
+  {
+   "id": "oll-19",
+   "set": "oll",
+   "name": "OLL 2 – Dot",
+   "group": "Dot",
+   "alg": "r U r' U2 r U2 R' U2 R U' r'",
+   "img": "img/oll-19.png"
+  },
+  {
+   "id": "oll-20",
+   "set": "oll",
+   "name": "OLL 3 – Dot",
+   "group": "Dot",
+   "alg": "r' R2 U R' U r U2 r' U M'",
+   "img": "img/oll-20.png"
+  },
+  {
+   "id": "oll-21",
+   "set": "oll",
+   "name": "OLL 4 – Dot",
+   "group": "Dot",
+   "alg": "M U' r U2 r' U' R U' R' M'",
+   "img": "img/oll-21.png"
+  },
+  {
+   "id": "oll-22",
+   "set": "oll",
+   "name": "OLL 17 – Dot",
+   "group": "Dot",
+   "alg": "F R' F' R2 r' U R U' R' U' M'",
+   "img": "img/oll-22.png"
+  },
+  {
+   "id": "oll-23",
+   "set": "oll",
+   "name": "OLL 18 – Dot",
+   "group": "Dot",
+   "alg": "r U R' U R U2 r2 U' R U' R' U2 r",
+   "img": "img/oll-23.png"
+  },
+  {
+   "id": "oll-24",
+   "set": "oll",
+   "name": "OLL 19 – Dot",
+   "group": "Dot",
+   "alg": "r' R U R U R' U' M' R' F R F'",
+   "img": "img/oll-24.png"
+  },
+  {
+   "id": "oll-25",
+   "set": "oll",
+   "name": "OLL 20 – Dot",
+   "group": "Dot",
+   "alg": "r U R' U' M2 U R U' R' U' M'",
+   "img": "img/oll-25.png"
+  },
+  {
+   "id": "oll-26",
+   "set": "oll",
+   "name": "OLL 9 – Fish Shape",
+   "group": "Fish Shape",
+   "alg": "R U R' U' R' F R2 U R' U' F'",
+   "img": "img/oll-26.png"
+  },
+  {
+   "id": "oll-27",
+   "set": "oll",
+   "name": "OLL 10 – Fish Shape",
+   "group": "Fish Shape",
+   "alg": "R U R' U R' F R F' R U2 R'",
+   "img": "img/oll-27.png"
+  },
+  {
+   "id": "oll-28",
+   "set": "oll",
+   "name": "OLL 35 – Fish Shape",
+   "group": "Fish Shape",
+   "alg": "R U2 R2 F R F' R U2 R'",
+   "img": "img/oll-28.png"
+  },
+  {
+   "id": "oll-29",
+   "set": "oll",
+   "name": "OLL 37 – Fish Shape",
+   "group": "Fish Shape",
+   "alg": "F R' F' R U R U' R'",
+   "img": "img/oll-29.png"
+  },
+  {
+   "id": "oll-30",
+   "set": "oll",
+   "name": "OLL 51 – I Shape",
+   "group": "I Shape",
+   "alg": "F U R U' R' U R U' R' F'",
+   "img": "img/oll-30.png"
+  },
+  {
+   "id": "oll-31",
+   "set": "oll",
+   "name": "OLL 52 – I Shape",
+   "group": "I Shape",
+   "alg": "R U R' U R U' B U' B' R'",
+   "img": "img/oll-31.png"
+  },
+  {
+   "id": "oll-32",
+   "set": "oll",
+   "name": "OLL 55 – I Shape",
+   "group": "I Shape",
+   "alg": "R' F R U R U' R2 F' R2 U' R' U R U R'",
+   "img": "img/oll-32.png"
+  },
+  {
+   "id": "oll-33",
+   "set": "oll",
+   "name": "OLL 56 – I Shape",
+   "group": "I Shape",
+   "alg": "r' U' r U' R' U R U' R' U R r' U r",
+   "img": "img/oll-33.png"
+  },
+  {
+   "id": "oll-34",
+   "set": "oll",
+   "name": "OLL 13 – Knight Move Shape",
+   "group": "Knight Move Shape",
+   "alg": "F U R U' R2 F' R U R U' R'",
+   "img": "img/oll-34.png"
+  },
+  {
+   "id": "oll-35",
+   "set": "oll",
+   "name": "OLL 14 – Knight Move Shape",
+   "group": "Knight Move Shape",
+   "alg": "R' F R U R' F' R F U' F'",
+   "img": "img/oll-35.png"
+  },
+  {
+   "id": "oll-36",
+   "set": "oll",
+   "name": "OLL 15 – Knight Move Shape",
+   "group": "Knight Move Shape",
+   "alg": "l' U' l L' U' L U l' U l",
+   "img": "img/oll-36.png"
+  },
+  {
+   "id": "oll-37",
+   "set": "oll",
+   "name": "OLL 16 – Knight Move Shape",
+   "group": "Knight Move Shape",
+   "alg": "r U r' R U R' U' r U' r'",
+   "img": "img/oll-37.png"
+  },
+  {
+   "id": "oll-38",
+   "set": "oll",
+   "name": "OLL 31 – P Shape",
+   "group": "P Shape",
+   "alg": "R' U' F U R U' R' F' R",
+   "img": "img/oll-38.png"
+  },
+  {
+   "id": "oll-39",
+   "set": "oll",
+   "name": "OLL 32 – P Shape",
+   "group": "P Shape",
+   "alg": "L U F' U' L' U L F L'",
+   "img": "img/oll-39.png"
+  },
+  {
+   "id": "oll-40",
+   "set": "oll",
+   "name": "OLL 43 – P Shape",
+   "group": "P Shape",
+   "alg": "F' U' L' U L F",
+   "img": "img/oll-40.png"
+  },
+  {
+   "id": "oll-41",
+   "set": "oll",
+   "name": "OLL 44 – P Shape",
+   "group": "P Shape",
+   "alg": "F U R U' R' F'",
+   "img": "img/oll-41.png"
+  },
+  {
+   "id": "oll-42",
+   "set": "oll",
+   "name": "OLL 47 – Small L Shape",
+   "group": "Small L Shape",
+   "alg": "R' U' R' F R F' R' F R F' U R",
+   "img": "img/oll-42.png"
+  },
+  {
+   "id": "oll-43",
+   "set": "oll",
+   "name": "OLL 48 – Small L Shape",
+   "group": "Small L Shape",
+   "alg": "F R U R' U' R U R' U' F'",
+   "img": "img/oll-43.png"
+  },
+  {
+   "id": "oll-44",
+   "set": "oll",
+   "name": "OLL 49 – Small L Shape",
+   "group": "Small L Shape",
+   "alg": "r U' r2 U r2 U r2 U' r",
+   "img": "img/oll-44.png"
+  },
+  {
+   "id": "oll-45",
+   "set": "oll",
+   "name": "OLL 50 – Small L Shape",
+   "group": "Small L Shape",
+   "alg": "r' U r2 U' r2 U' r2 U r'",
+   "img": "img/oll-45.png"
+  },
+  {
+   "id": "oll-46",
+   "set": "oll",
+   "name": "OLL 53 – Small L Shape",
+   "group": "Small L Shape",
+   "alg": "l' U2 L U L' U' L U L' U l",
+   "img": "img/oll-46.png"
+  },
+  {
+   "id": "oll-47",
+   "set": "oll",
+   "name": "OLL 54 – Small L Shape",
+   "group": "Small L Shape",
+   "alg": "r U2 R' U' R U R' U' R U' r'",
+   "img": "img/oll-47.png"
+  },
+  {
+   "id": "oll-48",
+   "set": "oll",
+   "name": "OLL 7 – Small Lightning Bolt",
+   "group": "Small Lightning Bolt",
+   "alg": "r U R' U R U2 r'",
+   "img": "img/oll-48.png"
+  },
+  {
+   "id": "oll-49",
+   "set": "oll",
+   "name": "OLL 8 – Small Lightning Bolt",
+   "group": "Small Lightning Bolt",
+   "alg": "l' U' L U' L' U2 l",
+   "img": "img/oll-49.png"
+  },
+  {
+   "id": "oll-50",
+   "set": "oll",
+   "name": "OLL 11 – Small Lightning Bolt",
+   "group": "Small Lightning Bolt",
+   "alg": "r U R' U R' F R F' R U2 r'",
+   "img": "img/oll-50.png"
+  },
+  {
+   "id": "oll-51",
+   "set": "oll",
+   "name": "OLL 12 – Small Lightning Bolt",
+   "group": "Small Lightning Bolt",
+   "alg": "M' R' U' R U' R' U2 R U' R r'",
+   "img": "img/oll-51.png"
+  },
+  {
+   "id": "oll-52",
+   "set": "oll",
+   "name": "OLL 5 – Square Shape",
+   "group": "Square Shape",
+   "alg": "l' U2 L U L' U l",
+   "img": "img/oll-52.png"
+  },
+  {
+   "id": "oll-53",
+   "set": "oll",
+   "name": "OLL 6 – Square Shape",
+   "group": "Square Shape",
+   "alg": "r U2 R' U' R U' r'",
+   "img": "img/oll-53.png"
+  },
+  {
+   "id": "oll-54",
+   "set": "oll",
+   "name": "OLL 33 – T Shape",
+   "group": "T Shape",
+   "alg": "R U R' U' R' F R F'",
+   "img": "img/oll-54.png"
+  },
+  {
+   "id": "oll-55",
+   "set": "oll",
+   "name": "OLL 45 – T Shape",
+   "group": "T Shape",
+   "alg": "F R U R' U' F'",
+   "img": "img/oll-55.png"
+  },
+  {
+   "id": "oll-56",
+   "set": "oll",
+   "name": "OLL 36 – W Shape",
+   "group": "W Shape",
+   "alg": "L' U' L U' L' U L U L F' L' F",
+   "img": "img/oll-56.png"
+  },
+  {
+   "id": "oll-57",
+   "set": "oll",
+   "name": "OLL 38 – W Shape",
+   "group": "W Shape",
+   "alg": "R U R' U R U' R' U' R' F R F'",
+   "img": "img/oll-57.png"
+  },
+  {
+   "id": "pll-01",
+   "set": "pll",
+   "name": "Aa",
+   "group": "Adjacent Corner Swap",
+   "alg": "x L2 D2 L' U' L D2 L' U L'",
+   "img": "img/pll-01.png"
+  },
+  {
+   "id": "pll-02",
+   "set": "pll",
+   "name": "Ab",
+   "group": "Adjacent Corner Swap",
+   "alg": "x' L2 D2 L U L' D2 L U' L",
+   "img": "img/pll-02.png"
+  },
+  {
+   "id": "pll-03",
+   "set": "pll",
+   "name": "F",
+   "group": "Adjacent Corner Swap",
+   "alg": "R' U' F' R U R' U' R' F R2 U' R' U' R U R' U R",
+   "img": "img/pll-03.png"
+  },
+  {
+   "id": "pll-04",
+   "set": "pll",
+   "name": "Ga",
+   "group": "Adjacent Corner Swap",
+   "alg": "R2 U R' U R' U' R U' R2 U' D R' U R D'",
+   "img": "img/pll-04.png"
+  },
+  {
+   "id": "pll-05",
+   "set": "pll",
+   "name": "Gb",
+   "group": "Adjacent Corner Swap",
+   "alg": "R' U' R U D' R2 U R' U R U' R U' R2 D",
+   "img": "img/pll-05.png"
+  },
+  {
+   "id": "pll-06",
+   "set": "pll",
+   "name": "Gc",
+   "group": "Adjacent Corner Swap",
+   "alg": "R2 U' R U' R U R' U R2 U D' R U' R' D",
+   "img": "img/pll-06.png"
+  },
+  {
+   "id": "pll-07",
+   "set": "pll",
+   "name": "Gd",
+   "group": "Adjacent Corner Swap",
+   "alg": "R U R' U' D R2 U' R U' R' U R' U R2 D'",
+   "img": "img/pll-07.png"
+  },
+  {
+   "id": "pll-08",
+   "set": "pll",
+   "name": "Ja",
+   "group": "Adjacent Corner Swap",
+   "alg": "x R2 F R F' R U2 r' U r U2",
+   "img": "img/pll-08.png"
+  },
+  {
+   "id": "pll-09",
+   "set": "pll",
+   "name": "Jb",
+   "group": "Adjacent Corner Swap",
+   "alg": "R U R' F' R U R' U' R' F R2 U' R'",
+   "img": "img/pll-09.png"
+  },
+  {
+   "id": "pll-10",
+   "set": "pll",
+   "name": "Ra",
+   "group": "Adjacent Corner Swap",
+   "alg": "R U' R' U' R U R D R' U' R D' R' U2 R'",
+   "img": "img/pll-10.png"
+  },
+  {
+   "id": "pll-11",
+   "set": "pll",
+   "name": "Rb",
+   "group": "Adjacent Corner Swap",
+   "alg": "R2 F R U R U' R' F' R U2 R' U2 R",
+   "img": "img/pll-11.png"
+  },
+  {
+   "id": "pll-12",
+   "set": "pll",
+   "name": "T",
+   "group": "Adjacent Corner Swap",
+   "alg": "R U R' U' R' F R2 U' R' U' R U R' F'",
+   "img": "img/pll-12.png"
+  },
+  {
+   "id": "pll-13",
+   "set": "pll",
+   "name": "E",
+   "group": "Diagonal Corner Swap",
+   "alg": "x' L' U L D' L' U' L D L' U' L D' L' U L D",
+   "img": "img/pll-13.png"
+  },
+  {
+   "id": "pll-14",
+   "set": "pll",
+   "name": "Na",
+   "group": "Diagonal Corner Swap",
+   "alg": "R U R' U R U R' F' R U R' U' R' F R2 U' R' U2 R U' R'",
+   "img": "img/pll-14.png"
+  },
+  {
+   "id": "pll-15",
+   "set": "pll",
+   "name": "Nb",
+   "group": "Diagonal Corner Swap",
+   "alg": "R' U R U' R' F' U' F R U R' F R' F' R U' R",
+   "img": "img/pll-15.png"
+  },
+  {
+   "id": "pll-16",
+   "set": "pll",
+   "name": "V",
+   "group": "Diagonal Corner Swap",
+   "alg": "R' U R' U' y R' F' R2 U' R' U R' F R F",
+   "img": "img/pll-16.png"
+  },
+  {
+   "id": "pll-17",
+   "set": "pll",
+   "name": "Y",
+   "group": "Diagonal Corner Swap",
+   "alg": "F R U' R' U' R U R' F' R U R' U' R' F R F'",
+   "img": "img/pll-17.png"
+  },
+  {
+   "id": "pll-18",
+   "set": "pll",
+   "name": "H",
+   "group": "Edges Only",
+   "alg": "M2 U M2 U2 M2 U M2",
+   "img": "img/pll-18.png"
+  },
+  {
+   "id": "pll-19",
+   "set": "pll",
+   "name": "Ua",
+   "group": "Edges Only",
+   "alg": "M2 U M U2 M' U M2",
+   "img": "img/pll-19.png"
+  },
+  {
+   "id": "pll-20",
+   "set": "pll",
+   "name": "Ub",
+   "group": "Edges Only",
+   "alg": "M2 U' M U2 M' U' M2",
+   "img": "img/pll-20.png"
+  },
+  {
+   "id": "pll-21",
+   "set": "pll",
+   "name": "Z",
+   "group": "Edges Only",
+   "alg": "M' U M2 U M2 U M' U2 M2",
+   "img": "img/pll-21.png"
+  },
+  {
+   "id": "coll-01",
+   "set": "coll",
+   "name": "H1",
+   "group": "H",
+   "alg": "R U R' U R U' R' U R U2 R'",
+   "img": "img/coll-01.png"
+  },
+  {
+   "id": "coll-02",
+   "set": "coll",
+   "name": "H2",
+   "group": "H",
+   "alg": "F R U' R' U R U2 R' U' R U R' U' F'",
+   "img": "img/coll-02.png"
+  },
+  {
+   "id": "coll-03",
+   "set": "coll",
+   "name": "H3",
+   "group": "H",
+   "alg": "R U R' U R U L' U R' U' L",
+   "img": "img/coll-03.png"
+  },
+  {
+   "id": "coll-04",
+   "set": "coll",
+   "name": "H4",
+   "group": "H",
+   "alg": "F R U R' U' R U R' U' R U R' U' F'",
+   "img": "img/coll-04.png"
+  },
+  {
+   "id": "coll-05",
+   "set": "coll",
+   "name": "L1",
+   "group": "L",
+   "alg": "R' U2 R U R' U' R U R' U' R U R' U R",
+   "img": "img/coll-05.png"
+  },
+  {
+   "id": "coll-06",
+   "set": "coll",
+   "name": "L2",
+   "group": "L",
+   "alg": "R' U2 R' D' R U2 R' D R2",
+   "img": "img/coll-06.png"
+  },
+  {
+   "id": "coll-07",
+   "set": "coll",
+   "name": "L3",
+   "group": "L",
+   "alg": "R U2 R D R' U2 R D' R2",
+   "img": "img/coll-07.png"
+  },
+  {
+   "id": "coll-08",
+   "set": "coll",
+   "name": "L4",
+   "group": "L",
+   "alg": "F R' F' r U R U' r'",
+   "img": "img/coll-08.png"
+  },
+  {
+   "id": "coll-09",
+   "set": "coll",
+   "name": "L5",
+   "group": "L",
+   "alg": "x R' U R D' R' U' R D",
+   "img": "img/coll-09.png"
+  },
+  {
+   "id": "coll-10",
+   "set": "coll",
+   "name": "L6",
+   "group": "L",
+   "alg": "R' U' R U R' F' R U R' U' R' F R2",
+   "img": "img/coll-10.png"
+  },
+  {
+   "id": "coll-11",
+   "set": "coll",
+   "name": "P1",
+   "group": "Pi",
+   "alg": "R U2 R2 U' R2 U' R2 U2 R",
+   "img": "img/coll-11.png"
+  },
+  {
+   "id": "coll-12",
+   "set": "coll",
+   "name": "P2",
+   "group": "Pi",
+   "alg": "R' F2 R U2 R U2 R' F2 U' R U' R'",
+   "img": "img/coll-12.png"
+  },
+  {
+   "id": "coll-13",
+   "set": "coll",
+   "name": "P3",
+   "group": "Pi",
+   "alg": "R' U' F' R U R' U' R' F R2 U2 R' U2 R",
+   "img": "img/coll-13.png"
+  },
+  {
+   "id": "coll-14",
+   "set": "coll",
+   "name": "P4",
+   "group": "Pi",
+   "alg": "R U R' U' R' F R2 U R' U' R U R' U' F'",
+   "img": "img/coll-14.png"
+  },
+  {
+   "id": "coll-15",
+   "set": "coll",
+   "name": "P5",
+   "group": "Pi",
+   "alg": "R U' L' U R' U L U L' U L",
+   "img": "img/coll-15.png"
+  },
+  {
+   "id": "coll-16",
+   "set": "coll",
+   "name": "P6",
+   "group": "Pi",
+   "alg": "R2 D' R U R' D R U R U' R' U R U R' U R",
+   "img": "img/coll-16.png"
+  },
+  {
+   "id": "coll-17",
+   "set": "coll",
+   "name": "T1",
+   "group": "T",
+   "alg": "R U2 R' U' R U' R2 U2 R U R' U R",
+   "img": "img/coll-17.png"
+  },
+  {
+   "id": "coll-18",
+   "set": "coll",
+   "name": "T2",
+   "group": "T",
+   "alg": "R' U R U2 R' L' U R U' L",
+   "img": "img/coll-18.png"
+  },
+  {
+   "id": "coll-19",
+   "set": "coll",
+   "name": "T3",
+   "group": "T",
+   "alg": "l' U' L U l F' L' F",
+   "img": "img/coll-19.png"
+  },
+  {
+   "id": "coll-20",
+   "set": "coll",
+   "name": "T4",
+   "group": "T",
+   "alg": "F R U R' U' R U' R' U' R U R' F'",
+   "img": "img/coll-20.png"
+  },
+  {
+   "id": "coll-21",
+   "set": "coll",
+   "name": "T5",
+   "group": "T",
+   "alg": "r U R' U' r' F R F'",
+   "img": "img/coll-21.png"
+  },
+  {
+   "id": "coll-22",
+   "set": "coll",
+   "name": "T6",
+   "group": "T",
+   "alg": "R' U R2 D r' U2 r D' R2 U' R",
+   "img": "img/coll-22.png"
+  },
+  {
+   "id": "coll-23",
+   "set": "coll",
+   "name": "U1",
+   "group": "U",
+   "alg": "R' U' R U' R' U2 R2 U R' U R U2 R'",
+   "img": "img/coll-23.png"
+  },
+  {
+   "id": "coll-24",
+   "set": "coll",
+   "name": "U2",
+   "group": "U",
+   "alg": "R' F R U' R' U' R U R' F' R U R' U' R' F R F' R",
+   "img": "img/coll-24.png"
+  },
+  {
+   "id": "coll-25",
+   "set": "coll",
+   "name": "U3",
+   "group": "U",
+   "alg": "R2 D R' U2 R D' R' U2 R'",
+   "img": "img/coll-25.png"
+  },
+  {
+   "id": "coll-26",
+   "set": "coll",
+   "name": "U4",
+   "group": "U",
+   "alg": "F R U' R' U R U R' U R U' R' F'",
+   "img": "img/coll-26.png"
+  },
+  {
+   "id": "coll-27",
+   "set": "coll",
+   "name": "U5",
+   "group": "U",
+   "alg": "R2 D' R U2 R' D R U2 R",
+   "img": "img/coll-27.png"
+  },
+  {
+   "id": "coll-28",
+   "set": "coll",
+   "name": "U6",
+   "group": "U",
+   "alg": "R2 D' R U R' D R U R U' R' U' R",
+   "img": "img/coll-28.png"
+  },
+  {
+   "id": "wv-01",
+   "set": "wv",
+   "name": "Oriented",
+   "group": "3 Corners",
+   "alg": "L' U2 R U R' U2 L",
+   "img": "img/wv-01.png"
+  },
+  {
+   "id": "wv-02",
+   "set": "wv",
+   "name": "Rectangle 1",
+   "group": "2 Corners",
+   "alg": "U' R' F R U R U' R' F'",
+   "img": "img/wv-02.png"
+  },
+  {
+   "id": "wv-03",
+   "set": "wv",
+   "name": "Rectangle 2",
+   "group": "2 Corners",
+   "alg": "R U' R'",
+   "img": "img/wv-03.png"
+  },
+  {
+   "id": "wv-04",
+   "set": "wv",
+   "name": "Snake 1",
+   "group": "2 Corners",
+   "alg": "R U' R' U R' U' R U' R' U2 R",
+   "img": "img/wv-04.png"
+  },
+  {
+   "id": "wv-05",
+   "set": "wv",
+   "name": "Snake 2",
+   "group": "2 Corners",
+   "alg": "R2 D R' U' R D' R2",
+   "img": "img/wv-05.png"
+  },
+  {
+   "id": "wv-06",
+   "set": "wv",
+   "name": "Tank 1",
+   "group": "2 Corners",
+   "alg": "R U R' U' R U' R'",
+   "img": "img/wv-06.png"
+  },
+  {
+   "id": "wv-07",
+   "set": "wv",
+   "name": "Tank 2",
+   "group": "2 Corners",
+   "alg": "U' R U' R' U2 R U' R' U2 R U R'",
+   "img": "img/wv-07.png"
+  },
+  {
+   "id": "wv-08",
+   "set": "wv",
+   "name": "Adjacent 1",
+   "group": "1 Corner",
+   "alg": "R U' R D' R U2 R' D R U2 R",
+   "img": "img/wv-08.png"
+  },
+  {
+   "id": "wv-09",
+   "set": "wv",
+   "name": "Adjacent 2",
+   "group": "1 Corner",
+   "alg": "U' R' F' R U2 R U2 R' F",
+   "img": "img/wv-09.png"
+  },
+  {
+   "id": "wv-10",
+   "set": "wv",
+   "name": "Adjacent 3",
+   "group": "1 Corner",
+   "alg": "U R U2 R'",
+   "img": "img/wv-10.png"
+  },
+  {
+   "id": "wv-11",
+   "set": "wv",
+   "name": "Adjacent 4",
+   "group": "1 Corner",
+   "alg": "U R U' R' U' R' F R U R U' R' F'",
+   "img": "img/wv-11.png"
+  },
+  {
+   "id": "wv-12",
+   "set": "wv",
+   "name": "Bowtie 1",
+   "group": "1 Corner",
+   "alg": "U' L' U R U' R' L",
+   "img": "img/wv-12.png"
+  },
+  {
+   "id": "wv-13",
+   "set": "wv",
+   "name": "Bowtie 2",
+   "group": "1 Corner",
+   "alg": "U R2 D R' U2 R D' R2",
+   "img": "img/wv-13.png"
+  },
+  {
+   "id": "wv-14",
+   "set": "wv",
+   "name": "Bowtie 3",
+   "group": "1 Corner",
+   "alg": "U R U2 R2 U' R U' R' U2 R",
+   "img": "img/wv-14.png"
+  },
+  {
+   "id": "wv-15",
+   "set": "wv",
+   "name": "Bowtie 4",
+   "group": "1 Corner",
+   "alg": "U' R' F2 R F2 U L' U L",
+   "img": "img/wv-15.png"
+  },
+  {
+   "id": "wv-16",
+   "set": "wv",
+   "name": "Gun (Back)",
+   "group": "1 Corner",
+   "alg": "R U R2 U' R2 U' R2 U2 R",
+   "img": "img/wv-16.png"
+  },
+  {
+   "id": "wv-17",
+   "set": "wv",
+   "name": "Gun (Far)",
+   "group": "1 Corner",
+   "alg": "U R' U' R2 U' R2 U2 R",
+   "img": "img/wv-17.png"
+  },
+  {
+   "id": "wv-18",
+   "set": "wv",
+   "name": "Gun (Near)",
+   "group": "1 Corner",
+   "alg": "U R U' R' U R U2 R'",
+   "img": "img/wv-18.png"
+  },
+  {
+   "id": "wv-19",
+   "set": "wv",
+   "name": "Gun (Sides)",
+   "group": "1 Corner",
+   "alg": "R U' R' U R U2 R2 U' R2 U' R2 U2 R",
+   "img": "img/wv-19.png"
+  },
+  {
+   "id": "wv-20",
+   "set": "wv",
+   "name": "H (Front)",
+   "group": "0 Corners",
+   "alg": "U R' U L U' R2 U L' U R'",
+   "img": "img/wv-20.png"
+  },
+  {
+   "id": "wv-21",
+   "set": "wv",
+   "name": "H (Side)",
+   "group": "0 Corners",
+   "alg": "U R U' R' U R U' R' U R U2 R'",
+   "img": "img/wv-21.png"
+  },
+  {
+   "id": "wv-22",
+   "set": "wv",
+   "name": "Pi (Back)",
+   "group": "0 Corners",
+   "alg": "R2 D R' U R D' R' U2 R'",
+   "img": "img/wv-22.png"
+  },
+  {
+   "id": "wv-23",
+   "set": "wv",
+   "name": "Pi (Far)",
+   "group": "0 Corners",
+   "alg": "R U' R2 U2 R U R' U R",
+   "img": "img/wv-23.png"
+  },
+  {
+   "id": "wv-24",
+   "set": "wv",
+   "name": "Pi (Front)",
+   "group": "0 Corners",
+   "alg": "U R U2 R2 U2 R U R' U R",
+   "img": "img/wv-24.png"
+  },
+  {
+   "id": "wv-25",
+   "set": "wv",
+   "name": "Pi (Near)",
+   "group": "0 Corners",
+   "alg": "R U' R2 U' R U' R' U2 R",
+   "img": "img/wv-25.png"
+  },
+  {
+   "id": "wv-26",
+   "set": "wv",
+   "name": "Sune 1",
+   "group": "0 Corners",
+   "alg": "R U R' U' R U R' U' R U' R'",
+   "img": "img/wv-26.png"
+  },
+  {
+   "id": "wv-27",
+   "set": "wv",
+   "name": "Sune 2",
+   "group": "0 Corners",
+   "alg": "R U' R' U' R U R' U R U2 R'",
+   "img": "img/wv-27.png"
+  },
+  {
+   "id": "oholl-01",
+   "set": "oholl",
+   "name": "OLL 29 – Awkward Shape",
+   "group": "Awkward Shape",
+   "alg": "R U R' U' R U' R' F' U' F R U R'",
+   "img": "img/oholl-01.png"
+  },
+  {
+   "id": "oholl-02",
+   "set": "oholl",
+   "name": "OLL 30 – Awkward Shape",
+   "group": "Awkward Shape",
+   "alg": "F U R U2 R' U' R U2 R' U' F'",
+   "img": "img/oholl-02.png"
+  },
+  {
+   "id": "oholl-03",
+   "set": "oholl",
+   "name": "OLL 41 – Awkward Shape",
+   "group": "Awkward Shape",
+   "alg": "R U R' U R U2 R' F R U R' U' F'",
+   "img": "img/oholl-03.png"
+  },
+  {
+   "id": "oholl-04",
+   "set": "oholl",
+   "name": "OLL 42 – Awkward Shape",
+   "group": "Awkward Shape",
+   "alg": "R' U' R U' R' U2 R F R U R' U' F'",
+   "img": "img/oholl-04.png"
+  },
+  {
+   "id": "oholl-05",
+   "set": "oholl",
+   "name": "OLL 39 – Big Lightning Bolt",
+   "group": "Big Lightning Bolt",
+   "alg": "r U' r' U' r y R U R' f'",
+   "img": "img/oholl-05.png"
+  },
+  {
+   "id": "oholl-06",
+   "set": "oholl",
+   "name": "OLL 40 – Big Lightning Bolt",
+   "group": "Big Lightning Bolt",
+   "alg": "R' F R U R' U' F' U R",
+   "img": "img/oholl-06.png"
+  },
+  {
+   "id": "oholl-07",
+   "set": "oholl",
+   "name": "OLL 34 – C Shape",
+   "group": "C Shape",
+   "alg": "R U R2 U' R' F R U R U' F'",
+   "img": "img/oholl-07.png"
+  },
+  {
+   "id": "oholl-08",
+   "set": "oholl",
+   "name": "OLL 46 – C Shape",
+   "group": "C Shape",
+   "alg": "R' U' R' F R F' U R",
+   "img": "img/oholl-08.png"
+  },
+  {
+   "id": "oholl-09",
+   "set": "oholl",
+   "name": "OLL 28 – Corners Oriented",
+   "group": "Corners Oriented",
+   "alg": "r U R' U' r' R U R U' R'",
+   "img": "img/oholl-09.png"
+  },
+  {
+   "id": "oholl-10",
+   "set": "oholl",
+   "name": "OLL 57 – Corners Oriented",
+   "group": "Corners Oriented",
+   "alg": "R U R' U' R' r U R U' r'",
+   "img": "img/oholl-10.png"
+  },
+  {
+   "id": "oholl-11",
+   "set": "oholl",
+   "name": "OLL 21 – Cross",
+   "group": "Cross",
+   "alg": "R U2 R' U' R U R' U' R U' R'",
+   "img": "img/oholl-11.png"
+  },
+  {
+   "id": "oholl-12",
+   "set": "oholl",
+   "name": "OLL 22 – Cross",
+   "group": "Cross",
+   "alg": "R U2 R2 U' R2 U' R2 U2 R",
+   "img": "img/oholl-12.png"
+  },
+  {
+   "id": "oholl-13",
+   "set": "oholl",
+   "name": "OLL 23 – Cross",
+   "group": "Cross",
+   "alg": "R U R' U R U2 R2 U' R U' R' U2 R",
+   "img": "img/oholl-13.png"
+  },
+  {
+   "id": "oholl-14",
+   "set": "oholl",
+   "name": "OLL 24 – Cross",
+   "group": "Cross",
+   "alg": "r U R' U' r' F R F'",
+   "img": "img/oholl-14.png"
+  },
+  {
+   "id": "oholl-15",
+   "set": "oholl",
+   "name": "OLL 25 – Cross",
+   "group": "Cross",
+   "alg": "F R' F' r U R U' r'",
+   "img": "img/oholl-15.png"
+  },
+  {
+   "id": "oholl-16",
+   "set": "oholl",
+   "name": "OLL 26 – Cross",
+   "group": "Cross",
+   "alg": "R U2 R' U' R U' R'",
+   "img": "img/oholl-16.png"
+  },
+  {
+   "id": "oholl-17",
+   "set": "oholl",
+   "name": "OLL 27 – Cross",
+   "group": "Cross",
+   "alg": "R U R' U R U2 R'",
+   "img": "img/oholl-17.png"
+  },
+  {
+   "id": "oholl-18",
+   "set": "oholl",
+   "name": "OLL 1 – Dot",
+   "group": "Dot",
+   "alg": "R U2 R2 F R F' U2 R' F R F'",
+   "img": "img/oholl-18.png"
+  },
+  {
+   "id": "oholl-19",
+   "set": "oholl",
+   "name": "OLL 2 – Dot",
+   "group": "Dot",
+   "alg": "r U r' U2 r U2 R' U2 R U' r'",
+   "img": "img/oholl-19.png"
+  },
+  {
+   "id": "oholl-20",
+   "set": "oholl",
+   "name": "OLL 3 – Dot",
+   "group": "Dot",
+   "alg": "r' R2 U R' U r U2 r' U R' r",
+   "img": "img/oholl-20.png"
+  },
+  {
+   "id": "oholl-21",
+   "set": "oholl",
+   "name": "OLL 4 – Dot",
+   "group": "Dot",
+   "alg": "r' R U' r U2 r' U' R U' R2 r",
+   "img": "img/oholl-21.png"
+  },
+  {
+   "id": "oholl-22",
+   "set": "oholl",
+   "name": "OLL 17 – Dot",
+   "group": "Dot",
+   "alg": "F R' F' R2 r' U R U' R' U' R' r",
+   "img": "img/oholl-22.png"
+  },
+  {
+   "id": "oholl-23",
+   "set": "oholl",
+   "name": "OLL 18 – Dot",
+   "group": "Dot",
+   "alg": "r U R' U R U2 r2 U' R U' R' U2 r",
+   "img": "img/oholl-23.png"
+  },
+  {
+   "id": "oholl-24",
+   "set": "oholl",
+   "name": "OLL 19 – Dot",
+   "group": "Dot",
+   "alg": "r U2 R' U' R U' r2 U2 R U R' U r",
+   "img": "img/oholl-24.png"
+  },
+  {
+   "id": "oholl-25",
+   "set": "oholl",
+   "name": "OLL 20 – Dot",
+   "group": "Dot",
+   "alg": "r U R' U' r2 R2 U R U' R' U' R' r",
+   "img": "img/oholl-25.png"
+  },
+  {
+   "id": "oholl-26",
+   "set": "oholl",
+   "name": "OLL 9 – Fish Shape",
+   "group": "Fish Shape",
+   "alg": "R U R' U' R' F R2 U R' U' F'",
+   "img": "img/oholl-26.png"
+  },
+  {
+   "id": "oholl-27",
+   "set": "oholl",
+   "name": "OLL 10 – Fish Shape",
+   "group": "Fish Shape",
+   "alg": "r U R' U R U' R' U' r' R U R U' R'",
+   "img": "img/oholl-27.png"
+  },
+  {
+   "id": "oholl-28",
+   "set": "oholl",
+   "name": "OLL 35 – Fish Shape",
+   "group": "Fish Shape",
+   "alg": "R U2 R2 F R F' R U2 R'",
+   "img": "img/oholl-28.png"
+  },
+  {
+   "id": "oholl-29",
+   "set": "oholl",
+   "name": "OLL 37 – Fish Shape",
+   "group": "Fish Shape",
+   "alg": "F R U' R' U' R U R' F'",
+   "img": "img/oholl-29.png"
+  },
+  {
+   "id": "oholl-30",
+   "set": "oholl",
+   "name": "OLL 51 – I Shape",
+   "group": "I Shape",
+   "alg": "F U R U' R' U R U' R' F'",
+   "img": "img/oholl-30.png"
+  },
+  {
+   "id": "oholl-31",
+   "set": "oholl",
+   "name": "OLL 52 – I Shape",
+   "group": "I Shape",
+   "alg": "R U R' U R U' y R U' R' F'",
+   "img": "img/oholl-31.png"
+  },
+  {
+   "id": "oholl-32",
+   "set": "oholl",
+   "name": "OLL 55 – I Shape",
+   "group": "I Shape",
+   "alg": "R U2 R2 U' R U' R' U2 F R F'",
+   "img": "img/oholl-32.png"
+  },
+  {
+   "id": "oholl-33",
+   "set": "oholl",
+   "name": "OLL 56 – I Shape",
+   "group": "I Shape",
+   "alg": "r U r' U R U' R' U R U' R' r U' r'",
+   "img": "img/oholl-33.png"
+  },
+  {
+   "id": "oholl-34",
+   "set": "oholl",
+   "name": "OLL 13 – Knight Move Shape",
+   "group": "Knight Move Shape",
+   "alg": "F U R U' R2 F' R U R U' R'",
+   "img": "img/oholl-34.png"
+  },
+  {
+   "id": "oholl-35",
+   "set": "oholl",
+   "name": "OLL 14 – Knight Move Shape",
+   "group": "Knight Move Shape",
+   "alg": "R' F R U R' F' R y' R U' R'",
+   "img": "img/oholl-35.png"
+  },
+  {
+   "id": "oholl-36",
+   "set": "oholl",
+   "name": "OLL 15 – Knight Move Shape",
+   "group": "Knight Move Shape",
+   "alg": "r' U' R' r U' R U r' U r",
+   "img": "img/oholl-36.png"
+  },
+  {
+   "id": "oholl-37",
+   "set": "oholl",
+   "name": "OLL 16 – Knight Move Shape",
+   "group": "Knight Move Shape",
+   "alg": "r U r' R U R' U' r U' r'",
+   "img": "img/oholl-37.png"
+  },
+  {
+   "id": "oholl-38",
+   "set": "oholl",
+   "name": "OLL 31 – P Shape",
+   "group": "P Shape",
+   "alg": "R' U' F U R U' R' F' R",
+   "img": "img/oholl-38.png"
+  },
+  {
+   "id": "oholl-39",
+   "set": "oholl",
+   "name": "OLL 32 – P Shape",
+   "group": "P Shape",
+   "alg": "L U F' U' L' U L F L'",
+   "img": "img/oholl-39.png"
+  },
+  {
+   "id": "oholl-40",
+   "set": "oholl",
+   "name": "OLL 43 – P Shape",
+   "group": "P Shape",
+   "alg": "F' U' L' U L F",
+   "img": "img/oholl-40.png"
+  },
+  {
+   "id": "oholl-41",
+   "set": "oholl",
+   "name": "OLL 44 – P Shape",
+   "group": "P Shape",
+   "alg": "F U R U' R' F'",
+   "img": "img/oholl-41.png"
+  },
+  {
+   "id": "oholl-42",
+   "set": "oholl",
+   "name": "OLL 47 – Small L Shape",
+   "group": "Small L Shape",
+   "alg": "R' U' x R' U R U' R' U R U' x' U R",
+   "img": "img/oholl-42.png"
+  },
+  {
+   "id": "oholl-43",
+   "set": "oholl",
+   "name": "OLL 48 – Small L Shape",
+   "group": "Small L Shape",
+   "alg": "F R U R' U' R U R' U' F'",
+   "img": "img/oholl-43.png"
+  },
+  {
+   "id": "oholl-44",
+   "set": "oholl",
+   "name": "OLL 49 – Small L Shape",
+   "group": "Small L Shape",
+   "alg": "R x' U' z u2 R u2 R u2 R' u",
+   "img": "img/oholl-44.png"
+  },
+  {
+   "id": "oholl-45",
+   "set": "oholl",
+   "name": "OLL 50 – Small L Shape",
+   "group": "Small L Shape",
+   "alg": "r' U r2 U' r2 U' r2 U r'",
+   "img": "img/oholl-45.png"
+  },
+  {
+   "id": "oholl-46",
+   "set": "oholl",
+   "name": "OLL 53 – Small L Shape",
+   "group": "Small L Shape",
+   "alg": "r' U2 R U R' U' R U R' U r",
+   "img": "img/oholl-46.png"
+  },
+  {
+   "id": "oholl-47",
+   "set": "oholl",
+   "name": "OLL 54 – Small L Shape",
+   "group": "Small L Shape",
+   "alg": "r U2 R' U' R U R' U' R U' r'",
+   "img": "img/oholl-47.png"
+  },
+  {
+   "id": "oholl-48",
+   "set": "oholl",
+   "name": "OLL 7 – Small Lightning Bolt",
+   "group": "Small Lightning Bolt",
+   "alg": "r U R' U R U2 r'",
+   "img": "img/oholl-48.png"
+  },
+  {
+   "id": "oholl-49",
+   "set": "oholl",
+   "name": "OLL 8 – Small Lightning Bolt",
+   "group": "Small Lightning Bolt",
+   "alg": "r' U' R U' R' U2 r",
+   "img": "img/oholl-49.png"
+  },
+  {
+   "id": "oholl-50",
+   "set": "oholl",
+   "name": "OLL 11 – Small Lightning Bolt",
+   "group": "Small Lightning Bolt",
+   "alg": "r' R2 U R' U R U2 R' U R' r",
+   "img": "img/oholl-50.png"
+  },
+  {
+   "id": "oholl-51",
+   "set": "oholl",
+   "name": "OLL 12 – Small Lightning Bolt",
+   "group": "Small Lightning Bolt",
+   "alg": "r R2 U' R U' R' U2 R U' r' R",
+   "img": "img/oholl-51.png"
+  },
+  {
+   "id": "oholl-52",
+   "set": "oholl",
+   "name": "OLL 5 – Square Shape",
+   "group": "Square Shape",
+   "alg": "r' U2 R U R' U r",
+   "img": "img/oholl-52.png"
+  },
+  {
+   "id": "oholl-53",
+   "set": "oholl",
+   "name": "OLL 6 – Square Shape",
+   "group": "Square Shape",
+   "alg": "r U2 R' U' R U' r'",
+   "img": "img/oholl-53.png"
+  },
+  {
+   "id": "oholl-54",
+   "set": "oholl",
+   "name": "OLL 33 – T Shape",
+   "group": "T Shape",
+   "alg": "R U R' U' R' F R F'",
+   "img": "img/oholl-54.png"
+  },
+  {
+   "id": "oholl-55",
+   "set": "oholl",
+   "name": "OLL 45 – T Shape",
+   "group": "T Shape",
+   "alg": "F R U R' U' F'",
+   "img": "img/oholl-55.png"
+  },
+  {
+   "id": "oholl-56",
+   "set": "oholl",
+   "name": "OLL 36 – W Shape",
+   "group": "W Shape",
+   "alg": "R' U' R U' R' U R U x' R U' R' U",
+   "img": "img/oholl-56.png"
+  },
+  {
+   "id": "oholl-57",
+   "set": "oholl",
+   "name": "OLL 38 – W Shape",
+   "group": "W Shape",
+   "alg": "R U R' U R U' R' U' R' F R F'",
+   "img": "img/oholl-57.png"
+  },
+  {
+   "id": "ohpll-01",
+   "set": "ohpll",
+   "name": "Aa",
+   "group": "Adjacent Corner Swap",
+   "alg": "x R' U R' D2 R U' R' D2 R2",
+   "img": "img/ohpll-01.png"
+  },
+  {
+   "id": "ohpll-02",
+   "set": "ohpll",
+   "name": "Ab",
+   "group": "Adjacent Corner Swap",
+   "alg": "x R2 D2 R U R' D2 R U' R",
+   "img": "img/ohpll-02.png"
+  },
+  {
+   "id": "ohpll-03",
+   "set": "ohpll",
+   "name": "F",
+   "group": "Adjacent Corner Swap",
+   "alg": "R U R' U' R' U R U2 R' L' U R U' L U' R U' R'",
+   "img": "img/ohpll-03.png"
+  },
+  {
+   "id": "ohpll-04",
+   "set": "ohpll",
+   "name": "Ga",
+   "group": "Adjacent Corner Swap",
+   "alg": "R2 U R' U R' U' R U' R2 U' D R' U R D'",
+   "img": "img/ohpll-04.png"
+  },
+  {
+   "id": "ohpll-05",
+   "set": "ohpll",
+   "name": "Gb",
+   "group": "Adjacent Corner Swap",
+   "alg": "R' U' R U D' R2 U R' U R U' R U' R2 D",
+   "img": "img/ohpll-05.png"
+  },
+  {
+   "id": "ohpll-06",
+   "set": "ohpll",
+   "name": "Gc",
+   "group": "Adjacent Corner Swap",
+   "alg": "R2 U' R U' R U R' U R2 U D' R U' R' D",
+   "img": "img/ohpll-06.png"
+  },
+  {
+   "id": "ohpll-07",
+   "set": "ohpll",
+   "name": "Gd",
+   "group": "Adjacent Corner Swap",
+   "alg": "R U R' U' D R2 U' R U' R' U R' U R2 D'",
+   "img": "img/ohpll-07.png"
+  },
+  {
+   "id": "ohpll-08",
+   "set": "ohpll",
+   "name": "Ja",
+   "group": "Adjacent Corner Swap",
+   "alg": "R' U2 R U R' U2 L U' R U L'",
+   "img": "img/ohpll-08.png"
+  },
+  {
+   "id": "ohpll-09",
+   "set": "ohpll",
+   "name": "Jb",
+   "group": "Adjacent Corner Swap",
+   "alg": "R U2 R' U' R U2 L' U R' U' r",
+   "img": "img/ohpll-09.png"
+  },
+  {
+   "id": "ohpll-10",
+   "set": "ohpll",
+   "name": "Ra",
+   "group": "Adjacent Corner Swap",
+   "alg": "R U' R' U' R U R D R' U' R D' R' U2 R'",
+   "img": "img/ohpll-10.png"
+  },
+  {
+   "id": "ohpll-11",
+   "set": "ohpll",
+   "name": "Rb",
+   "group": "Adjacent Corner Swap",
+   "alg": "R' U2 R' D' R U' R' D R U R U' R' U' R",
+   "img": "img/ohpll-11.png"
+  },
+  {
+   "id": "ohpll-12",
+   "set": "ohpll",
+   "name": "T",
+   "group": "Adjacent Corner Swap",
+   "alg": "R U R' U' R' F R2 U' R' U' R U R' F'",
+   "img": "img/ohpll-12.png"
+  },
+  {
+   "id": "ohpll-13",
+   "set": "ohpll",
+   "name": "E",
+   "group": "Diagonal Corner Swap",
+   "alg": "x' R U' R' D R U R' D' R U R' D R U' R' D'",
+   "img": "img/ohpll-13.png"
+  },
+  {
+   "id": "ohpll-14",
+   "set": "ohpll",
+   "name": "Na",
+   "group": "Diagonal Corner Swap",
+   "alg": "R U R' U R U2 R' U' R U2 L' U R' U' L U' R U' R'",
+   "img": "img/ohpll-14.png"
+  },
+  {
+   "id": "ohpll-15",
+   "set": "ohpll",
+   "name": "Nb",
+   "group": "Diagonal Corner Swap",
+   "alg": "R' U' R U' R' U2 R U R' U2 L U' R U L' U R' U R",
+   "img": "img/ohpll-15.png"
+  },
+  {
+   "id": "ohpll-16",
+   "set": "ohpll",
+   "name": "V",
+   "group": "Diagonal Corner Swap",
+   "alg": "R' U R U' x' U R U2 R' U' R U' R' U2 R U R' U'",
+   "img": "img/ohpll-16.png"
+  },
+  {
+   "id": "ohpll-17",
+   "set": "ohpll",
+   "name": "Y",
+   "group": "Diagonal Corner Swap",
+   "alg": "R2 U' R' U R U' x' U' z' U' R U' R' U' r B",
+   "img": "img/ohpll-17.png"
+  },
+  {
+   "id": "ohpll-18",
+   "set": "ohpll",
+   "name": "H",
+   "group": "Edges Only",
+   "alg": "R2 U2 R U2 R2 U2 R2 U2 R U2 R2",
+   "img": "img/ohpll-18.png"
+  },
+  {
+   "id": "ohpll-19",
+   "set": "ohpll",
+   "name": "Ua",
+   "group": "Edges Only",
+   "alg": "R U' R U R U R U' R' U' R2",
+   "img": "img/ohpll-19.png"
+  },
+  {
+   "id": "ohpll-20",
+   "set": "ohpll",
+   "name": "Ub",
+   "group": "Edges Only",
+   "alg": "L' U L' U' L' U' L' U L U L2",
+   "img": "img/ohpll-20.png"
+  },
+  {
+   "id": "ohpll-21",
+   "set": "ohpll",
+   "name": "Z",
+   "group": "Edges Only",
+   "alg": "R' U' R U' R U R U' R' U R U R2 U' R'",
+   "img": "img/ohpll-21.png"
+  },
+  {
+   "id": "f2l-basic-01",
+   "set": "f2l-basic",
+   "name": "1A.1a",
+   "group": "1A Both pieces on top – white up",
+   "alg": "U2 (R U R') U (R U' R')",
+   "algs": [
+    {
+     "alg": "U2 (R U R') U (R U' R')",
+     "multi": false
+    },
+    {
+     "alg": "y F R U2 R' F'",
+     "multi": false
+    }
+   ],
+   "setup": "R U R' U' R U' R' U2",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-02",
+   "set": "f2l-basic",
+   "name": "1A.1b",
+   "group": "1A Both pieces on top – white up",
+   "alg": "y U2 (L' U' L) U' (L' U L)",
+   "algs": [
+    {
+     "alg": "y U2 (L' U' L) U' (L' U L)",
+     "multi": false
+    },
+    {
+     "alg": "F' L' U2 L F",
+     "multi": false
+    }
+   ],
+   "setup": "L' U' L U L' U L U2 y'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-03",
+   "set": "f2l-basic",
+   "name": "1A.2a",
+   "group": "1A Both pieces on top – white up",
+   "alg": "U (R U2 R') U (R U' R')",
+   "algs": [
+    {
+     "alg": "U (R U2 R') U (R U' R')",
+     "multi": false
+    }
+   ],
+   "setup": "R U R' U' R U2 R' U'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-04",
+   "set": "f2l-basic",
+   "name": "1A.2b",
+   "group": "1A Both pieces on top – white up",
+   "alg": "y U' (L' U2 L) U' (L' U L)",
+   "algs": [
+    {
+     "alg": "y U' (L' U2 L) U' (L' U L)",
+     "multi": false
+    }
+   ],
+   "setup": "L' U' L U L' U2 L U y'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-05",
+   "set": "f2l-basic",
+   "name": "1A.3a",
+   "group": "1A Both pieces on top – white up",
+   "alg": "U (R U' R') U' (R U' R' U R U' R')",
+   "algs": [
+    {
+     "alg": "U (R U' R') U' (R U' R' U R U' R')",
+     "multi": false
+    },
+    {
+     "alg": "U (F R' F' R) U (R U R')",
+     "multi": false
+    },
+    {
+     "alg": "y U L' U' (L2 F' L' F) (L' U L)",
+     "multi": false
+    },
+    {
+     "alg": "y F' (U' L' U L) F (L' U L)",
+     "multi": false
+    },
+    {
+     "alg": "U2 (L F' L' F) (R U R')",
+     "multi": true
+    },
+    {
+     "alg": "y' U2 R U' R' U' S R' S'",
+     "multi": true
+    }
+   ],
+   "setup": "R U R' U' R U R' U R U R' U'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-06",
+   "set": "f2l-basic",
+   "name": "1A.3b",
+   "group": "1A Both pieces on top – white up",
+   "alg": "y U' (L' U L) U (L' U L U' L' U L)",
+   "algs": [
+    {
+     "alg": "y U' (L' U L) U (L' U L U' L' U L)",
+     "multi": false
+    },
+    {
+     "alg": "y U' (F' L F L') U' (L' U' L)",
+     "multi": false
+    },
+    {
+     "alg": "U' R U (R2' F R F') (R U' R')",
+     "multi": false
+    },
+    {
+     "alg": "F (U R U' R') F' (R U' R')",
+     "multi": false
+    },
+    {
+     "alg": "y U2 (R F' R' F) (L' U' L)",
+     "multi": true
+    },
+    {
+     "alg": "y2 U2 L' U L U S' L S",
+     "multi": true
+    }
+   ],
+   "setup": "L' U' L U L' U' L U' L' U' L U y'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-07",
+   "set": "f2l-basic",
+   "name": "1A.4a",
+   "group": "1A Both pieces on top – white up",
+   "alg": "(R U2 R') U' (R U R')",
+   "algs": [
+    {
+     "alg": "(R U2 R') U' (R U R')",
+     "multi": false
+    }
+   ],
+   "setup": "R U' R' U R U2 R'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-08",
+   "set": "f2l-basic",
+   "name": "1A.4b",
+   "group": "1A Both pieces on top – white up",
+   "alg": "y (L' U2 L) U (L' U' L)",
+   "algs": [
+    {
+     "alg": "y (L' U2 L) U (L' U' L)",
+     "multi": false
+    }
+   ],
+   "setup": "L' U L U' L' U2 L y'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-09",
+   "set": "f2l-basic",
+   "name": "1A.1a",
+   "group": "1A Both pieces on top – white on side, top stickers differ",
+   "alg": "(R U R')",
+   "algs": [
+    {
+     "alg": "(R U R')",
+     "multi": false
+    }
+   ],
+   "setup": "R U' R'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-10",
+   "set": "f2l-basic",
+   "name": "1A.1b",
+   "group": "1A Both pieces on top – white on side, top stickers differ",
+   "alg": "y (L' U' L)",
+   "algs": [
+    {
+     "alg": "y (L' U' L)",
+     "multi": false
+    }
+   ],
+   "setup": "L' U L y'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-11",
+   "set": "f2l-basic",
+   "name": "1A.2a",
+   "group": "1A Both pieces on top – white on side, top stickers differ",
+   "alg": "U' (R U R') U (R U R')",
+   "algs": [
+    {
+     "alg": "U' (R U R') U (R U R')",
+     "multi": false
+    },
+    {
+     "alg": "U2 (R U' R') U' (R U R')",
+     "multi": false
+    },
+    {
+     "alg": "R' U R2 U R'",
+     "multi": true
+    }
+   ],
+   "setup": "R U' R' U' R U' R' U",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-12",
+   "set": "f2l-basic",
+   "name": "1A.2b",
+   "group": "1A Both pieces on top – white on side, top stickers differ",
+   "alg": "y U (L' U' L) U' (L' U' L)",
+   "algs": [
+    {
+     "alg": "y U (L' U' L) U' (L' U' L)",
+     "multi": false
+    },
+    {
+     "alg": "y U2 (L' U L) U (L' U' L)",
+     "multi": false
+    },
+    {
+     "alg": "y L U' L2' U' L",
+     "multi": true
+    }
+   ],
+   "setup": "L' U L U L' U L U' y'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-13",
+   "set": "f2l-basic",
+   "name": "1A.3a",
+   "group": "1A Both pieces on top – white on side, top stickers differ",
+   "alg": "R' U2 R2 U R2' U R",
+   "algs": [
+    {
+     "alg": "R' U2 R2 U R2' U R",
+     "multi": false
+    },
+    {
+     "alg": "(R U' R') U (R U' R') U2 (R U' R')",
+     "multi": false
+    },
+    {
+     "alg": "y U L' U2 L U' y' R U R'",
+     "multi": false
+    },
+    {
+     "alg": "R' U2 R2 U R'",
+     "multi": true
+    }
+   ],
+   "setup": "R' U' R2 U' R2 U2 R",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-14",
+   "set": "f2l-basic",
+   "name": "1A.3b",
+   "group": "1A Both pieces on top – white on side, top stickers differ",
+   "alg": "y L U2 L2' U' L2 U' L'",
+   "algs": [
+    {
+     "alg": "y L U2 L2' U' L2 U' L'",
+     "multi": false
+    },
+    {
+     "alg": "y (L' U L) U' (L' U L) U2 (L' U L)",
+     "multi": false
+    },
+    {
+     "alg": "U' (R U2 R') U y (L' U' L)",
+     "multi": false
+    },
+    {
+     "alg": "y L U2 L2' U' L",
+     "multi": true
+    }
+   ],
+   "setup": "L U L2 U L2 U2 L' y'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-15",
+   "set": "f2l-basic",
+   "name": "1A.4a",
+   "group": "1A Both pieces on top – white on side, top stickers differ",
+   "alg": "y U L' U2 L U' y' R U R'",
+   "algs": [
+    {
+     "alg": "y U L' U2 L U' y' R U R'",
+     "multi": false
+    }
+   ],
+   "setup": "R U' R' U F' U2 F U'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-16",
+   "set": "f2l-basic",
+   "name": "1A.4a·2",
+   "group": "1A Both pieces on top – white on side, top stickers differ",
+   "alg": "U' (R U' R') U (R U R')",
+   "algs": [
+    {
+     "alg": "U' (R U' R') U (R U R')",
+     "multi": false
+    }
+   ],
+   "setup": "R U' R' U' R U R' U",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-17",
+   "set": "f2l-basic",
+   "name": "1A.4b",
+   "group": "1A Both pieces on top – white on side, top stickers differ",
+   "alg": "U' (R U2 R') U y (L' U' L)",
+   "algs": [
+    {
+     "alg": "U' (R U2 R') U y (L' U' L)",
+     "multi": false
+    }
+   ],
+   "setup": "L' U L U' F U2 F' U y'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-18",
+   "set": "f2l-basic",
+   "name": "1A.4b·2",
+   "group": "1A Both pieces on top – white on side, top stickers differ",
+   "alg": "y U (L' U L) U' (L' U' L)",
+   "algs": [
+    {
+     "alg": "y U (L' U L) U' (L' U' L)",
+     "multi": false
+    }
+   ],
+   "setup": "L' U L U L' U' L U' y'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-19",
+   "set": "f2l-basic",
+   "name": "1A.1a",
+   "group": "1A Both pieces on top – white on side, top stickers same",
+   "alg": "y U' (L' U L)",
+   "algs": [
+    {
+     "alg": "y U' (L' U L)",
+     "multi": false
+    }
+   ],
+   "setup": "L' U' L U y'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-20",
+   "set": "f2l-basic",
+   "name": "1A.1b",
+   "group": "1A Both pieces on top – white on side, top stickers same",
+   "alg": "U (R U' R')",
+   "algs": [
+    {
+     "alg": "U (R U' R')",
+     "multi": false
+    }
+   ],
+   "setup": "R U R' U'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-21",
+   "set": "f2l-basic",
+   "name": "1A.2a",
+   "group": "1A Both pieces on top – white on side, top stickers same",
+   "alg": "y U (L' U2 L) U2 (L' U L)",
+   "algs": [
+    {
+     "alg": "y U (L' U2 L) U2 (L' U L)",
+     "multi": false
+    },
+    {
+     "alg": "r' U2 R2 U R2' U r",
+     "multi": false
+    }
+   ],
+   "setup": "L' U' L U2 L' U2 L U' y'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-22",
+   "set": "f2l-basic",
+   "name": "1A.2b",
+   "group": "1A Both pieces on top – white on side, top stickers same",
+   "alg": "U' (R U2 R') U2 (R U' R')",
+   "algs": [
+    {
+     "alg": "U' (R U2 R') U2 (R U' R')",
+     "multi": false
+    },
+    {
+     "alg": "y l U2 L2' U' L2 U' l'",
+     "multi": false
+    }
+   ],
+   "setup": "R U R' U2 R U2 R' U",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-23",
+   "set": "f2l-basic",
+   "name": "1A.3a",
+   "group": "1A Both pieces on top – white on side, top stickers same",
+   "alg": "U' (R U R') U2 (R U' R')",
+   "algs": [
+    {
+     "alg": "U' (R U R') U2 (R U' R')",
+     "multi": false
+    },
+    {
+     "alg": "y U l' U L U' L' U' l",
+     "multi": false
+    }
+   ],
+   "setup": "R U R' U2 R U' R' U",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-24",
+   "set": "f2l-basic",
+   "name": "1A.3b",
+   "group": "1A Both pieces on top – white on side, top stickers same",
+   "alg": "y U (L' U' L) U2 (L' U L)",
+   "algs": [
+    {
+     "alg": "y U (L' U' L) U2 (L' U L)",
+     "multi": false
+    },
+    {
+     "alg": "U' r U' R' U R U r'",
+     "multi": false
+    }
+   ],
+   "setup": "L' U' L U2 L' U L U' y'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-25",
+   "set": "f2l-basic",
+   "name": "1A.4a",
+   "group": "1A Both pieces on top – white on side, top stickers same",
+   "alg": "M U (L F' L') U' M'",
+   "algs": [
+    {
+     "alg": "M U (L F' L') U' M'",
+     "multi": false
+    },
+    {
+     "alg": "y (L' U L) y' U2 (R U R')",
+     "multi": false
+    },
+    {
+     "alg": "y' (R2' F R F' R) U2 (R' U R)",
+     "multi": false
+    },
+    {
+     "alg": "y2 (f' L f) U2 (L U L')",
+     "multi": false
+    },
+    {
+     "alg": "U' (R' U R) U' (R U R')",
+     "multi": true
+    }
+   ],
+   "setup": "R L' B L U L' B' R' L",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-26",
+   "set": "f2l-basic",
+   "name": "1A.4b",
+   "group": "1A Both pieces on top – white on side, top stickers same",
+   "alg": "y M U' (R' F R) U M'",
+   "algs": [
+    {
+     "alg": "y M U' (R' F R) U M'",
+     "multi": false
+    },
+    {
+     "alg": "(R U' R') y U2 (L' U' L)",
+     "multi": false
+    },
+    {
+     "alg": "y2 (L2 F' L' F L') U2 (L U' L')",
+     "multi": false
+    },
+    {
+     "alg": "y' (f R' f') U2 R' U' R",
+     "multi": false
+    },
+    {
+     "alg": "y U (L U' L') U (L' U' L)",
+     "multi": true
+    }
+   ],
+   "setup": "R L' B' R' U' R B R' L y'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-27",
+   "set": "f2l-basic",
+   "name": "1B.1a",
+   "group": "1B One piece in its slot – edge in slot",
+   "alg": "U (R U R') U2 (R U R')",
+   "algs": [
+    {
+     "alg": "U (R U R') U2 (R U R')",
+     "multi": false
+    },
+    {
+     "alg": "U' (R U2 R') U (R U R')",
+     "multi": false
+    },
+    {
+     "alg": "y U (L' U L) U2 (L' U L)",
+     "multi": false
+    }
+   ],
+   "setup": "R U' R' U2 R U' R' U'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-28",
+   "set": "f2l-basic",
+   "name": "1B.1b",
+   "group": "1B One piece in its slot – edge in slot",
+   "alg": "y U' (L' U' L) U2 (L' U' L)",
+   "algs": [
+    {
+     "alg": "y U' (L' U' L) U2 (L' U' L)",
+     "multi": false
+    },
+    {
+     "alg": "y U (L' U2 L) U' (L' U' L)",
+     "multi": false
+    },
+    {
+     "alg": "U' R U' R' U2 R U' R'",
+     "multi": false
+    }
+   ],
+   "setup": "L' U L U2 L' U L U y'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-29",
+   "set": "f2l-basic",
+   "name": "1B.2a",
+   "group": "1B One piece in its slot – edge in slot",
+   "alg": "U (F' U' F) U' (R U R')",
+   "algs": [
+    {
+     "alg": "U (F' U' F) U' (R U R')",
+     "multi": false
+    },
+    {
+     "alg": "y U2 (L' U' L) (F' L F L')",
+     "multi": false
+    },
+    {
+     "alg": "y U' M' (U' L' U l) (L' U L)",
+     "multi": false
+    },
+    {
+     "alg": "y' U2 (R' U' R) y U (R U' R')",
+     "multi": false
+    },
+    {
+     "alg": "y' U2 R' U' M U' R U M'",
+     "multi": false
+    },
+    {
+     "alg": "y2 U (f' L' f) U' (L U L')",
+     "multi": false
+    },
+    {
+     "alg": "y U' (L U F' L' F) (L' U L)",
+     "multi": true
+    }
+   ],
+   "setup": "R U' R' U F' U F U'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-30",
+   "set": "f2l-basic",
+   "name": "1B.2b",
+   "group": "1B One piece in its slot – edge in slot",
+   "alg": "y U' (F U F') U (L' U' L)",
+   "algs": [
+    {
+     "alg": "y U' (F U F') U (L' U' L)",
+     "multi": false
+    },
+    {
+     "alg": "U2 (R U R') (F R' F' R)",
+     "multi": false
+    },
+    {
+     "alg": "U M' (U R U' r') (R U' R')",
+     "multi": false
+    },
+    {
+     "alg": "y2 U2 (L U L') y' U' (L' U L)",
+     "multi": false
+    },
+    {
+     "alg": "y2 U2 L U M U L' U' M'",
+     "multi": false
+    },
+    {
+     "alg": "y' U' (f R f') U (R' U' R)",
+     "multi": false
+    },
+    {
+     "alg": "U (R' U' F R F') (R U' R')",
+     "multi": true
+    }
+   ],
+   "setup": "L' U L U' F U' F' U y'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-31",
+   "set": "f2l-basic",
+   "name": "1B.3a",
+   "group": "1B One piece in its slot – edge in slot",
+   "alg": "(U R U' R')3",
+   "algs": [
+    {
+     "alg": "(U R U' R')3",
+     "multi": false
+    }
+   ],
+   "setup": "R U R' U' R U R' U' R U R' U'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-32",
+   "set": "f2l-basic",
+   "name": "1B.3b",
+   "group": "1B One piece in its slot – edge in slot",
+   "alg": "U' (R' F R F') (R U' R')",
+   "algs": [
+    {
+     "alg": "U' (R' F R F') (R U' R')",
+     "multi": false
+    },
+    {
+     "alg": "(R U' R') (F' U2 F)",
+     "multi": false
+    },
+    {
+     "alg": "y' R' U R' F R F' R",
+     "multi": false
+    },
+    {
+     "alg": "y' U' (R' U2 R) (f R f')",
+     "multi": false
+    }
+   ],
+   "setup": "R U R' F R' F' R U",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-33",
+   "set": "f2l-basic",
+   "name": "1B.1a",
+   "group": "1B One piece in its slot – corner in slot",
+   "alg": "(R U R') U' (R U R')",
+   "algs": [
+    {
+     "alg": "(R U R') U' (R U R')",
+     "multi": false
+    },
+    {
+     "alg": "y M' (U' L' U L) (U' L' U l)",
+     "multi": false
+    },
+    {
+     "alg": "y (L F' L' F)2",
+     "multi": false
+    }
+   ],
+   "setup": "R U' R' U R U' R'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-34",
+   "set": "f2l-basic",
+   "name": "1B.1b",
+   "group": "1B One piece in its slot – corner in slot",
+   "alg": "y (L' U' L) U (L' U' L)",
+   "algs": [
+    {
+     "alg": "y (L' U' L) U (L' U' L)",
+     "multi": false
+    },
+    {
+     "alg": "M' (U R U' R') (U R U' r')",
+     "multi": false
+    },
+    {
+     "alg": "(R' F R F')2",
+     "multi": false
+    }
+   ],
+   "setup": "L' U L U' L' U L y'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-35",
+   "set": "f2l-basic",
+   "name": "1B.2a",
+   "group": "1B One piece in its slot – corner in slot",
+   "alg": "(R U' R') U (R U' R')",
+   "algs": [
+    {
+     "alg": "(R U' R') U (R U' R')",
+     "multi": false
+    }
+   ],
+   "setup": "R U R' U' R U R'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-36",
+   "set": "f2l-basic",
+   "name": "1B.2b",
+   "group": "1B One piece in its slot – corner in slot",
+   "alg": "y (L' U L) U' (L' U L)",
+   "algs": [
+    {
+     "alg": "y (L' U L) U' (L' U L)",
+     "multi": false
+    }
+   ],
+   "setup": "L' U' L U L' U' L y'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-37",
+   "set": "f2l-basic",
+   "name": "1B.3a",
+   "group": "1B One piece in its slot – corner in slot",
+   "alg": "U' (R' F R F') (R U R')",
+   "algs": [
+    {
+     "alg": "U' (R' F R F') (R U R')",
+     "multi": false
+    },
+    {
+     "alg": "(R' F' R) (U R U' R') F",
+     "multi": false
+    },
+    {
+     "alg": "U' F' (R U R' U') (R' F R)",
+     "multi": false
+    },
+    {
+     "alg": "y U' (L' U L) (F' L F L')",
+     "multi": false
+    },
+    {
+     "alg": "y2 U' M U L U' M' U L'",
+     "multi": false
+    },
+    {
+     "alg": "y' U' R' U M U' R U M'",
+     "multi": false
+    }
+   ],
+   "setup": "R U' R' F R' F' R U",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-38",
+   "set": "f2l-basic",
+   "name": "1B.3b",
+   "group": "1B One piece in its slot – corner in slot",
+   "alg": "y U (L F' L' F) (L' U' L)",
+   "algs": [
+    {
+     "alg": "y U (L F' L' F) (L' U' L)",
+     "multi": false
+    },
+    {
+     "alg": "y (L F L') (U' L' U L) F'",
+     "multi": false
+    },
+    {
+     "alg": "y U F (L' U' L U) (L F' L')",
+     "multi": false
+    },
+    {
+     "alg": "U (R U' R') (F R' F' R)",
+     "multi": false
+    },
+    {
+     "alg": "y' U M U' R' U M' U' R",
+     "multi": false
+    },
+    {
+     "alg": "y2 U L U' M U L' U' M'",
+     "multi": false
+    }
+   ],
+   "setup": "L' U L F' L F L' U' y'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-39",
+   "set": "f2l-basic",
+   "name": "1C.1a",
+   "group": "1C Both pieces in their slot – both in slot",
+   "alg": "(R U' R') U (R U2 R' U R U' R')",
+   "algs": [
+    {
+     "alg": "(R U' R') U (R U2 R' U R U' R')",
+     "multi": false
+    },
+    {
+     "alg": "y' (L' U L) U (L' U' L U2' L' U L)",
+     "multi": false
+    }
+   ],
+   "setup": "R U R' U' R U2 R' U' R U R'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-40",
+   "set": "f2l-basic",
+   "name": "1C.1b",
+   "group": "1C Both pieces in their slot – both in slot",
+   "alg": "y' (L' U L) U' (L' U2' L U' L' U L)",
+   "algs": [
+    {
+     "alg": "y' (L' U L) U' (L' U2' L U' L' U L)",
+     "multi": false
+    },
+    {
+     "alg": "(R U' R') U' (R U R' U2 R U' R')",
+     "multi": false
+    }
+   ],
+   "setup": "L' U' L U L' U2 L U L' U' L y",
+   "slots": [
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-41",
+   "set": "f2l-basic",
+   "name": "1C.2a",
+   "group": "1C Both pieces in their slot – both in slot",
+   "alg": "(R U' R') (F' L' U2 L F)",
+   "algs": [
+    {
+     "alg": "(R U' R') (F' L' U2 L F)",
+     "multi": false
+    },
+    {
+     "alg": "y (F R U2' R' F') (L' U' L)",
+     "multi": false
+    },
+    {
+     "alg": "y2 L2 F U F' U' L' U L'",
+     "multi": false
+    },
+    {
+     "alg": "y' R' U R' U' F' U F R2",
+     "multi": false
+    }
+   ],
+   "setup": "F' L' U2 L F R U R'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-42",
+   "set": "f2l-basic",
+   "name": "1C.2b",
+   "group": "1C Both pieces in their slot – both in slot",
+   "alg": "y (L' U L) (F R U2' R' F')",
+   "algs": [
+    {
+     "alg": "y (L' U L) (F R U2' R' F')",
+     "multi": false
+    },
+    {
+     "alg": "(F' L' U2 L F) (R U R')",
+     "multi": false
+    },
+    {
+     "alg": "y' R2' F' U' F U R U' R",
+     "multi": false
+    },
+    {
+     "alg": "y2 L U' L U F U' F' L2'",
+     "multi": false
+    }
+   ],
+   "setup": "F R U2 R' F' L' U' L y'",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-basic-43",
+   "set": "f2l-basic",
+   "name": "1C.3a",
+   "group": "1C Both pieces in their slot – both in slot",
+   "alg": "R2' U2' F R2 F' U2' R' U R'",
+   "algs": [
+    {
+     "alg": "R2' U2' F R2 F' U2' R' U R'",
+     "multi": false
+    },
+    {
+     "alg": "y L2 U2 F' L2' F U2 L U' L",
+     "multi": false
+    },
+    {
+     "alg": "y' (f R' f') U (R' U2' R) U (R' U2' R)",
+     "multi": false
+    },
+    {
+     "alg": "y2 (f' L f) U' (L U2 L') U' (L U2 L')",
+     "multi": false
+    }
+   ],
+   "setup": "R U' R U2 F R2 F' U2 R2",
+   "slots": [
+    "FR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-01",
+   "set": "f2l-adv",
+   "name": "2A.1a",
+   "group": "2A Edge in the wrong slot – white up",
+   "alg": "U' R' U R2 U' R'",
+   "algs": [
+    {
+     "alg": "U' R' U R2 U' R'",
+     "multi": false
+    }
+   ],
+   "setup": "R U R2 U' R U",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-02",
+   "set": "f2l-adv",
+   "name": "2A.1b",
+   "group": "2A Edge in the wrong slot – white up",
+   "alg": "y U L U' L2' U L",
+   "algs": [
+    {
+     "alg": "y U L U' L2' U L",
+     "multi": false
+    }
+   ],
+   "setup": "L' U' L2 U L' U' y'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-03",
+   "set": "f2l-adv",
+   "name": "2A.2a",
+   "group": "2A Edge in the wrong slot – white up",
+   "alg": "U2 (R' U R) U' (S R S')",
+   "algs": [
+    {
+     "alg": "U2 (R' U R) U' (S R S')",
+     "multi": false
+    }
+   ],
+   "setup": "F' B U' F B' U R' U' R U2",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-04",
+   "set": "f2l-adv",
+   "name": "2A.2a·2",
+   "group": "2A Edge in the wrong slot – white up",
+   "alg": "y R' F R2 U' R' U2 F'",
+   "algs": [
+    {
+     "alg": "y R' F R2 U' R' U2 F'",
+     "multi": false
+    }
+   ],
+   "setup": "F U2 R U R2 F' R y'",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-05",
+   "set": "f2l-adv",
+   "name": "2A.2a·3",
+   "group": "2A Edge in the wrong slot – white up",
+   "alg": "y2 U2 (L F' L' F) (L U L')",
+   "algs": [
+    {
+     "alg": "y2 U2 (L F' L' F) (L U L')",
+     "multi": false
+    }
+   ],
+   "setup": "L U' L' F' L F L' U2 y2",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-06",
+   "set": "f2l-adv",
+   "name": "2A.2b",
+   "group": "2A Edge in the wrong slot – white up",
+   "alg": "y U2 (L U' L') U (S' L' S)",
+   "algs": [
+    {
+     "alg": "y U2 (L U' L') U (S' L' S)",
+     "multi": false
+    }
+   ],
+   "setup": "F B' U F' B U' L U L' U2 y'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-07",
+   "set": "f2l-adv",
+   "name": "2A.2b·2",
+   "group": "2A Edge in the wrong slot – white up",
+   "alg": "L F' L2' U L U2' F",
+   "algs": [
+    {
+     "alg": "L F' L2' U L U2' F",
+     "multi": false
+    }
+   ],
+   "setup": "F' U2 L' U' L2 F L'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-08",
+   "set": "f2l-adv",
+   "name": "2A.2b·3",
+   "group": "2A Edge in the wrong slot – white up",
+   "alg": "y' U2 (R' F R F') (R' U' R)",
+   "algs": [
+    {
+     "alg": "y' U2 (R' F R F') (R' U' R)",
+     "multi": false
+    }
+   ],
+   "setup": "R' U R F R' F' R U2 y",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-09",
+   "set": "f2l-adv",
+   "name": "2A.3a",
+   "group": "2A Edge in the wrong slot – white up",
+   "alg": "U2 L2' u L2 u' L2'",
+   "algs": [
+    {
+     "alg": "U2 L2' u L2 u' L2'",
+     "multi": false
+    },
+    {
+     "alg": "y U2 R2 u' R2' u R2",
+     "multi": false
+    },
+    {
+     "alg": "y' U2 L2' u' L2 u L2'",
+     "multi": false
+    },
+    {
+     "alg": "y2 U2 R2 u R2' u' R2",
+     "multi": false
+    }
+   ],
+   "setup": "L2 D F2 D' L2 U2",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-10",
+   "set": "f2l-adv",
+   "name": "2A.3b",
+   "group": "2A Edge in the wrong slot – white up",
+   "alg": "L F' U F L'",
+   "algs": [
+    {
+     "alg": "L F' U F L'",
+     "multi": false
+    }
+   ],
+   "setup": "L F' U' F L'",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-11",
+   "set": "f2l-adv",
+   "name": "2A.3b·2",
+   "group": "2A Edge in the wrong slot – white up",
+   "alg": "y R' F U' F' R",
+   "algs": [
+    {
+     "alg": "y R' F U' F' R",
+     "multi": false
+    }
+   ],
+   "setup": "R' F U F' R y'",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-12",
+   "set": "f2l-adv",
+   "name": "2A.3b·3",
+   "group": "2A Edge in the wrong slot – white up",
+   "alg": "y' (L' u' L) U' (L' u L)",
+   "algs": [
+    {
+     "alg": "y' (L' u' L) U' (L' u L)",
+     "multi": false
+    }
+   ],
+   "setup": "L' D' B U B' D L y",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-13",
+   "set": "f2l-adv",
+   "name": "2A.3b·4",
+   "group": "2A Edge in the wrong slot – white up",
+   "alg": "y2 (R u R') U (R u' R')",
+   "algs": [
+    {
+     "alg": "y2 (R u R') U (R u' R')",
+     "multi": false
+    }
+   ],
+   "setup": "R D B' U' B D' R' y2",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-14",
+   "set": "f2l-adv",
+   "name": "2A.1a",
+   "group": "2A Edge in the wrong slot – white on side/front",
+   "alg": "R' U' R2 U R'",
+   "algs": [
+    {
+     "alg": "R' U' R2 U R'",
+     "multi": false
+    }
+   ],
+   "setup": "R U' R2 U R",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-15",
+   "set": "f2l-adv",
+   "name": "2A.1b",
+   "group": "2A Edge in the wrong slot – white on side/front",
+   "alg": "y L U L2' U' L",
+   "algs": [
+    {
+     "alg": "y L U L2' U' L",
+     "multi": false
+    }
+   ],
+   "setup": "L' U L2 U' L' y'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-16",
+   "set": "f2l-adv",
+   "name": "2A.2a",
+   "group": "2A Edge in the wrong slot – white on side/front",
+   "alg": "F D R D' F'",
+   "algs": [
+    {
+     "alg": "F D R D' F'",
+     "multi": false
+    },
+    {
+     "alg": "y' R u R u' R'",
+     "multi": false
+    }
+   ],
+   "setup": "F D R' D' F'",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-17",
+   "set": "f2l-adv",
+   "name": "2A.2a·2",
+   "group": "2A Edge in the wrong slot – white on side/front",
+   "alg": "y R (F U F') R'",
+   "algs": [
+    {
+     "alg": "y R (F U F') R'",
+     "multi": false
+    },
+    {
+     "alg": "y2 F (L U L') F'",
+     "multi": false
+    }
+   ],
+   "setup": "R F U' F' R' y'",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-18",
+   "set": "f2l-adv",
+   "name": "2A.2b",
+   "group": "2A Edge in the wrong slot – white on side/front",
+   "alg": "y F' D' L' D F",
+   "algs": [
+    {
+     "alg": "y F' D' L' D F",
+     "multi": false
+    },
+    {
+     "alg": "y2 L' u' L' u L",
+     "multi": false
+    }
+   ],
+   "setup": "F' D' L D F y'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-19",
+   "set": "f2l-adv",
+   "name": "2A.2b·2",
+   "group": "2A Edge in the wrong slot – white on side/front",
+   "alg": "L' (F' U' F) L",
+   "algs": [
+    {
+     "alg": "L' (F' U' F) L",
+     "multi": false
+    },
+    {
+     "alg": "y' F' (R' U' R) F",
+     "multi": false
+    }
+   ],
+   "setup": "L' F' U F L",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-20",
+   "set": "f2l-adv",
+   "name": "2A.3a",
+   "group": "2A Edge in the wrong slot – white on side/front",
+   "alg": "U' (L' U' L) (R U' R')",
+   "algs": [
+    {
+     "alg": "U' (L' U' L) (R U' R')",
+     "multi": false
+    }
+   ],
+   "setup": "R U R' L' U L U",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-21",
+   "set": "f2l-adv",
+   "name": "2A.3a·2",
+   "group": "2A Edge in the wrong slot – white on side/front",
+   "alg": "y U2 L' U' L2 U L2' U' L",
+   "algs": [
+    {
+     "alg": "y U2 L' U' L2 U L2' U' L",
+     "multi": false
+    }
+   ],
+   "setup": "L' U L2 U' L2 U L U2 y'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-22",
+   "set": "f2l-adv",
+   "name": "2A.3b",
+   "group": "2A Edge in the wrong slot – white on side/front",
+   "alg": "U (R U R') (L' U L)",
+   "algs": [
+    {
+     "alg": "U (R U R') (L' U L)",
+     "multi": false
+    }
+   ],
+   "setup": "L' U' L R U' R' U'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-23",
+   "set": "f2l-adv",
+   "name": "2A.3b·2",
+   "group": "2A Edge in the wrong slot – white on side/front",
+   "alg": "y' U2' R U R2' U' R2 U R'",
+   "algs": [
+    {
+     "alg": "y' U2' R U R2' U' R2 U R'",
+     "multi": false
+    }
+   ],
+   "setup": "R U' R2 U R2 U' R' U2 y",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-24",
+   "set": "f2l-adv",
+   "name": "2A.4a",
+   "group": "2A Edge in the wrong slot – white on side/front",
+   "alg": "(F U2 F') (R U R')",
+   "algs": [
+    {
+     "alg": "(F U2 F') (R U R')",
+     "multi": false
+    },
+    {
+     "alg": "y L U2 L' F U F'",
+     "multi": false
+    },
+    {
+     "alg": "y' R U2 R' f R f'",
+     "multi": false
+    }
+   ],
+   "setup": "R U' R' F U2 F'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-25",
+   "set": "f2l-adv",
+   "name": "2A.4b",
+   "group": "2A Edge in the wrong slot – white on side/front",
+   "alg": "y (F' U2 F) (L' U' L)",
+   "algs": [
+    {
+     "alg": "y (F' U2 F) (L' U' L)",
+     "multi": false
+    },
+    {
+     "alg": "R' U2 R F' U' F",
+     "multi": false
+    },
+    {
+     "alg": "y2 L' U2 L f' L' f",
+     "multi": false
+    }
+   ],
+   "setup": "L' U L F' U2 F y'",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-26",
+   "set": "f2l-adv",
+   "name": "2A.5a",
+   "group": "2A Edge in the wrong slot – white on side/front",
+   "alg": "U (R U R') (L U L')",
+   "algs": [
+    {
+     "alg": "U (R U R') (L U L')",
+     "multi": false
+    }
+   ],
+   "setup": "L U' L' R U' R' U'",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-27",
+   "set": "f2l-adv",
+   "name": "2A.5a·2",
+   "group": "2A Edge in the wrong slot – white on side/front",
+   "alg": "U' (R U2 R') U' (L U L')",
+   "algs": [
+    {
+     "alg": "U' (R U2 R') U' (L U L')",
+     "multi": false
+    }
+   ],
+   "setup": "L U' L' U R U2 R' U",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-28",
+   "set": "f2l-adv",
+   "name": "2A.5a·3",
+   "group": "2A Edge in the wrong slot – white on side/front",
+   "alg": "y U (L' U L) (R' U R)",
+   "algs": [
+    {
+     "alg": "y U (L' U L) (R' U R)",
+     "multi": false
+    }
+   ],
+   "setup": "R' U' R L' U' L U' y'",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-29",
+   "set": "f2l-adv",
+   "name": "2A.5b",
+   "group": "2A Edge in the wrong slot – white on side/front",
+   "alg": "y U' (L' U' L) (R' U' R)",
+   "algs": [
+    {
+     "alg": "y U' (L' U' L) (R' U' R)",
+     "multi": false
+    }
+   ],
+   "setup": "R' U R L' U L U y'",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-30",
+   "set": "f2l-adv",
+   "name": "2A.5b·2",
+   "group": "2A Edge in the wrong slot – white on side/front",
+   "alg": "y U (L' U2 L) U (R' U' R)",
+   "algs": [
+    {
+     "alg": "y U (L' U2 L) U (R' U' R)",
+     "multi": false
+    }
+   ],
+   "setup": "R' U R U' L' U2 L U' y'",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-31",
+   "set": "f2l-adv",
+   "name": "2A.5b·3",
+   "group": "2A Edge in the wrong slot – white on side/front",
+   "alg": "U' (R U' R') (L U' L')",
+   "algs": [
+    {
+     "alg": "U' (R U' R') (L U' L')",
+     "multi": false
+    }
+   ],
+   "setup": "L U L' R U R' U",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-32",
+   "set": "f2l-adv",
+   "name": "2A.6a",
+   "group": "2A Edge in the wrong slot – white on side/front",
+   "alg": "U2 F' (L U L') F",
+   "algs": [
+    {
+     "alg": "U2 F' (L U L') F",
+     "multi": false
+    },
+    {
+     "alg": "y U2 L' (B U B') L",
+     "multi": false
+    },
+    {
+     "alg": "y' U2 R' (F U F') R",
+     "multi": false
+    },
+    {
+     "alg": "y2 f' U L U' f",
+     "multi": false
+    }
+   ],
+   "setup": "F' L U' L' F U2",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-33",
+   "set": "f2l-adv",
+   "name": "2A.6b",
+   "group": "2A Edge in the wrong slot – white on side/front",
+   "alg": "y U2' F (R' U' R) F'",
+   "algs": [
+    {
+     "alg": "y U2' F (R' U' R) F'",
+     "multi": false
+    },
+    {
+     "alg": "U2' R (B' U' B) R'",
+     "multi": false
+    },
+    {
+     "alg": "y2 U2' L (F' U' F) L'",
+     "multi": false
+    },
+    {
+     "alg": "y' f U' R' U f'",
+     "multi": false
+    }
+   ],
+   "setup": "F R' U R F' U2 y'",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-34",
+   "set": "f2l-adv",
+   "name": "2B.1a",
+   "group": "2B Corner in the wrong slot – corner in right slot",
+   "alg": "U (R U' R') (L' U L)",
+   "algs": [
+    {
+     "alg": "U (R U' R') (L' U L)",
+     "multi": false
+    }
+   ],
+   "setup": "L' U' L R U R' U'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-35",
+   "set": "f2l-adv",
+   "name": "2B.1b",
+   "group": "2B Corner in the wrong slot – corner in right slot",
+   "alg": "y (L' U2 L) U' (L U L')",
+   "algs": [
+    {
+     "alg": "y (L' U2 L) U' (L U L')",
+     "multi": false
+    }
+   ],
+   "setup": "L U' L' U L' U2 L y'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-36",
+   "set": "f2l-adv",
+   "name": "2B.1b·2",
+   "group": "2B Corner in the wrong slot – corner in right slot",
+   "alg": "y U2 (L' U L) U' (L U2 L')",
+   "algs": [
+    {
+     "alg": "y U2 (L' U L) U' (L U2 L')",
+     "multi": false
+    }
+   ],
+   "setup": "L U2 L' U L' U' L U2 y'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-37",
+   "set": "f2l-adv",
+   "name": "2B.2a",
+   "group": "2B Corner in the wrong slot – corner in right slot",
+   "alg": "U2 (R U' R') U (L' U' L)",
+   "algs": [
+    {
+     "alg": "U2 (R U' R') U (L' U' L)",
+     "multi": false
+    }
+   ],
+   "setup": "L' U L U' R U R' U2",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-38",
+   "set": "f2l-adv",
+   "name": "2B.2a·2",
+   "group": "2B Corner in the wrong slot – corner in right slot",
+   "alg": "y (F' L F L') U' (L U2 L')",
+   "algs": [
+    {
+     "alg": "y (F' L F L') U' (L U2 L')",
+     "multi": false
+    }
+   ],
+   "setup": "L U2 L' U L F' L' F y'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-39",
+   "set": "f2l-adv",
+   "name": "2B.2b",
+   "group": "2B Corner in the wrong slot – corner in right slot",
+   "alg": "y U' L' U' L2 U2 L'",
+   "algs": [
+    {
+     "alg": "y U' L' U' L2 U2 L'",
+     "multi": false
+    }
+   ],
+   "setup": "L U2 L2 U L U y'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-40",
+   "set": "f2l-adv",
+   "name": "2B.3a",
+   "group": "2B Corner in the wrong slot – corner in right slot",
+   "alg": "(R U R') U' (L' U L)",
+   "algs": [
+    {
+     "alg": "(R U R') U' (L' U L)",
+     "multi": false
+    },
+    {
+     "alg": "y (S' L S)",
+     "multi": false
+    }
+   ],
+   "setup": "L' U' L U R U' R'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-41",
+   "set": "f2l-adv",
+   "name": "2B.3b",
+   "group": "2B Corner in the wrong slot – corner in right slot",
+   "alg": "U' (R U R') (F U F')",
+   "algs": [
+    {
+     "alg": "U' (R U R') (F U F')",
+     "multi": false
+    },
+    {
+     "alg": "y U' (F U F') (L U L')",
+     "multi": false
+    }
+   ],
+   "setup": "F U' F' R U' R' U",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-42",
+   "set": "f2l-adv",
+   "name": "2B.3b·2",
+   "group": "2B Corner in the wrong slot – corner in right slot",
+   "alg": "y U (L' U L) U (L U L')",
+   "algs": [
+    {
+     "alg": "y U (L' U L) U (L U L')",
+     "multi": false
+    }
+   ],
+   "setup": "L U' L' U' L' U' L U' y'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-43",
+   "set": "f2l-adv",
+   "name": "2B.1a",
+   "group": "2B Corner in the wrong slot – corner in left slot",
+   "alg": "y U' (L' U L) (R U' R')",
+   "algs": [
+    {
+     "alg": "y U' (L' U L) (R U' R')",
+     "multi": false
+    }
+   ],
+   "setup": "R U R' L' U' L U y'",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-44",
+   "set": "f2l-adv",
+   "name": "2B.1b",
+   "group": "2B Corner in the wrong slot – corner in left slot",
+   "alg": "(R U2 R') U (R' U' R)",
+   "algs": [
+    {
+     "alg": "(R U2 R') U (R' U' R)",
+     "multi": false
+    }
+   ],
+   "setup": "R' U R U' R U2 R'",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-45",
+   "set": "f2l-adv",
+   "name": "2B.1b·2",
+   "group": "2B Corner in the wrong slot – corner in left slot",
+   "alg": "U2 (R U' R') U (R' U2 R)",
+   "algs": [
+    {
+     "alg": "U2 (R U' R') U (R' U2 R)",
+     "multi": false
+    }
+   ],
+   "setup": "R' U2 R U' R U R' U2",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-46",
+   "set": "f2l-adv",
+   "name": "2B.2a",
+   "group": "2B Corner in the wrong slot – corner in left slot",
+   "alg": "(F R' F' R) U (R' U2 R)",
+   "algs": [
+    {
+     "alg": "(F R' F' R) U (R' U2 R)",
+     "multi": false
+    }
+   ],
+   "setup": "R' U2 R U' R' F R F'",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-47",
+   "set": "f2l-adv",
+   "name": "2B.2a·2",
+   "group": "2B Corner in the wrong slot – corner in left slot",
+   "alg": "y U2 (L' U L) U' (R U R')",
+   "algs": [
+    {
+     "alg": "y U2 (L' U L) U' (R U R')",
+     "multi": false
+    }
+   ],
+   "setup": "R U' R' U L' U' L U2 y'",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-48",
+   "set": "f2l-adv",
+   "name": "2B.2b",
+   "group": "2B Corner in the wrong slot – corner in left slot",
+   "alg": "U R U R2' U2 R",
+   "algs": [
+    {
+     "alg": "U R U R2' U2 R",
+     "multi": false
+    }
+   ],
+   "setup": "R' U2 R2 U' R' U'",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-49",
+   "set": "f2l-adv",
+   "name": "2B.3a",
+   "group": "2B Corner in the wrong slot – corner in left slot",
+   "alg": "(S R' S')",
+   "algs": [
+    {
+     "alg": "(S R' S')",
+     "multi": false
+    },
+    {
+     "alg": "y (L' U' L) U (R U' R')",
+     "multi": false
+    }
+   ],
+   "setup": "F' B U F B'",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-50",
+   "set": "f2l-adv",
+   "name": "2B.3b",
+   "group": "2B Corner in the wrong slot – corner in left slot",
+   "alg": "U (F U' F') (R' U' R)",
+   "algs": [
+    {
+     "alg": "U (F U' F') (R' U' R)",
+     "multi": false
+    }
+   ],
+   "setup": "R' U R F U F' U'",
+   "slots": [
+    "FL",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-51",
+   "set": "f2l-adv",
+   "name": "2B.3b·2",
+   "group": "2B Corner in the wrong slot – corner in left slot",
+   "alg": "U' (R U' R') U' (R' U R)",
+   "algs": [
+    {
+     "alg": "U' (R U' R') U' (R' U R)",
+     "multi": false
+    }
+   ],
+   "setup": "R' U' R U R U R' U",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-52",
+   "set": "f2l-adv",
+   "name": "2B.3b·3",
+   "group": "2B Corner in the wrong slot – corner in left slot",
+   "alg": "y U (L' U' L) (F' U' F)",
+   "algs": [
+    {
+     "alg": "y U (L' U' L) (F' U' F)",
+     "multi": false
+    }
+   ],
+   "setup": "F' U F L' U L U' y'",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-53",
+   "set": "f2l-adv",
+   "name": "2B.1a",
+   "group": "2B Corner in the wrong slot – corner in opposite slot",
+   "alg": "U' (F' U F) (L U2 L')",
+   "algs": [
+    {
+     "alg": "U' (F' U F) (L U2 L')",
+     "multi": false
+    },
+    {
+     "alg": "y U' (L' U L) U' (f R' f')",
+     "multi": false
+    }
+   ],
+   "setup": "L U2 L' F' U' F U",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-54",
+   "set": "f2l-adv",
+   "name": "2B.1b",
+   "group": "2B Corner in the wrong slot – corner in opposite slot",
+   "alg": "U (R U' R') U (f' L f)",
+   "algs": [
+    {
+     "alg": "U (R U' R') U (f' L f)",
+     "multi": false
+    },
+    {
+     "alg": "y U (F U' F') (R' U2 R)",
+     "multi": false
+    }
+   ],
+   "setup": "B' U' B U' R U R' U'",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-55",
+   "set": "f2l-adv",
+   "name": "2B.2a",
+   "group": "2B Corner in the wrong slot – corner in opposite slot",
+   "alg": "(R U' R') (L U2 L')",
+   "algs": [
+    {
+     "alg": "(R U' R') (L U2 L')",
+     "multi": false
+    }
+   ],
+   "setup": "L U2 L' R U R'",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-56",
+   "set": "f2l-adv",
+   "name": "2B.2a·2",
+   "group": "2B Corner in the wrong slot – corner in opposite slot",
+   "alg": "y (L' U' L) (f R' f')",
+   "algs": [
+    {
+     "alg": "y (L' U' L) (f R' f')",
+     "multi": false
+    }
+   ],
+   "setup": "B U B' L' U L y'",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-57",
+   "set": "f2l-adv",
+   "name": "2B.2b",
+   "group": "2B Corner in the wrong slot – corner in opposite slot",
+   "alg": "(R U R') (f' L f)",
+   "algs": [
+    {
+     "alg": "(R U R') (f' L f)",
+     "multi": false
+    }
+   ],
+   "setup": "B' U' B R U' R'",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-58",
+   "set": "f2l-adv",
+   "name": "2B.2b·2",
+   "group": "2B Corner in the wrong slot – corner in opposite slot",
+   "alg": "y (L' U L) (R' U2 R)",
+   "algs": [
+    {
+     "alg": "y (L' U L) (R' U2 R)",
+     "multi": false
+    }
+   ],
+   "setup": "R' U2 R L' U' L y'",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-59",
+   "set": "f2l-adv",
+   "name": "2B.3a",
+   "group": "2B Corner in the wrong slot – corner in opposite slot",
+   "alg": "(R U' R') U (L U L')",
+   "algs": [
+    {
+     "alg": "(R U' R') U (L U L')",
+     "multi": false
+    }
+   ],
+   "setup": "L U' L' U' R U R'",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-60",
+   "set": "f2l-adv",
+   "name": "2B.3a·2",
+   "group": "2B Corner in the wrong slot – corner in opposite slot",
+   "alg": "y (L F' L' F) (R' U2 R)",
+   "algs": [
+    {
+     "alg": "y (L F' L' F) (R' U2 R)",
+     "multi": false
+    }
+   ],
+   "setup": "R' U2 R F' L F L' y'",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-61",
+   "set": "f2l-adv",
+   "name": "2B.3b",
+   "group": "2B Corner in the wrong slot – corner in opposite slot",
+   "alg": "(R' F R F') (L U2 L')",
+   "algs": [
+    {
+     "alg": "(R' F R F') (L U2 L')",
+     "multi": false
+    }
+   ],
+   "setup": "L U2 L' F R' F' R",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-adv-62",
+   "set": "f2l-adv",
+   "name": "2B.3b·2",
+   "group": "2B Corner in the wrong slot – corner in opposite slot",
+   "alg": "y (L' U' L) U' (R' U' R)",
+   "algs": [
+    {
+     "alg": "y (L' U' L) U' (R' U' R)",
+     "multi": false
+    }
+   ],
+   "setup": "R' U R U L' U L y'",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-01",
+   "set": "f2l-expert",
+   "name": "3.1a",
+   "group": "3 Expert – corner solved",
+   "alg": "R2 U' R2' U R2",
+   "algs": [
+    {
+     "alg": "R2 U' R2' U R2",
+     "multi": false
+    },
+    {
+     "alg": "y2 L2' U' L2 U L2'",
+     "multi": false
+    },
+    {
+     "alg": "y F' R' F2 R F",
+     "multi": false
+    }
+   ],
+   "setup": "R2 U' R2 U R2",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-02",
+   "set": "f2l-expert",
+   "name": "3.1b",
+   "group": "3 Expert – corner solved",
+   "alg": "f' R' U R f",
+   "algs": [
+    {
+     "alg": "f' R' U R f",
+     "multi": false
+    },
+    {
+     "alg": "y R' u' R u R",
+     "multi": false
+    },
+    {
+     "alg": "y' L' u' L u L",
+     "multi": false
+    },
+    {
+     "alg": "y2 f' D' L D f",
+     "multi": false
+    }
+   ],
+   "setup": "B' D' R' D B",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-03",
+   "set": "f2l-expert",
+   "name": "3.2a",
+   "group": "3 Expert – corner solved",
+   "alg": "y L2' U L2 U' L2'",
+   "algs": [
+    {
+     "alg": "y L2' U L2 U' L2'",
+     "multi": false
+    },
+    {
+     "alg": "y' R2 U R2' U' R2",
+     "multi": false
+    },
+    {
+     "alg": "F L F2' L' F'",
+     "multi": false
+    }
+   ],
+   "setup": "L2 U L2 U' L2 y'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-04",
+   "set": "f2l-expert",
+   "name": "3.2b",
+   "group": "3 Expert – corner solved",
+   "alg": "y2 f' D' L D f",
+   "algs": [
+    {
+     "alg": "y2 f' D' L D f",
+     "multi": false
+    }
+   ],
+   "setup": "B' L' U' L B y2",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-05",
+   "set": "f2l-expert",
+   "name": "3.2b·2",
+   "group": "3 Expert – corner solved",
+   "alg": "y f L U' L' f'",
+   "algs": [
+    {
+     "alg": "y f L U' L' f'",
+     "multi": false
+    },
+    {
+     "alg": "L u L' u' L'",
+     "multi": false
+    },
+    {
+     "alg": "y2 R u R' u' R'",
+     "multi": false
+    },
+    {
+     "alg": "y' f D R' D' f'",
+     "multi": false
+    }
+   ],
+   "setup": "B D L D' B' y'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-06",
+   "set": "f2l-expert",
+   "name": "3.3a",
+   "group": "3 Expert – corner solved",
+   "alg": "L2' u' L2 u L2'",
+   "algs": [
+    {
+     "alg": "L2' u' L2 u L2'",
+     "multi": false
+    },
+    {
+     "alg": "y' R2 u R2' u' R2",
+     "multi": false
+    },
+    {
+     "alg": "y L2' u L2 u' L2'",
+     "multi": false
+    },
+    {
+     "alg": "y2 R2 u' R2' u R2",
+     "multi": false
+    }
+   ],
+   "setup": "L2 D' B2 D L2",
+   "slots": [
+    "FL",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-07",
+   "set": "f2l-expert",
+   "name": "3.3b",
+   "group": "3 Expert – corner solved",
+   "alg": "(L' u' L) U (L' u L)",
+   "algs": [
+    {
+     "alg": "(L' u' L) U (L' u L)",
+     "multi": false
+    },
+    {
+     "alg": "y2 (R' u' R) U (R' u R)",
+     "multi": false
+    }
+   ],
+   "setup": "L' D' B U' B' D L",
+   "slots": [
+    "FL",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-08",
+   "set": "f2l-expert",
+   "name": "3.3b·2",
+   "group": "3 Expert – corner solved",
+   "alg": "y' (R u R') U' (R u' R')",
+   "algs": [
+    {
+     "alg": "y' (R u R') U' (R u' R')",
+     "multi": false
+    },
+    {
+     "alg": "y (L u L') U' (L u' L')",
+     "multi": false
+    }
+   ],
+   "setup": "R D B' U B D' R' y",
+   "slots": [
+    "FL",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-09",
+   "set": "f2l-expert",
+   "name": "3.1a",
+   "group": "3 Expert – pair in wrong slot",
+   "alg": "R' F R2 U' R2' F' R",
+   "algs": [
+    {
+     "alg": "R' F R2 U' R2' F' R",
+     "multi": false
+    }
+   ],
+   "setup": "R' F R2 U R2 F' R",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-10",
+   "set": "f2l-expert",
+   "name": "3.1a·2",
+   "group": "3 Expert – pair in wrong slot",
+   "alg": "L F' L2' U' L2 F L'",
+   "algs": [
+    {
+     "alg": "L F' L2' U' L2 F L'",
+     "multi": false
+    }
+   ],
+   "setup": "L F' L2 U L2 F L'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-11",
+   "set": "f2l-expert",
+   "name": "3.1a·3",
+   "group": "3 Expert – pair in wrong slot",
+   "alg": "y (f' L' f) U' (L' U L)",
+   "algs": [
+    {
+     "alg": "y (f' L' f) U' (L' U L)",
+     "multi": false
+    }
+   ],
+   "setup": "L' U' L U B' U B y'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-12",
+   "set": "f2l-expert",
+   "name": "3.1a·4",
+   "group": "3 Expert – pair in wrong slot",
+   "alg": "y' (R U R') U' (f R' f')",
+   "algs": [
+    {
+     "alg": "y' (R U R') U' (f R' f')",
+     "multi": false
+    },
+    {
+     "alg": "y2 (f R f') (L U2 L')",
+     "multi": false
+    }
+   ],
+   "setup": "B U B' U R U' R' y",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-13",
+   "set": "f2l-expert",
+   "name": "3.1b",
+   "group": "3 Expert – pair in wrong slot",
+   "alg": "y L F' L2' U L2 F L'",
+   "algs": [
+    {
+     "alg": "y L F' L2' U L2 F L'",
+     "multi": false
+    }
+   ],
+   "setup": "L F' L2 U' L2 F L' y'",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-14",
+   "set": "f2l-expert",
+   "name": "3.1b·2",
+   "group": "3 Expert – pair in wrong slot",
+   "alg": "y R' F R2 U R2' F' R",
+   "algs": [
+    {
+     "alg": "y R' F R2 U R2' F' R",
+     "multi": false
+    }
+   ],
+   "setup": "R' F R2 U' R2 F' R y'",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-15",
+   "set": "f2l-expert",
+   "name": "3.1b·3",
+   "group": "3 Expert – pair in wrong slot",
+   "alg": "(f R f') U (R U' R')",
+   "algs": [
+    {
+     "alg": "(f R f') U (R U' R')",
+     "multi": false
+    }
+   ],
+   "setup": "R U R' U' B U' B'",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-16",
+   "set": "f2l-expert",
+   "name": "3.1b·4",
+   "group": "3 Expert – pair in wrong slot",
+   "alg": "y2 (L' U' L) U (f' L f)",
+   "algs": [
+    {
+     "alg": "y2 (L' U' L) U (f' L f)",
+     "multi": false
+    },
+    {
+     "alg": "y' (f' L' f) (R' U2' R)",
+     "multi": false
+    }
+   ],
+   "setup": "B' U' B U' L' U L y2",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-17",
+   "set": "f2l-expert",
+   "name": "3.2a",
+   "group": "3 Expert – pair in wrong slot",
+   "alg": "R (L U2 L') R'",
+   "algs": [
+    {
+     "alg": "R (L U2 L') R'",
+     "multi": false
+    },
+    {
+     "alg": "y L' (R' U2 R) L",
+     "multi": false
+    }
+   ],
+   "setup": "R L U2 L' R'",
+   "slots": [
+    "FR",
+    "BL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-18",
+   "set": "f2l-expert",
+   "name": "3.1a",
+   "group": "3 Expert – flipped edge, corner in adjacent slot",
+   "alg": "L F2' L' F U' F",
+   "algs": [
+    {
+     "alg": "L F2' L' F U' F",
+     "multi": false
+    },
+    {
+     "alg": "(L F' L' U' F) U' (R U R')",
+     "multi": false
+    }
+   ],
+   "setup": "F' U F' L F2 L'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-19",
+   "set": "f2l-expert",
+   "name": "3.1a·2",
+   "group": "3 Expert – flipped edge, corner in adjacent slot",
+   "alg": "y (L U' F' L' F) (L' U L)",
+   "algs": [
+    {
+     "alg": "y (L U' F' L' F) (L' U L)",
+     "multi": false
+    }
+   ],
+   "setup": "L' U' L F' L F U L' y'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-20",
+   "set": "f2l-expert",
+   "name": "3.1b",
+   "group": "3 Expert – flipped edge, corner in adjacent slot",
+   "alg": "y R' F2 R F' U F'",
+   "algs": [
+    {
+     "alg": "y R' F2 R F' U F'",
+     "multi": false
+    },
+    {
+     "alg": "y (R' F R U F') U (L' U' L)",
+     "multi": false
+    }
+   ],
+   "setup": "F U' F R' F2 R y'",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-21",
+   "set": "f2l-expert",
+   "name": "3.1b·2",
+   "group": "3 Expert – flipped edge, corner in adjacent slot",
+   "alg": "(R' U F R F') (R U' R')",
+   "algs": [
+    {
+     "alg": "(R' U F R F') (R U' R')",
+     "multi": false
+    }
+   ],
+   "setup": "R U R' F R' F' U' R",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-22",
+   "set": "f2l-expert",
+   "name": "3.2a",
+   "group": "3 Expert – flipped edge, corner in adjacent slot",
+   "alg": "(R' F R U' F') (R U' R')",
+   "algs": [
+    {
+     "alg": "(R' F R U' F') (R U' R')",
+     "multi": false
+    }
+   ],
+   "setup": "R U R' F U R' F' R",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-23",
+   "set": "f2l-expert",
+   "name": "3.2a·2",
+   "group": "3 Expert – flipped edge, corner in adjacent slot",
+   "alg": "y (L' U' L) U (S' L' S)",
+   "algs": [
+    {
+     "alg": "y (L' U' L) U (S' L' S)",
+     "multi": false
+    }
+   ],
+   "setup": "F B' U F' B U' L' U L y'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-24",
+   "set": "f2l-expert",
+   "name": "3.2b",
+   "group": "3 Expert – flipped edge, corner in adjacent slot",
+   "alg": "y (L F' L' U F) (L' U L)",
+   "algs": [
+    {
+     "alg": "y (L F' L' U F) (L' U L)",
+     "multi": false
+    }
+   ],
+   "setup": "L' U' L F' U' L F L' y'",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-25",
+   "set": "f2l-expert",
+   "name": "3.2b·2",
+   "group": "3 Expert – flipped edge, corner in adjacent slot",
+   "alg": "(R U R') U' (S R S')",
+   "algs": [
+    {
+     "alg": "(R U R') U' (S R S')",
+     "multi": false
+    }
+   ],
+   "setup": "F' B U' F B' U R U' R'",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-26",
+   "set": "f2l-expert",
+   "name": "3.3a",
+   "group": "3 Expert – flipped edge, corner in adjacent slot",
+   "alg": "(L' U L) (M' U R U' r') (R U' R')",
+   "algs": [
+    {
+     "alg": "(L' U L) (M' U R U' r') (R U' R')",
+     "multi": false
+    }
+   ],
+   "setup": "R U R' L F R' F' R L' L' U' L",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-27",
+   "set": "f2l-expert",
+   "name": "3.3a·2",
+   "group": "3 Expert – flipped edge, corner in adjacent slot",
+   "alg": "y (L U F' L' F) U2 (L' U' L)",
+   "algs": [
+    {
+     "alg": "y (L U F' L' F) U2 (L' U' L)",
+     "multi": false
+    },
+    {
+     "alg": "y (L U L') (F U F') U' (L' U L)",
+     "multi": false
+    }
+   ],
+   "setup": "L' U L U2 F' L F U' L' y'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-28",
+   "set": "f2l-expert",
+   "name": "3.3b",
+   "group": "3 Expert – flipped edge, corner in adjacent slot",
+   "alg": "y (R U' R') (M' U' L' U l) (L' U L)",
+   "algs": [
+    {
+     "alg": "y (R U' R') (M' U' L' U l) (L' U L)",
+     "multi": false
+    }
+   ],
+   "setup": "L' U' L R' F' L F R L' R U R' y'",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-29",
+   "set": "f2l-expert",
+   "name": "3.3b·2",
+   "group": "3 Expert – flipped edge, corner in adjacent slot",
+   "alg": "(R' U' F R F') U2 (R U R')",
+   "algs": [
+    {
+     "alg": "(R' U' F R F') U2 (R U R')",
+     "multi": false
+    },
+    {
+     "alg": "(R' U' R) (F' U' F) U (R U' R')",
+     "multi": false
+    }
+   ],
+   "setup": "R U' R' U2 F R' F' U R",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-30",
+   "set": "f2l-expert",
+   "name": "3.1a",
+   "group": "3 Expert – other easy cases",
+   "alg": "(R' F R U' F') U (R U' R')",
+   "algs": [
+    {
+     "alg": "(R' F R U' F') U (R U' R')",
+     "multi": false
+    }
+   ],
+   "setup": "R U R' U' F U R' F' R",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-31",
+   "set": "f2l-expert",
+   "name": "3.1a·2",
+   "group": "3 Expert – other easy cases",
+   "alg": "R U' R2' u' R' u R",
+   "algs": [
+    {
+     "alg": "R U' R2' u' R' u R",
+     "multi": false
+    },
+    {
+     "alg": "y2 L U' L2' u' L' u L",
+     "multi": false
+    }
+   ],
+   "setup": "R' D' F D R2 U R'",
+   "slots": [
+    "FR",
+    "FL"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-32",
+   "set": "f2l-expert",
+   "name": "3.1b",
+   "group": "3 Expert – other easy cases",
+   "alg": "y (L F' L' U F) U' (L' U L)",
+   "algs": [
+    {
+     "alg": "y (L F' L' U F) U' (L' U L)",
+     "multi": false
+    }
+   ],
+   "setup": "L' U' L U F' U' L F L' y'",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "f2l-expert-33",
+   "set": "f2l-expert",
+   "name": "3.1b·2",
+   "group": "3 Expert – other easy cases",
+   "alg": "y L' U L2 u L u' L'",
+   "algs": [
+    {
+     "alg": "y L' U L2 u L u' L'",
+     "multi": false
+    },
+    {
+     "alg": "y' R' U R2 u R u' R'",
+     "multi": false
+    }
+   ],
+   "setup": "L D F' D' L2 U' L y'",
+   "slots": [
+    "FR",
+    "BR"
+   ],
+   "img": null
+  },
+  {
+   "id": "beginner-01",
+   "set": "beginner",
+   "name": "Edge goes to the right (front-right slot)",
+   "group": "Layer 2",
+   "alg": "U R U' R' U' F' U F",
+   "img": null
+  },
+  {
+   "id": "beginner-02",
+   "set": "beginner",
+   "name": "Edge goes to the left (front-left slot)",
+   "group": "Layer 2",
+   "alg": "U' L' U L U F U' F'",
+   "img": null
+  },
+  {
+   "id": "beginner-03",
+   "set": "beginner",
+   "name": "Edge stuck in the slot, wrong way (front-right)",
+   "group": "Layer 2",
+   "alg": "R U' R' U' F' U F U' R U' R' U' F' U F",
+   "img": null
+  },
+  {
+   "id": "beginner-04",
+   "set": "beginner",
+   "name": "Yellow cross: line (from L shape / dot too)",
+   "group": "Last layer",
+   "alg": "F R U R' U' F'",
+   "img": null
+  },
+  {
+   "id": "beginner-05",
+   "set": "beginner",
+   "name": "Yellow cross: dot / L shape",
+   "group": "Last layer",
+   "alg": "F U R U' R' F'",
+   "img": null
+  },
+  {
+   "id": "beginner-06",
+   "set": "beginner",
+   "name": "Yellow corners: Sune",
+   "group": "Last layer",
+   "alg": "R U R' U R U2 R'",
+   "img": null
+  },
+  {
+   "id": "beginner-07",
+   "set": "beginner",
+   "name": "Yellow corners: Anti-Sune",
+   "group": "Last layer",
+   "alg": "R U2 R' U' R U' R'",
+   "img": null
+  },
+  {
+   "id": "beginner-08",
+   "set": "beginner",
+   "name": "Corner placement (swap two corners)",
+   "group": "Last layer",
+   "alg": "U R U' L' U R' U' L",
+   "img": null
+  },
+  {
+   "id": "beginner-09",
+   "set": "beginner",
+   "name": "Edge placement (3-cycle clockwise)",
+   "group": "Last layer",
+   "alg": "R U' R U R U R U' R' U' R2",
+   "img": null
+  },
+  {
+   "id": "beginner-10",
+   "set": "beginner",
+   "name": "Edge placement (3-cycle anti-clockwise)",
+   "group": "Last layer",
+   "alg": "R2 U R U R' U' R' U' R' U R'",
+   "img": null
+  },
+  {
+   "id": "beginner-11",
+   "set": "beginner",
+   "name": "Corner twist (R U R' U' repeated)",
+   "group": "Last layer",
+   "alg": "R U R' U' R U R' U'",
+   "img": null
+  },
+  {
+   "id": "ollpll-01",
+   "set": "ollpll",
+   "name": "OLL 29 – Awkward Shape → Ra",
+   "group": "Awkward Shape",
+   "alg": "R U R' U' R U' R' F' U' F R U R' R U' R' U' R U R D R' U' R D' R' U2 R'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R U R' U' R U' R' F' U' F R U R'"
+    },
+    {
+     "alg": "R U' R' U' R U R D R' U' R D' R' U2 R'"
+    }
+   ],
+   "setup": "R U2 R D R' U R D' R' U' R' U R U R' R U' R' F' U F R U R' U R U' R'"
+  },
+  {
+   "id": "ollpll-02",
+   "set": "ollpll",
+   "name": "OLL 30 – Awkward Shape → Y",
+   "group": "Awkward Shape",
+   "alg": "F R' F R2 U' R' U' R U R' F2 F R U' R' U' R U R' F' R U R' U' R' F R F'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "F R' F R2 U' R' U' R U R' F2"
+    },
+    {
+     "alg": "F R U' R' U' R U R' F' R U R' U' R' F R F'"
+    }
+   ],
+   "setup": "F R' F' R U R U' R' F R U' R' U R U R' F' F2 R U' R' U R U R2 F' R F'"
+  },
+  {
+   "id": "ollpll-03",
+   "set": "ollpll",
+   "name": "OLL 41 – Awkward Shape → Gb",
+   "group": "Awkward Shape",
+   "alg": "R U R' U R U2 R' F R U R' U' F' R' U' R U D' R2 U R' U R U' R U' R2 D",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R U R' U R U2 R' F R U R' U' F'"
+    },
+    {
+     "alg": "R' U' R U D' R2 U R' U R U' R U' R2 D"
+    }
+   ],
+   "setup": "D' R2 U R' U R' U' R U' R2 D U' R' U R F U R U' R' F' R U2 R' U' R U' R'"
+  },
+  {
+   "id": "ollpll-04",
+   "set": "ollpll",
+   "name": "OLL 42 – Awkward Shape → Rb",
+   "group": "Awkward Shape",
+   "alg": "R' U' R U' R' U2 R F R U R' U' F' R2 F R U R U' R' F' R U2 R' U2 R",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R' U' R U' R' U2 R F R U R' U' F'"
+    },
+    {
+     "alg": "R2 F R U R U' R' F' R U2 R' U2 R"
+    }
+   ],
+   "setup": "R' U2 R U2 R' F R U R' U' R' F' R2 F U R U' R' F' R' U2 R U R' U R"
+  },
+  {
+   "id": "ollpll-05",
+   "set": "ollpll",
+   "name": "OLL 39 – Big Lightning Bolt → Gb",
+   "group": "Big Lightning Bolt",
+   "alg": "L F' L' U' L U F U' L' R' U' R U D' R2 U R' U R U' R U' R2 D",
+   "img": null,
+   "algs": [
+    {
+     "alg": "L F' L' U' L U F U' L'"
+    },
+    {
+     "alg": "R' U' R U D' R2 U R' U R U' R U' R2 D"
+    }
+   ],
+   "setup": "D' R2 U R' U R' U' R U' R2 D U' R' U R L U F' U' L' U L F L'"
+  },
+  {
+   "id": "ollpll-06",
+   "set": "ollpll",
+   "name": "OLL 40 – Big Lightning Bolt → Z",
+   "group": "Big Lightning Bolt",
+   "alg": "R' F R U R' U' F' U R M' U M2 U M2 U M' U2 M2",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R' F R U R' U' F' U R"
+    },
+    {
+     "alg": "M' U M2 U M2 U M' U2 M2"
+    }
+   ],
+   "setup": "R2 L2 D2 R L' F' R2 L2 B' R2 L2 F' R L' R' U' F U R U' R' F' R"
+  },
+  {
+   "id": "ollpll-07",
+   "set": "ollpll",
+   "name": "OLL 34 – C Shape → Gc",
+   "group": "C Shape",
+   "alg": "R U R2 U' R' F R U R U' F' R2 U' R U' R U R' U R2 U D' R U' R' D",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R U R2 U' R' F R U R U' F'"
+    },
+    {
+     "alg": "R2 U' R U' R U R' U R2 U D' R U' R' D"
+    }
+   ],
+   "setup": "D' R U R' D U' R2 U' R U' R' U R' U R2 F U R' U' R' F' R U R2 U' R'"
+  },
+  {
+   "id": "ollpll-08",
+   "set": "ollpll",
+   "name": "OLL 46 – C Shape → Gd",
+   "group": "C Shape",
+   "alg": "R' U' R' F R F' U R R U R' U' D R2 U' R U' R' U R' U R2 D'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R' U' R' F R F' U R"
+    },
+    {
+     "alg": "R U R' U' D R2 U' R U' R' U R' U R2 D'"
+    }
+   ],
+   "setup": "D R2 U' R U' R U R' U R2 D' U R U' R' R' U' F R' F' R U R"
+  },
+  {
+   "id": "ollpll-09",
+   "set": "ollpll",
+   "name": "OLL 28 – Corners Oriented → Ua",
+   "group": "Corners Oriented",
+   "alg": "r U R' U' r' R U R U' R' M2 U M U2 M' U M2",
+   "img": null,
+   "algs": [
+    {
+     "alg": "r U R' U' r' R U R U' R'"
+    },
+    {
+     "alg": "M2 U M U2 M' U M2"
+    }
+   ],
+   "setup": "R2 L2 D' R L' F2 R' L D' R2 L2 R U R' U' R' L F R F' L'"
+  },
+  {
+   "id": "ollpll-10",
+   "set": "ollpll",
+   "name": "OLL 57 – Corners Oriented → H",
+   "group": "Corners Oriented",
+   "alg": "R U R' U' M' U R U' r' M2 U M2 U2 M2 U M2",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R U R' U' M' U R U' r'"
+    },
+    {
+     "alg": "M2 U M2 U2 M2 U M2"
+    }
+   ],
+   "setup": "R2 L2 D' R2 L2 U2 R2 L2 D' R2 L2 L F R' F' R L' U R U' R'"
+  },
+  {
+   "id": "ollpll-11",
+   "set": "ollpll",
+   "name": "OLL 21 – Cross → Ua",
+   "group": "Cross",
+   "alg": "R U2 R' U' R U R' U' R U' R' M2 U M U2 M' U M2",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R U2 R' U' R U R' U' R U' R'"
+    },
+    {
+     "alg": "M2 U M U2 M' U M2"
+    }
+   ],
+   "setup": "R2 L2 D' R L' F2 R' L D' R2 L2 R U R' U R U' R' U R U2 R'"
+  },
+  {
+   "id": "ollpll-12",
+   "set": "ollpll",
+   "name": "OLL 22 – Cross → Gb",
+   "group": "Cross",
+   "alg": "R U2 R2 U' R2 U' R2 U2 R R' U' R U D' R2 U R' U R U' R U' R2 D",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R U2 R2 U' R2 U' R2 U2 R"
+    },
+    {
+     "alg": "R' U' R U D' R2 U R' U R U' R U' R2 D"
+    }
+   ],
+   "setup": "D' R2 U R' U R' U' R U' R2 D U' R' U R R' U2 R2 U R2 U R2 U2 R'"
+  },
+  {
+   "id": "ollpll-13",
+   "set": "ollpll",
+   "name": "OLL 23 – Cross → Aa",
+   "group": "Cross",
+   "alg": "R2 D' R U2 R' D R U2 R x L2 D2 L' U' L D2 L' U L'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R2 D' R U2 R' D R U2 R"
+    },
+    {
+     "alg": "x L2 D2 L' U' L D2 L' U L'"
+    }
+   ],
+   "setup": "L U' L D2 L' U L D2 L2 R' B2 R' F' R B2 R' F R2 x'"
+  },
+  {
+   "id": "ollpll-14",
+   "set": "ollpll",
+   "name": "OLL 24 – Cross → Ra",
+   "group": "Cross",
+   "alg": "r U R' U' r' F R F' R U' R' U' R U R D R' U' R D' R' U2 R'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "r U R' U' r' F R F'"
+    },
+    {
+     "alg": "R U' R' U' R U R D R' U' R D' R' U2 R'"
+    }
+   ],
+   "setup": "R U2 R D R' U R D' R' U' R' U R U R' F R' F' L F R F' L'"
+  },
+  {
+   "id": "ollpll-15",
+   "set": "ollpll",
+   "name": "OLL 25 – Cross → Gb",
+   "group": "Cross",
+   "alg": "F' r U R' U' r' F R R' U' R U D' R2 U R' U R U' R U' R2 D",
+   "img": null,
+   "algs": [
+    {
+     "alg": "F' r U R' U' r' F R"
+    },
+    {
+     "alg": "R' U' R U D' R2 U R' U R U' R U' R2 D"
+    }
+   ],
+   "setup": "D' R2 U R' U R' U' R U' R2 D U' R' U R R' F' L F R F' L' F"
+  },
+  {
+   "id": "ollpll-16",
+   "set": "ollpll",
+   "name": "OLL 26 – Cross → Na",
+   "group": "Cross",
+   "alg": "R U2 R' U' R U' R' R U R' U R U R' F' R U R' U' R' F R2 U' R' U2 R U' R'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R U2 R' U' R U' R'"
+    },
+    {
+     "alg": "R U R' U R U R' F' R U R' U' R' F R2 U' R' U2 R U' R'"
+    }
+   ],
+   "setup": "R U R' U2 R U R2 F' R U R U' R' F R U' R' U' R U' R' R U R' U R U2 R'"
+  },
+  {
+   "id": "ollpll-17",
+   "set": "ollpll",
+   "name": "OLL 27 – Cross → F",
+   "group": "Cross",
+   "alg": "R U R' U R U2 R' R' U' F' R U R' U' R' F R2 U' R' U' R U R' U R",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R U R' U R U2 R'"
+    },
+    {
+     "alg": "R' U' F' R U R' U' R' F R2 U' R' U' R U R' U R"
+    }
+   ],
+   "setup": "R' U' R U' R' U R U R2 F' R U R U' R' F U R R U2 R' U' R U' R'"
+  },
+  {
+   "id": "ollpll-18",
+   "set": "ollpll",
+   "name": "OLL 1 – Dot → Ub",
+   "group": "Dot",
+   "alg": "R U2 R2 F R F' U2 R' F R F' M2 U' M U2 M' U' M2",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R U2 R2 F R F' U2 R' F R F'"
+    },
+    {
+     "alg": "M2 U' M U2 M' U' M2"
+    }
+   ],
+   "setup": "R2 L2 D R L' F2 R' L D R2 L2 F R' F' R U2 F R' F' R2 U2 R'"
+  },
+  {
+   "id": "ollpll-19",
+   "set": "ollpll",
+   "name": "OLL 2 – Dot → Ub",
+   "group": "Dot",
+   "alg": "r U r' U2 r U2 R' U2 R U' r' M2 U' M U2 M' U' M2",
+   "img": null,
+   "algs": [
+    {
+     "alg": "r U r' U2 r U2 R' U2 R U' r'"
+    },
+    {
+     "alg": "M2 U' M U2 M' U' M2"
+    }
+   ],
+   "setup": "R2 L2 D R L' F2 R' L D R2 L2 L F R' F2 R F2 L' U2 L F' L'"
+  },
+  {
+   "id": "ollpll-20",
+   "set": "ollpll",
+   "name": "OLL 3 – Dot → Gd",
+   "group": "Dot",
+   "alg": "r' R2 U R' U r U2 r' U M' R U R' U' D R2 U' R U' R' U R' U R2 D'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "r' R2 U R' U r U2 r' U M'"
+    },
+    {
+     "alg": "R U R' U' D R2 U' R U' R' U R' U R2 D'"
+    }
+   ],
+   "setup": "D R2 U' R U' R U R' U R2 D' U R U' R' R L' B' L U2 L' B' R B' R2 L"
+  },
+  {
+   "id": "ollpll-21",
+   "set": "ollpll",
+   "name": "OLL 4 – Dot → Ab",
+   "group": "Dot",
+   "alg": "M U' r U2 r' U' R U' R' M' x' L2 D2 L U L' D2 L U' L",
+   "img": null,
+   "algs": [
+    {
+     "alg": "M U' r U2 r' U' R U' R' M'"
+    },
+    {
+     "alg": "x' L2 D2 L U L' D2 L U' L"
+    }
+   ],
+   "setup": "L' U L' D2 L U' L' D2 L2 R L' R U R' U L F2 L' U R' L x"
+  },
+  {
+   "id": "ollpll-22",
+   "set": "ollpll",
+   "name": "OLL 17 – Dot → Z",
+   "group": "Dot",
+   "alg": "F R' F' R2 r' U R U' R' U' M' M' U M2 U M2 U M' U2 M2",
+   "img": null,
+   "algs": [
+    {
+     "alg": "F R' F' R2 r' U R U' R' U' M'"
+    },
+    {
+     "alg": "M' U M2 U M2 U M' U2 M2"
+    }
+   ],
+   "setup": "R2 L2 D2 R L' F' R2 L2 B' R2 L2 F' R L' R L' B R B R' B' L R2 F R F'"
+  },
+  {
+   "id": "ollpll-23",
+   "set": "ollpll",
+   "name": "OLL 18 – Dot → Z",
+   "group": "Dot",
+   "alg": "r U R' U R U2 r2 U' R U' R' U2 r M' U M2 U M2 U M' U2 M2",
+   "img": null,
+   "algs": [
+    {
+     "alg": "r U R' U R U2 r2 U' R U' R' U2 r"
+    },
+    {
+     "alg": "M' U M2 U M2 U M' U2 M2"
+    }
+   ],
+   "setup": "R2 L2 D2 R L' F' R2 L2 B' R2 L2 F' R L' L' B2 R B R' B L2 F2 R' F' R F' L'"
+  },
+  {
+   "id": "ollpll-24",
+   "set": "ollpll",
+   "name": "OLL 19 – Dot → Ga",
+   "group": "Dot",
+   "alg": "r' R U R U R' U' M' R' F R F' R2 U R' U R' U' R U' R2 U' D R' U R D'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "r' R U R U R' U' M' R' F R F'"
+    },
+    {
+     "alg": "R2 U R' U R' U' R U' R2 U' D R' U R D'"
+    }
+   ],
+   "setup": "D R' U' R D' U R2 U R' U R U' R U' R2 F R' F' R R L' B R B' R' B' R' L"
+  },
+  {
+   "id": "ollpll-25",
+   "set": "ollpll",
+   "name": "OLL 20 – Dot → Ub",
+   "group": "Dot",
+   "alg": "r U R' U' M2 U R U' R' U' M' M2 U' M U2 M' U' M2",
+   "img": null,
+   "algs": [
+    {
+     "alg": "r U R' U' M2 U R U' R' U' M'"
+    },
+    {
+     "alg": "M2 U' M U2 M' U' M2"
+    }
+   ],
+   "setup": "R2 L2 D R L' F2 R' L D R2 L2 R L' B R B R' B' R2 L2 F R F' L'"
+  },
+  {
+   "id": "ollpll-26",
+   "set": "ollpll",
+   "name": "OLL 9 – Fish Shape → Ja",
+   "group": "Fish Shape",
+   "alg": "R U R' U' R' F R2 U R' U' F' x R2 F R F' R U2 r' U r U2",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R U R' U' R' F R2 U R' U' F'"
+    },
+    {
+     "alg": "x R2 F R F' R U2 r' U r U2"
+    }
+   ],
+   "setup": "U2 L' B' L U2 R' F R' F' R2 U B R B' R2 U' R B R B' R' x'"
+  },
+  {
+   "id": "ollpll-27",
+   "set": "ollpll",
+   "name": "OLL 10 – Fish Shape → H",
+   "group": "Fish Shape",
+   "alg": "R U R' U R' F R F' R U2 R' M2 U M2 U2 M2 U M2",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R U R' U R' F R F' R U2 R'"
+    },
+    {
+     "alg": "M2 U M2 U2 M2 U M2"
+    }
+   ],
+   "setup": "R2 L2 D' R2 L2 U2 R2 L2 D' R2 L2 R U2 R' F R' F' R U' R U' R'"
+  },
+  {
+   "id": "ollpll-28",
+   "set": "ollpll",
+   "name": "OLL 35 – Fish Shape → Jb",
+   "group": "Fish Shape",
+   "alg": "R U2 R2 F R F' R U2 R' R U R' F' R U R' U' R' F R2 U' R'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R U2 R2 F R F' R U2 R'"
+    },
+    {
+     "alg": "R U R' F' R U R' U' R' F R2 U' R'"
+    }
+   ],
+   "setup": "R U R2 F' R U R U' R' F R U' R' R U2 R' F R' F' R2 U2 R'"
+  },
+  {
+   "id": "ollpll-29",
+   "set": "ollpll",
+   "name": "OLL 37 – Fish Shape → E",
+   "group": "Fish Shape",
+   "alg": "F R' F' R U R U' R' x' L' U L D' L' U' L D L' U' L D' L' U L D",
+   "img": null,
+   "algs": [
+    {
+     "alg": "F R' F' R U R U' R'"
+    },
+    {
+     "alg": "x' L' U L D' L' U' L D L' U' L D' L' U L D"
+    }
+   ],
+   "setup": "D' L' U' L D L' U L D' L' U L D L' U' L R F R' F' R' D R D' x"
+  },
+  {
+   "id": "ollpll-30",
+   "set": "ollpll",
+   "name": "OLL 51 – I Shape → Gd",
+   "group": "I Shape",
+   "alg": "F U R U' R' U R U' R' F' R U R' U' D R2 U' R U' R' U R' U R2 D'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "F U R U' R' U R U' R' F'"
+    },
+    {
+     "alg": "R U R' U' D R2 U' R U' R' U R' U R2 D'"
+    }
+   ],
+   "setup": "D R2 U' R U' R U R' U R2 D' U R U' R' F R U R' U' R U R' U' F'"
+  },
+  {
+   "id": "ollpll-31",
+   "set": "ollpll",
+   "name": "OLL 52 – I Shape → V",
+   "group": "I Shape",
+   "alg": "R U R' U R U' B U' B' R' R' U R' U' y R' F' R2 U' R' U R' F R F",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R U R' U R U' B U' B' R'"
+    },
+    {
+     "alg": "R' U R' U' y R' F' R2 U' R' U R' F R F"
+    }
+   ],
+   "setup": "F' R' F' R U' R U R2 F R U F U' F F R U R' U F' U' F U' F' y'"
+  },
+  {
+   "id": "ollpll-32",
+   "set": "ollpll",
+   "name": "OLL 55 – I Shape → Ab",
+   "group": "I Shape",
+   "alg": "R' F R U R U' R2 F' R2 U' R' U R U R' x' L2 D2 L U L' D2 L U' L",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R' F R U R U' R2 F' R2 U' R' U R U R'"
+    },
+    {
+     "alg": "x' L2 D2 L U L' D2 L U' L"
+    }
+   ],
+   "setup": "L' U L' D2 L U' L' D2 L2 R F' R' F' R F R2 D R2 F R' F' R' D' R x"
+  },
+  {
+   "id": "ollpll-33",
+   "set": "ollpll",
+   "name": "OLL 56 – I Shape → F",
+   "group": "I Shape",
+   "alg": "r' U' r U' R' U R U' R' U R r' U r R' U' F' R U R' U' R' F R2 U' R' U' R U R' U R",
+   "img": null,
+   "algs": [
+    {
+     "alg": "r' U' r U' R' U R U' R' U R r' U r"
+    },
+    {
+     "alg": "R' U' F' R U R' U' R' F R2 U' R' U' R U R' U R"
+    }
+   ],
+   "setup": "R' U' R U' R' U R U R2 F' R U R U' R' F U R L' B' L R' U' R U R' U' R U L' B L"
+  },
+  {
+   "id": "ollpll-34",
+   "set": "ollpll",
+   "name": "OLL 13 – Knight Move Shape → Rb",
+   "group": "Knight Move Shape",
+   "alg": "F U R U' R2 F' R U R U' R' R2 F R U R U' R' F' R U2 R' U2 R",
+   "img": null,
+   "algs": [
+    {
+     "alg": "F U R U' R2 F' R U R U' R'"
+    },
+    {
+     "alg": "R2 F R U R U' R' F' R U2 R' U2 R"
+    }
+   ],
+   "setup": "R' U2 R U2 R' F R U R' U' R' F' R2 R U R' U' R' F R2 U R' U' F'"
+  },
+  {
+   "id": "ollpll-35",
+   "set": "ollpll",
+   "name": "OLL 14 – Knight Move Shape → T",
+   "group": "Knight Move Shape",
+   "alg": "R' F R U R' F' R F U' F' R U R' U' R' F R2 U' R' U' R U R' F'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R' F R U R' F' R F U' F'"
+    },
+    {
+     "alg": "R U R' U' R' F R2 U' R' U' R U R' F'"
+    }
+   ],
+   "setup": "F R U' R' U R U R2 F' R U R U' R' F U F' R' F R U' R' F' R"
+  },
+  {
+   "id": "ollpll-36",
+   "set": "ollpll",
+   "name": "OLL 15 – Knight Move Shape → E",
+   "group": "Knight Move Shape",
+   "alg": "l' U' l L' U' L U l' U l x' L' U L D' L' U' L D L' U' L D' L' U L D",
+   "img": null,
+   "algs": [
+    {
+     "alg": "l' U' l L' U' L U l' U l"
+    },
+    {
+     "alg": "x' L' U L D' L' U' L D L' U' L D' L' U L D"
+    }
+   ],
+   "setup": "D' L' U' L D L' U L D' L' U L D L' U' L R' D' R F' L' F L R' D R x"
+  },
+  {
+   "id": "ollpll-37",
+   "set": "ollpll",
+   "name": "OLL 16 – Knight Move Shape → Ja",
+   "group": "Knight Move Shape",
+   "alg": "r U r' R U R' U' r U' r' x R2 F R F' R U2 r' U r U2",
+   "img": null,
+   "algs": [
+    {
+     "alg": "r U r' R U R' U' r U' r'"
+    },
+    {
+     "alg": "x R2 F R F' R U2 r' U r U2"
+    }
+   ],
+   "setup": "U2 L' B' L U2 R' F R' F' R2 L U L' B R B' R' L U' L' x'"
+  },
+  {
+   "id": "ollpll-38",
+   "set": "ollpll",
+   "name": "OLL 31 – P Shape → Nb",
+   "group": "P Shape",
+   "alg": "R' U' F U R U' R' F' R R' U R U' R' F' U' F R U R' F R' F' R U' R",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R' U' F U R U' R' F' R"
+    },
+    {
+     "alg": "R' U R U' R' F' U' F R U R' F R' F' R U' R"
+    }
+   ],
+   "setup": "R' U R' F R F' R U' R' F' U F R U R' U' R R' F R U R' U' F' U R"
+  },
+  {
+   "id": "ollpll-39",
+   "set": "ollpll",
+   "name": "OLL 32 – P Shape → H",
+   "group": "P Shape",
+   "alg": "L U F' U' L' U L F L' M2 U M2 U2 M2 U M2",
+   "img": null,
+   "algs": [
+    {
+     "alg": "L U F' U' L' U L F L'"
+    },
+    {
+     "alg": "M2 U M2 U2 M2 U M2"
+    }
+   ],
+   "setup": "R2 L2 D' R2 L2 U2 R2 L2 D' R2 L2 L F' L' U' L U F U' L'"
+  },
+  {
+   "id": "ollpll-40",
+   "set": "ollpll",
+   "name": "OLL 43 – P Shape → V",
+   "group": "P Shape",
+   "alg": "F' U' L' U L F R' U R' U' y R' F' R2 U' R' U R' F R F",
+   "img": null,
+   "algs": [
+    {
+     "alg": "F' U' L' U L F"
+    },
+    {
+     "alg": "R' U R' U' y R' F' R2 U' R' U R' F R F"
+    }
+   ],
+   "setup": "F' R' F' R U' R U R2 F R U F U' F L' B' U' B U L y'"
+  },
+  {
+   "id": "ollpll-41",
+   "set": "ollpll",
+   "name": "OLL 44 – P Shape → Ra",
+   "group": "P Shape",
+   "alg": "F U R U' R' F' R U' R' U' R U R D R' U' R D' R' U2 R'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "F U R U' R' F'"
+    },
+    {
+     "alg": "R U' R' U' R U R D R' U' R D' R' U2 R'"
+    }
+   ],
+   "setup": "R U2 R D R' U R D' R' U' R' U R U R' F R U R' U' F'"
+  },
+  {
+   "id": "ollpll-42",
+   "set": "ollpll",
+   "name": "OLL 47 – Small L Shape → E",
+   "group": "Small L Shape",
+   "alg": "R' U' R' F R F' R' F R F' U R x' L' U L D' L' U' L D L' U' L D' L' U L D",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R' U' R' F R F' R' F R F' U R"
+    },
+    {
+     "alg": "x' L' U L D' L' U' L D L' U' L D' L' U L D"
+    }
+   ],
+   "setup": "D' L' U' L D L' U L D' L' U L D L' U' L R' F' D R' D' R D R' D' R F R x"
+  },
+  {
+   "id": "ollpll-43",
+   "set": "ollpll",
+   "name": "OLL 48 – Small L Shape → T",
+   "group": "Small L Shape",
+   "alg": "F R U R' U' R U R' U' F' R U R' U' R' F R2 U' R' U' R U R' F'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "F R U R' U' R U R' U' F'"
+    },
+    {
+     "alg": "R U R' U' R' F R2 U' R' U' R U R' F'"
+    }
+   ],
+   "setup": "F R U' R' U R U R2 F' R U R U' R' F U R U' R' U R U' R' F'"
+  },
+  {
+   "id": "ollpll-44",
+   "set": "ollpll",
+   "name": "OLL 49 – Small L Shape → Na",
+   "group": "Small L Shape",
+   "alg": "r U' r2 U r2 U r2 U' r R U R' U R U R' F' R U R' U' R' F R2 U' R' U2 R U' R'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "r U' r2 U r2 U r2 U' r"
+    },
+    {
+     "alg": "R U R' U R U R' F' R U R' U' R' F R2 U' R' U2 R U' R'"
+    }
+   ],
+   "setup": "R U R' U2 R U R2 F' R U R U' R' F R U' R' U' R U' R' L' B L2 F' L2 B' L2 F L'"
+  },
+  {
+   "id": "ollpll-45",
+   "set": "ollpll",
+   "name": "OLL 50 – Small L Shape → Aa",
+   "group": "Small L Shape",
+   "alg": "r' U r2 U' r2 U' r2 U r' x L2 D2 L' U' L D2 L' U L'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "r' U r2 U' r2 U' r2 U r'"
+    },
+    {
+     "alg": "x L2 D2 L' U' L D2 L' U L'"
+    }
+   ],
+   "setup": "L U' L D2 L' U L D2 L2 L U' L2 D L2 U L2 D' L x'"
+  },
+  {
+   "id": "ollpll-46",
+   "set": "ollpll",
+   "name": "OLL 53 – Small L Shape → Jb",
+   "group": "Small L Shape",
+   "alg": "l' U2 L U L' U' L U L' U l R U R' F' R U R' U' R' F R2 U' R'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "l' U2 L U L' U' L U L' U l"
+    },
+    {
+     "alg": "R U R' F' R U R' U' R' F R2 U' R'"
+    }
+   ],
+   "setup": "R U R2 F' R U R U' R' F R U' R' R' F' L F' L' F L F' L' F2 R"
+  },
+  {
+   "id": "ollpll-47",
+   "set": "ollpll",
+   "name": "OLL 54 – Small L Shape → Gb",
+   "group": "Small L Shape",
+   "alg": "r U2 R' U' R U R' U' R U' r' R' U' R U D' R2 U R' U R U' R U' R2 D",
+   "img": null,
+   "algs": [
+    {
+     "alg": "r U2 R' U' R U R' U' R U' r'"
+    },
+    {
+     "alg": "R' U' R U D' R2 U R' U R U' R U' R2 D"
+    }
+   ],
+   "setup": "D' R2 U R' U R' U' R U' R2 D U' R' U R L F R' F R F' R' F R F2 L'"
+  },
+  {
+   "id": "ollpll-48",
+   "set": "ollpll",
+   "name": "OLL 7 – Small Lightning Bolt → Na",
+   "group": "Small Lightning Bolt",
+   "alg": "r U R' U R U2 r' R U R' U R U R' F' R U R' U' R' F R2 U' R' U2 R U' R'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "r U R' U R U2 r'"
+    },
+    {
+     "alg": "R U R' U R U R' F' R U R' U' R' F R2 U' R' U2 R U' R'"
+    }
+   ],
+   "setup": "R U R' U2 R U R2 F' R U R U' R' F R U' R' U' R U' R' L F2 R' F' R F' L'"
+  },
+  {
+   "id": "ollpll-49",
+   "set": "ollpll",
+   "name": "OLL 8 – Small Lightning Bolt → Nb",
+   "group": "Small Lightning Bolt",
+   "alg": "l' U' L U' L' U2 l R' U R U' R' F' U' F R U R' F R' F' R U' R",
+   "img": null,
+   "algs": [
+    {
+     "alg": "l' U' L U' L' U2 l"
+    },
+    {
+     "alg": "R' U R U' R' F' U' F R U R' F R' F' R U' R"
+    }
+   ],
+   "setup": "R' U R' F R F' R U' R' F' U F R U R' U' R R' F2 L F L' F R"
+  },
+  {
+   "id": "ollpll-50",
+   "set": "ollpll",
+   "name": "OLL 11 – Small Lightning Bolt → Y",
+   "group": "Small Lightning Bolt",
+   "alg": "r U R' U R' F R F' R U2 r' F R U' R' U' R U R' F' R U R' U' R' F R F'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "r U R' U R' F R F' R U2 r'"
+    },
+    {
+     "alg": "F R U' R' U' R U R' F' R U R' U' R' F R F'"
+    }
+   ],
+   "setup": "F R' F' R U R U' R' F R U' R' U R U R' F' L F2 R' D R' D' R F' R F' L'"
+  },
+  {
+   "id": "ollpll-51",
+   "set": "ollpll",
+   "name": "OLL 12 – Small Lightning Bolt → H",
+   "group": "Small Lightning Bolt",
+   "alg": "M' R' U' R U' R' U2 R U' R r' M2 U M2 U2 M2 U M2",
+   "img": null,
+   "algs": [
+    {
+     "alg": "M' R' U' R U' R' U2 R U' R r'"
+    },
+    {
+     "alg": "M2 U M2 U2 M2 U M2"
+    }
+   ],
+   "setup": "R2 L2 D' R2 L2 U2 R2 L2 D' R2 L2 L R' F R' F2 R F R' F R R L'"
+  },
+  {
+   "id": "ollpll-52",
+   "set": "ollpll",
+   "name": "OLL 5 – Square Shape → Ab",
+   "group": "Square Shape",
+   "alg": "l' U2 L U L' U l x' L2 D2 L U L' D2 L U' L",
+   "img": null,
+   "algs": [
+    {
+     "alg": "l' U2 L U L' U l"
+    },
+    {
+     "alg": "x' L2 D2 L U L' D2 L U' L"
+    }
+   ],
+   "setup": "L' U L' D2 L U' L' D2 L2 R' D' L D' L' D2 R x"
+  },
+  {
+   "id": "ollpll-53",
+   "set": "ollpll",
+   "name": "OLL 6 – Square Shape → E",
+   "group": "Square Shape",
+   "alg": "r U2 R' U' R U' r' x' L' U L D' L' U' L D L' U' L D' L' U L D",
+   "img": null,
+   "algs": [
+    {
+     "alg": "r U2 R' U' R U' r'"
+    },
+    {
+     "alg": "x' L' U L D' L' U' L D L' U' L D' L' U L D"
+    }
+   ],
+   "setup": "D' L' U' L D L' U L D' L' U L D L' U' L L D R' D R D2 L' x"
+  },
+  {
+   "id": "ollpll-54",
+   "set": "ollpll",
+   "name": "OLL 33 – T Shape → Ab",
+   "group": "T Shape",
+   "alg": "R U R' U' R' F R F' x' L2 D2 L U L' D2 L U' L",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R U R' U' R' F R F'"
+    },
+    {
+     "alg": "x' L2 D2 L U L' D2 L U' L"
+    }
+   ],
+   "setup": "L' U L' D2 L U' L' D2 L2 D R' D' R F R F' R' x"
+  },
+  {
+   "id": "ollpll-55",
+   "set": "ollpll",
+   "name": "OLL 45 – T Shape → Ub",
+   "group": "T Shape",
+   "alg": "F R U R' U' F' M2 U' M U2 M' U' M2",
+   "img": null,
+   "algs": [
+    {
+     "alg": "F R U R' U' F'"
+    },
+    {
+     "alg": "M2 U' M U2 M' U' M2"
+    }
+   ],
+   "setup": "R2 L2 D R L' F2 R' L D R2 L2 F U R U' R' F'"
+  },
+  {
+   "id": "ollpll-56",
+   "set": "ollpll",
+   "name": "OLL 36 – W Shape → Ab",
+   "group": "W Shape",
+   "alg": "L' U' L U' L' U L U L F' L' F x' L2 D2 L U L' D2 L U' L",
+   "img": null,
+   "algs": [
+    {
+     "alg": "L' U' L U' L' U L U L F' L' F"
+    },
+    {
+     "alg": "x' L2 D2 L U L' D2 L U' L"
+    }
+   ],
+   "setup": "L' U L' D2 L U' L' D2 L2 D' L D L' F' L' F' L F L' F L x"
+  },
+  {
+   "id": "ollpll-57",
+   "set": "ollpll",
+   "name": "OLL 38 – W Shape → T",
+   "group": "W Shape",
+   "alg": "R U R' U R U' R' U' R' F R F' R U R' U' R' F R2 U' R' U' R U R' F'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "R U R' U R U' R' U' R' F R F'"
+    },
+    {
+     "alg": "R U R' U' R' F R2 U' R' U' R U R' F'"
+    }
+   ],
+   "setup": "F R U' R' U R U R2 F' R U R U' R' F R' F' R U R U R' U' R U' R'"
+  },
+  {
+   "id": "f2l-chain-01",
+   "set": "f2l-chain",
+   "name": "3 pairs #1",
+   "group": "3 unsolved slots",
+   "alg": "y U (L' U L) U' (L' U' L) U' (R' F R F') (R U R') y (L' U L) (F R U2' R' F') U' (R' F R F') (R U' R')",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y U (L' U L) U' (L' U' L)"
+    },
+    {
+     "alg": "U' (R' F R F') (R U R')"
+    },
+    {
+     "alg": "y (L' U L) (F R U2' R' F')"
+    },
+    {
+     "alg": "U' (R' F R F') (R U' R')"
+    }
+   ],
+   "setup": "R U R' F R' F' R U F R U2 R' F' L' U' L F U' F' L F' L' F U B' U B U B' U' B U' y2",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-02",
+   "set": "f2l-chain",
+   "name": "3 pairs #2",
+   "group": "3 unsolved slots",
+   "alg": "y (L' U L) U' (L' U L) y M U' (R' F R) U M' y U L' U2 L U' y' R U R' y (L' U' L)",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y (L' U L) U' (L' U L)"
+    },
+    {
+     "alg": "y M U' (R' F R) U M'"
+    },
+    {
+     "alg": "y U L' U2 L U' y' R U R'"
+    },
+    {
+     "alg": "y (L' U' L)"
+    }
+   ],
+   "setup": "L' U L F U' F' U L' U2 L U' F B' R' F' U' F R F' B R' U' R U R' U' R y",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-03",
+   "set": "f2l-chain",
+   "name": "4 pairs #3",
+   "group": "4 unsolved slots",
+   "alg": "y (L' U L) U' (L' U L) y (L' U2 L) U (L' U' L) y (L' U' L) U (L' U' L) U' (R U2 R') U y (L' U' L)",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y (L' U L) U' (L' U L)"
+    },
+    {
+     "alg": "y (L' U2 L) U (L' U' L)"
+    },
+    {
+     "alg": "y (L' U' L) U (L' U' L)"
+    },
+    {
+     "alg": "U' (R U2 R') U y (L' U' L)"
+    }
+   ],
+   "setup": "L' U L U' F U2 F' U B' U B U' B' U B R' U R U' R' U2 R F' U' F U F' U' F",
+   "slots": [
+    "FR",
+    "FL",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-04",
+   "set": "f2l-chain",
+   "name": "3 pairs #4",
+   "group": "3 unsolved slots",
+   "alg": "y (L' U2 L) U (L' U' L) y (L' U2 L) U (L' U' L) y (L' U L) U' (L' U L)",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y (L' U2 L) U (L' U' L)"
+    },
+    {
+     "alg": "y (L' U2 L) U (L' U' L)"
+    },
+    {
+     "alg": "y (L' U L) U' (L' U L)"
+    }
+   ],
+   "setup": "L' U' L U L' U' L B' U B U' B' U2 B R' U R U' R' U2 R y",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-05",
+   "set": "f2l-chain",
+   "name": "3 pairs #5",
+   "group": "3 unsolved slots",
+   "alg": "y U' (L' U L) y (L' U L) (F R U2' R' F') y U2 (L' U' L) U' (L' U L)",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y U' (L' U L)"
+    },
+    {
+     "alg": "y (L' U L) (F R U2' R' F')"
+    },
+    {
+     "alg": "y U2 (L' U' L) U' (L' U L)"
+    }
+   ],
+   "setup": "L' U' L U L' U L U2 L F U2 F' L' B' U' B R' U' R U y",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-06",
+   "set": "f2l-chain",
+   "name": "3 pairs #6",
+   "group": "3 unsolved slots",
+   "alg": "y U' (F U F') U (L' U' L) y (L' U L) (F R U2' R' F') y (L' U' L)",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y U' (F U F') U (L' U' L)"
+    },
+    {
+     "alg": "y (L' U L) (F R U2' R' F')"
+    },
+    {
+     "alg": "y (L' U' L)"
+    }
+   ],
+   "setup": "L' U L L F U2 F' L' B' U' B R' U R U' B U' B' U y",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-07",
+   "set": "f2l-chain",
+   "name": "3 pairs #7",
+   "group": "3 unsolved slots",
+   "alg": "U' (R U2 R') U y (L' U' L) y U (L' U2 L) U2 (L' U L) U' (R U2 R') U2 (R U' R')",
+   "img": null,
+   "algs": [
+    {
+     "alg": "U' (R U2 R') U y (L' U' L)"
+    },
+    {
+     "alg": "y U (L' U2 L) U2 (L' U L)"
+    },
+    {
+     "alg": "U' (R U2 R') U2 (R U' R')"
+    }
+   ],
+   "setup": "R U R' U2 R U2 R' U L' U' L U2 L' U2 L U' B' U B U' L U2 L' U y2",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-08",
+   "set": "f2l-chain",
+   "name": "3 pairs #8",
+   "group": "3 unsolved slots",
+   "alg": "y (L' U' L) U (L' U' L) U' (R U R') U (R U R') y U (L' U L) U' (L' U' L) R' U2 R2 U R2' U R",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y (L' U' L) U (L' U' L)"
+    },
+    {
+     "alg": "U' (R U R') U (R U R')"
+    },
+    {
+     "alg": "y U (L' U L) U' (L' U' L)"
+    },
+    {
+     "alg": "R' U2 R2 U R2' U R"
+    }
+   ],
+   "setup": "R' U' R2 U' R2 U2 R L' U L U L' U' L U' F U' F' U' F U' F' U B' U B U' B' U B y2",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-09",
+   "set": "f2l-chain",
+   "name": "3 pairs #9",
+   "group": "3 unsolved slots",
+   "alg": "y (L' U' L) y L U2 L2' U' L2 U' L' (R U' R') (F' L' U2 L F)",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y (L' U' L)"
+    },
+    {
+     "alg": "y L U2 L2' U' L2 U' L'"
+    },
+    {
+     "alg": "(R U' R') (F' L' U2 L F)"
+    }
+   ],
+   "setup": "F' L' U2 L F R U R' L U L2 U L2 U2 L' B' U B y2",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-10",
+   "set": "f2l-chain",
+   "name": "3 pairs #10",
+   "group": "3 unsolved slots",
+   "alg": "y (L' U' L) U (R U R') U2 (R U R') y U (L F' L' F) (L' U' L) U' (R U R') U2 (R U' R')",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y (L' U' L)"
+    },
+    {
+     "alg": "U (R U R') U2 (R U R')"
+    },
+    {
+     "alg": "y U (L F' L' F) (L' U' L)"
+    },
+    {
+     "alg": "U' (R U R') U2 (R U' R')"
+    }
+   ],
+   "setup": "R U R' U2 R U' R' U L' U L F' L F L' U' F U' F' U2 F U' F' U' B' U B y2",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-11",
+   "set": "f2l-chain",
+   "name": "3 pairs #11",
+   "group": "3 unsolved slots",
+   "alg": "y (L' U L) U' (L' U L) M U (L F' L') U' M' y U' (F U F') U (L' U' L) y U (L' U' L) U2 (L' U L)",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y (L' U L) U' (L' U L)"
+    },
+    {
+     "alg": "M U (L F' L') U' M'"
+    },
+    {
+     "alg": "y U' (F U F') U (L' U' L)"
+    },
+    {
+     "alg": "y U (L' U' L) U2 (L' U L)"
+    }
+   ],
+   "setup": "L' U' L U2 L' U L U' B' U B U' L U' L' U L R' F R U R' F' L' R R' U' R U R' U' R y",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-12",
+   "set": "f2l-chain",
+   "name": "3 pairs #12",
+   "group": "3 unsolved slots",
+   "alg": "y U' (L' U L) U (L' U L U' L' U L) R2' U2' F R2 F' U2' R' U R' y (L' U L) (F R U2' R' F') y L U2 L2' U' L2 U' L'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y U' (L' U L) U (L' U L U' L' U L)"
+    },
+    {
+     "alg": "R2' U2' F R2 F' U2' R' U R'"
+    },
+    {
+     "alg": "y (L' U L) (F R U2' R' F')"
+    },
+    {
+     "alg": "y L U2 L2' U' L2 U' L'"
+    }
+   ],
+   "setup": "L U L2 U L2 U2 L' L F U2 F' L' B' U' B L U' L U2 B L2 B' U2 L2 R' U' R U R' U' R U' R' U' R U y",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-13",
+   "set": "f2l-chain",
+   "name": "3 pairs #13",
+   "group": "3 unsolved slots",
+   "alg": "y U2 (L' U' L) U' (L' U L) (R U' R') U (R U2 R' U R U' R') y U (L' U' L) U2 (L' U L) (R U' R') (F' L' U2 L F)",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y U2 (L' U' L) U' (L' U L)"
+    },
+    {
+     "alg": "(R U' R') U (R U2 R' U R U' R')"
+    },
+    {
+     "alg": "y U (L' U' L) U2 (L' U L)"
+    },
+    {
+     "alg": "(R U' R') (F' L' U2 L F)"
+    }
+   ],
+   "setup": "F' L' U2 L F R U R' L' U' L U2 L' U L U' F U F' U' F U2 F' U' F U F' B' U' B U B' U B U2 y2",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-14",
+   "set": "f2l-chain",
+   "name": "3 pairs #14",
+   "group": "3 unsolved slots",
+   "alg": "y (L' U L) (F R U2' R' F') y (L' U2 L) U (L' U' L) (R U2 R') U' (R U R')",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y (L' U L) (F R U2' R' F')"
+    },
+    {
+     "alg": "y (L' U2 L) U (L' U' L)"
+    },
+    {
+     "alg": "(R U2 R') U' (R U R')"
+    }
+   ],
+   "setup": "R U' R' U R U2 R' L' U L U' L' U2 L L F U2 F' L' B' U' B y2",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-15",
+   "set": "f2l-chain",
+   "name": "3 pairs #15",
+   "group": "3 unsolved slots",
+   "alg": "U' (R U R') U2 (R U' R') y (L' U' L) U (L' U' L) y U (L' U L) U' (L' U' L) y U' (L' U' L) U2 (L' U' L)",
+   "img": null,
+   "algs": [
+    {
+     "alg": "U' (R U R') U2 (R U' R')"
+    },
+    {
+     "alg": "y (L' U' L) U (L' U' L)"
+    },
+    {
+     "alg": "y U (L' U L) U' (L' U' L)"
+    },
+    {
+     "alg": "y U' (L' U' L) U2 (L' U' L)"
+    }
+   ],
+   "setup": "L' U L U2 L' U L U B' U B U B' U' B U' R' U R U' R' U R B U B' U2 B U' B' U y",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-16",
+   "set": "f2l-chain",
+   "name": "3 pairs #16",
+   "group": "3 unsolved slots",
+   "alg": "U2 (R U R') U (R U' R') y (L' U2 L) U (L' U' L) y U (L' U2 L) U2 (L' U L) U' (R' F R F') (R U R')",
+   "img": null,
+   "algs": [
+    {
+     "alg": "U2 (R U R') U (R U' R')"
+    },
+    {
+     "alg": "y (L' U2 L) U (L' U' L)"
+    },
+    {
+     "alg": "y U (L' U2 L) U2 (L' U L)"
+    },
+    {
+     "alg": "U' (R' F R F') (R U R')"
+    }
+   ],
+   "setup": "R U' R' F R' F' R U L' U' L U2 L' U2 L U' B' U B U' B' U2 B L U L' U' L U' L' U2 y2",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-17",
+   "set": "f2l-chain",
+   "name": "3 pairs #17",
+   "group": "3 unsolved slots",
+   "alg": "U' (R U2 R') U y (L' U' L) y U L' U2 L U' y' R U R' y U' (L' U L) U (L' U L U' L' U L) y (L' U L) U' (L' U L)",
+   "img": null,
+   "algs": [
+    {
+     "alg": "U' (R U2 R') U y (L' U' L)"
+    },
+    {
+     "alg": "y U L' U2 L U' y' R U R'"
+    },
+    {
+     "alg": "y U' (L' U L) U (L' U L U' L' U L)"
+    },
+    {
+     "alg": "y (L' U L) U' (L' U L)"
+    }
+   ],
+   "setup": "L' U' L U L' U' L B' U' B U B' U' B U' B' U' B U L U' L' U B' U2 B U' R' U R U' B U2 B' U y",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-18",
+   "set": "f2l-chain",
+   "name": "3 pairs #18",
+   "group": "3 unsolved slots",
+   "alg": "y (L' U' L) U (L' U' L) y (L' U' L) (U R U' R')3",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y (L' U' L) U (L' U' L)"
+    },
+    {
+     "alg": "y (L' U' L)"
+    },
+    {
+     "alg": "(U R U' R')3"
+    }
+   ],
+   "setup": "R U R' U' R U R' U' R U R' U' L' U L B' U B U' B' U B y2",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-19",
+   "set": "f2l-chain",
+   "name": "3 pairs #19",
+   "group": "3 unsolved slots",
+   "alg": "y U (L' U' L) U' (L' U' L) y U' (L' U' L) U2 (L' U' L) y U2 (L' U' L) U' (L' U L)",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y U (L' U' L) U' (L' U' L)"
+    },
+    {
+     "alg": "y U' (L' U' L) U2 (L' U' L)"
+    },
+    {
+     "alg": "y U2 (L' U' L) U' (L' U L)"
+    }
+   ],
+   "setup": "L' U' L U L' U L U2 B' U B U2 B' U B U R' U R U R' U R U' y",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-20",
+   "set": "f2l-chain",
+   "name": "4 pairs #20",
+   "group": "4 unsolved slots",
+   "alg": "y (L' U L) (F R U2' R' F') y U' (L' U L) U (L' U L U' L' U L) y (L' U2 L) U (L' U' L) U' (R U2 R') U y (L' U' L)",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y (L' U L) (F R U2' R' F')"
+    },
+    {
+     "alg": "y U' (L' U L) U (L' U L U' L' U L)"
+    },
+    {
+     "alg": "y (L' U2 L) U (L' U' L)"
+    },
+    {
+     "alg": "U' (R U2 R') U y (L' U' L)"
+    }
+   ],
+   "setup": "L' U L U' F U2 F' U B' U B U' B' U2 B R' U' R U R' U' R U' R' U' R U R B U2 B' R' F' U' F",
+   "slots": [
+    "FR",
+    "FL",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-21",
+   "set": "f2l-chain",
+   "name": "4 pairs #21",
+   "group": "4 unsolved slots",
+   "alg": "y (L' U' L) U (L' U' L) y U (L' U' L) U' (L' U' L) y U2 (L' U' L) U' (L' U L) U' (R' F R F') (R U' R')",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y (L' U' L) U (L' U' L)"
+    },
+    {
+     "alg": "y U (L' U' L) U' (L' U' L)"
+    },
+    {
+     "alg": "y U2 (L' U' L) U' (L' U L)"
+    },
+    {
+     "alg": "U' (R' F R F') (R U' R')"
+    }
+   ],
+   "setup": "R U R' F R' F' R U L' U' L U L' U L U2 B' U B U B' U B U' R' U R U' R' U R y",
+   "slots": [
+    "FR",
+    "FL",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-22",
+   "set": "f2l-chain",
+   "name": "3 pairs #22",
+   "group": "3 unsolved slots",
+   "alg": "y U (L' U2 L) U2 (L' U L) y U2 (L' U' L) U' (L' U L) R2' U2' F R2 F' U2' R' U R' U (R U' R') U' (R U' R' U R U' R')",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y U (L' U2 L) U2 (L' U L)"
+    },
+    {
+     "alg": "y U2 (L' U' L) U' (L' U L)"
+    },
+    {
+     "alg": "R2' U2' F R2 F' U2' R' U R'"
+    },
+    {
+     "alg": "U (R U' R') U' (R U' R' U R U' R')"
+    }
+   ],
+   "setup": "R U R' U' R U R' U R U R' U' R U' R U2 F R2 F' U2 R2 L' U' L U L' U L U2 B' U' B U2 B' U2 B U' y2",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-23",
+   "set": "f2l-chain",
+   "name": "3 pairs #23",
+   "group": "3 unsolved slots",
+   "alg": "y U (L' U' L) U2 (L' U L) y (L' U2 L) U (L' U' L) (R U2 R') U' (R U R') (R U R') U' (R U R')",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y U (L' U' L) U2 (L' U L)"
+    },
+    {
+     "alg": "y (L' U2 L) U (L' U' L)"
+    },
+    {
+     "alg": "(R U2 R') U' (R U R')"
+    },
+    {
+     "alg": "(R U R') U' (R U R')"
+    }
+   ],
+   "setup": "R U' R' U R U' R' R U' R' U R U2 R' L' U L U' L' U2 L B' U' B U2 B' U B U' y2",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-24",
+   "set": "f2l-chain",
+   "name": "3 pairs #24",
+   "group": "3 unsolved slots",
+   "alg": "y (L' U L) U' (L' U L) y U (L' U L) U' (L' U' L) y U' (L' U' L) U2 (L' U' L)",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y (L' U L) U' (L' U L)"
+    },
+    {
+     "alg": "y U (L' U L) U' (L' U' L)"
+    },
+    {
+     "alg": "y U' (L' U' L) U2 (L' U' L)"
+    }
+   ],
+   "setup": "L' U L U2 L' U L U B' U B U B' U' B U' R' U' R U R' U' R y",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-25",
+   "set": "f2l-chain",
+   "name": "3 pairs #25",
+   "group": "3 unsolved slots",
+   "alg": "y U (L' U2 L) U2 (L' U L) y U' (F U F') U (L' U' L) (R U' R') (F' L' U2 L F) U' (R U' R') U (R U R')",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y U (L' U2 L) U2 (L' U L)"
+    },
+    {
+     "alg": "y U' (F U F') U (L' U' L)"
+    },
+    {
+     "alg": "(R U' R') (F' L' U2 L F)"
+    },
+    {
+     "alg": "U' (R U' R') U (R U R')"
+    }
+   ],
+   "setup": "R U' R' U' R U R' U F' L' U2 L F R U R' L' U L U' F U' F' U B' U' B U2 B' U2 B U' y2",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-26",
+   "set": "f2l-chain",
+   "name": "3 pairs #26",
+   "group": "3 unsolved slots",
+   "alg": "U' (R U2 R') U y (L' U' L) y U (L' U' L) U2 (L' U L) y (L' U' L) U (L' U' L)",
+   "img": null,
+   "algs": [
+    {
+     "alg": "U' (R U2 R') U y (L' U' L)"
+    },
+    {
+     "alg": "y U (L' U' L) U2 (L' U L)"
+    },
+    {
+     "alg": "y (L' U' L) U (L' U' L)"
+    }
+   ],
+   "setup": "L' U L U' L' U L B' U' B U2 B' U B U' R' U R U' B U2 B' U y",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-27",
+   "set": "f2l-chain",
+   "name": "3 pairs #27",
+   "group": "3 unsolved slots",
+   "alg": "y U (L' U L) U' (L' U' L) y U (L' U2 L) U2 (L' U L) y U (L' U' L) U2 (L' U L)",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y U (L' U L) U' (L' U' L)"
+    },
+    {
+     "alg": "y U (L' U2 L) U2 (L' U L)"
+    },
+    {
+     "alg": "y U (L' U' L) U2 (L' U L)"
+    }
+   ],
+   "setup": "L' U' L U2 L' U L U' B' U' B U2 B' U2 B U' R' U R U R' U' R U' y",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-28",
+   "set": "f2l-chain",
+   "name": "3 pairs #28",
+   "group": "3 unsolved slots",
+   "alg": "y U' (L' U' L) U2 (L' U' L) U (R U' R') y U2 (L' U' L) U' (L' U L) R2' U2' F R2 F' U2' R' U R'",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y U' (L' U' L) U2 (L' U' L)"
+    },
+    {
+     "alg": "U (R U' R')"
+    },
+    {
+     "alg": "y U2 (L' U' L) U' (L' U L)"
+    },
+    {
+     "alg": "R2' U2' F R2 F' U2' R' U R'"
+    }
+   ],
+   "setup": "R U' R U2 F R2 F' U2 R2 L' U' L U L' U L U2 F U F' U' B' U B U2 B' U B U y2",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-29",
+   "set": "f2l-chain",
+   "name": "3 pairs #29",
+   "group": "3 unsolved slots",
+   "alg": "(R U2 R') U' (R U R') y U (L F' L' F) (L' U' L) y U' (F U F') U (L' U' L) U' (R' F R F') (R U R')",
+   "img": null,
+   "algs": [
+    {
+     "alg": "(R U2 R') U' (R U R')"
+    },
+    {
+     "alg": "y U (L F' L' F) (L' U' L)"
+    },
+    {
+     "alg": "y U' (F U F') U (L' U' L)"
+    },
+    {
+     "alg": "U' (R' F R F') (R U R')"
+    }
+   ],
+   "setup": "R U' R' F R' F' R U L' U L U' F U' F' U B' U B L' B L B' U' L U' L' U L U2 L' y2",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-30",
+   "set": "f2l-chain",
+   "name": "3 pairs #30",
+   "group": "3 unsolved slots",
+   "alg": "y U L' U2 L U' y' R U R' y U' (L' U L) U (L' U L U' L' U L) y U' (F U F') U (L' U' L) y U' (L' U L)",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y U L' U2 L U' y' R U R'"
+    },
+    {
+     "alg": "y U' (L' U L) U (L' U L U' L' U L)"
+    },
+    {
+     "alg": "y U' (F U F') U (L' U' L)"
+    },
+    {
+     "alg": "y U' (L' U L)"
+    }
+   ],
+   "setup": "L' U' L U B' U B U' L U' L' U R' U' R U R' U' R U' R' U' R U B U' B' U R' U2 R U' y",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-31",
+   "set": "f2l-chain",
+   "name": "4 pairs #31",
+   "group": "4 unsolved slots",
+   "alg": "y U (L' U2 L) U2 (L' U L) y U (L F' L' F) (L' U' L) y U' (F U F') U (L' U' L) (R U2 R') U' (R U R')",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y U (L' U2 L) U2 (L' U L)"
+    },
+    {
+     "alg": "y U (L F' L' F) (L' U' L)"
+    },
+    {
+     "alg": "y U' (F U F') U (L' U' L)"
+    },
+    {
+     "alg": "(R U2 R') U' (R U R')"
+    }
+   ],
+   "setup": "R U' R' U R U2 R' L' U L U' F U' F' U B' U B L' B L B' U' R' U' R U2 R' U2 R U' y",
+   "slots": [
+    "FR",
+    "FL",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-32",
+   "set": "f2l-chain",
+   "name": "3 pairs #32",
+   "group": "3 unsolved slots",
+   "alg": "y U (L' U' L) U' (L' U' L) (R U' R') U (R U' R') y (L' U' L) y (L' U' L)",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y U (L' U' L) U' (L' U' L)"
+    },
+    {
+     "alg": "(R U' R') U (R U' R')"
+    },
+    {
+     "alg": "y (L' U' L)"
+    },
+    {
+     "alg": "y (L' U' L)"
+    }
+   ],
+   "setup": "L' U L B' U B L U L' U' L U L' R' U R U R' U R U' y",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-33",
+   "set": "f2l-chain",
+   "name": "3 pairs #33",
+   "group": "3 unsolved slots",
+   "alg": "y U' (F U F') U (L' U' L) R2' U2' F R2 F' U2' R' U R' y U L' U2 L U' y' R U R' y' (L' U L) U' (L' U2' L U' L' U L)",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y U' (F U F') U (L' U' L)"
+    },
+    {
+     "alg": "R2' U2' F R2 F' U2' R' U R'"
+    },
+    {
+     "alg": "y U L' U2 L U' y' R U R'"
+    },
+    {
+     "alg": "y' (L' U L) U' (L' U2' L U' L' U L)"
+    }
+   ],
+   "setup": "L' U' L U L' U2 L U L' U' L B U' B' U R' U2 R U' B U' B U2 R B2 R' U2 B2 F' U F U' R U' R' U",
+   "slots": [
+    "FR",
+    "FL",
+    "BR"
+   ]
+  },
+  {
+   "id": "f2l-chain-34",
+   "set": "f2l-chain",
+   "name": "3 pairs #34",
+   "group": "3 unsolved slots",
+   "alg": "U (R U R') U2 (R U R') y U' (L' U2 L) U' (L' U L) y U (L' U' L) U2 (L' U L) U' (R U' R') U (R U R')",
+   "img": null,
+   "algs": [
+    {
+     "alg": "U (R U R') U2 (R U R')"
+    },
+    {
+     "alg": "y U' (L' U2 L) U' (L' U L)"
+    },
+    {
+     "alg": "y U (L' U' L) U2 (L' U L)"
+    },
+    {
+     "alg": "U' (R U' R') U (R U R')"
+    }
+   ],
+   "setup": "R U' R' U' R U R' U L' U' L U2 L' U L U' B' U' B U B' U2 B U L U' L' U2 L U' L' U' y2",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-35",
+   "set": "f2l-chain",
+   "name": "3 pairs #35",
+   "group": "3 unsolved slots",
+   "alg": "y M U' (R' F R) U M' U' (R' F R F') (R U' R') y' (L' U L) U' (L' U2' L U' L' U L) y U (L F' L' F) (L' U' L)",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y M U' (R' F R) U M'"
+    },
+    {
+     "alg": "U' (R' F R F') (R U' R')"
+    },
+    {
+     "alg": "y' (L' U L) U' (L' U2' L U' L' U L)"
+    },
+    {
+     "alg": "y U (L F' L' F) (L' U' L)"
+    }
+   ],
+   "setup": "L' U L F' L F L' U' B' U' B U B' U2 B U B' U' B R U R' F R' F' R U R L' B' R' U' R B R' L y'",
+   "slots": [
+    "FR",
+    "FL",
+    "BR"
+   ]
+  },
+  {
+   "id": "f2l-chain-36",
+   "set": "f2l-chain",
+   "name": "3 pairs #36",
+   "group": "3 unsolved slots",
+   "alg": "y U (L' U' L) U2 (L' U L) U' (R U2 R') U y (L' U' L) y U L' U2 L U' y' R U R' U2 (R U R') U (R U' R')",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y U (L' U' L) U2 (L' U L)"
+    },
+    {
+     "alg": "U' (R U2 R') U y (L' U' L)"
+    },
+    {
+     "alg": "y U L' U2 L U' y' R U R'"
+    },
+    {
+     "alg": "U2 (R U R') U (R U' R')"
+    }
+   ],
+   "setup": "R U R' U' R U' R' U2 R U' R' U F' U2 F U' L' U L U' F U2 F' U B' U' B U2 B' U B U' y2",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-37",
+   "set": "f2l-chain",
+   "name": "3 pairs #37",
+   "group": "3 unsolved slots",
+   "alg": "y U' (L' U L) U (L' U L U' L' U L) (R U R') y U' (L' U L) (R U' R') U (R U2 R' U R U' R')",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y U' (L' U L) U (L' U L U' L' U L)"
+    },
+    {
+     "alg": "(R U R')"
+    },
+    {
+     "alg": "y U' (L' U L)"
+    },
+    {
+     "alg": "(R U' R') U (R U2 R' U R U' R')"
+    }
+   ],
+   "setup": "R U R' U' R U2 R' U' R U R' L' U' L U F U' F' B' U' B U B' U' B U' B' U' B U y2",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-38",
+   "set": "f2l-chain",
+   "name": "3 pairs #38",
+   "group": "3 unsolved slots",
+   "alg": "y U' (L' U L) y L U2 L2' U' L2 U' L' y U2 (L' U' L) U' (L' U L)",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y U' (L' U L)"
+    },
+    {
+     "alg": "y L U2 L2' U' L2 U' L'"
+    },
+    {
+     "alg": "y U2 (L' U' L) U' (L' U L)"
+    }
+   ],
+   "setup": "L' U' L U L' U L U2 B U B2 U B2 U2 B' R' U' R U y",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-39",
+   "set": "f2l-chain",
+   "name": "3 pairs #39",
+   "group": "3 unsolved slots",
+   "alg": "y U (L' U2 L) U2 (L' U L) y M U' (R' F R) U M' U (R U' R') U' (R U' R' U R U' R')",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y U (L' U2 L) U2 (L' U L)"
+    },
+    {
+     "alg": "y M U' (R' F R) U M'"
+    },
+    {
+     "alg": "U (R U' R') U' (R U' R' U R U' R')"
+    }
+   ],
+   "setup": "R U R' U' R U R' U R U R' U' R L' B' R' U' R B R' L B' U' B U2 B' U2 B U' y2",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  },
+  {
+   "id": "f2l-chain-40",
+   "set": "f2l-chain",
+   "name": "3 pairs #40",
+   "group": "3 unsolved slots",
+   "alg": "y U' (L' U' L) U2 (L' U' L) y (L' U' L) U (L' U' L) U' (R U R') U2 (R U' R') U' (R U2 R') U2 (R U' R')",
+   "img": null,
+   "algs": [
+    {
+     "alg": "y U' (L' U' L) U2 (L' U' L)"
+    },
+    {
+     "alg": "y (L' U' L) U (L' U' L)"
+    },
+    {
+     "alg": "U' (R U R') U2 (R U' R')"
+    },
+    {
+     "alg": "U' (R U2 R') U2 (R U' R')"
+    }
+   ],
+   "setup": "R U R' U2 R U2 R' U R U R' U2 R U' R' U L' U L U' L' U L B' U B U2 B' U B U y2",
+   "slots": [
+    "FR",
+    "BR",
+    "BL"
+   ]
+  }
+ ]
+}

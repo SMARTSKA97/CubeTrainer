@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\CubeTrainer.Domain\CubeTrainer.Domain.csproj" />
+    <!-- DI abstractions only (ships with the shared framework, no NuGet restore) -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+</Project>

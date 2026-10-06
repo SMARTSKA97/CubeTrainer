@@ -1,0 +1,23 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <!--
+    NuGet-backed features (PostgreSQL via EF Core + Npgsql, Swagger/OpenAPI) are on by default.
+    `-p:OfflineBuild=true` compiles everything else without restoring any package; used only on machines
+    that cannot reach nuget.org. The API then runs on the in-memory repository.
+  -->
+  <PropertyGroup>
+    <OfflineBuild Condition="'$(OfflineBuild)' == ''">false</OfflineBuild>
+  </PropertyGroup>
+</Project>

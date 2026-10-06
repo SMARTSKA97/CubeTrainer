@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\CubeTrainer.Application\CubeTrainer.Application.csproj" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(OfflineBuild)' != 'true'">
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(OfflineBuild)' != 'true'">
+    <DefineConstants>$(DefineConstants);POSTGRES</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(OfflineBuild)' == 'true'">
+    <Compile Remove="Persistence/Postgres/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="CubeTrainer.UnitTests" />
+  </ItemGroup>
+</Project>
