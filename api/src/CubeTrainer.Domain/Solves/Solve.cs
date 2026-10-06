@@ -38,6 +38,12 @@ public sealed class Solve
     /// <summary>Timer solves: which stage was practised; null means a full solve.</summary>
     public string? Stage { get; set; }
 
+    /// <summary>The cube used (free text, e.g. "GAN 13"), stamped from the profile when the solve was made. Lets stats be filtered per cube.</summary>
+    public string? Cube { get; set; }
+
+    /// <summary>The method in use (e.g. "cfop"), stamped like <see cref="Cube"/>.</summary>
+    public string? Method { get; set; }
+
     /// <summary>Mistake tags such as "pause" or "recog".</summary>
     public string[]? Tags { get; set; }
 
@@ -65,6 +71,8 @@ public sealed class Solve
         Auf = Auf,
         InspectionMs = InspectionMs,
         Stage = Stage,
+        Cube = Cube,
+        Method = Method,
         Tags = Tags is null ? null : [.. Tags],
     };
 }

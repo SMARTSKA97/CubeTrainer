@@ -3,6 +3,8 @@ import { AlgCase, AlgService } from '@core/data/alg-service';
 import { LearningSettings } from '@core/data/learning-settings';
 import { PlanService } from '@core/data/plan-service';
 import { SolveStore } from '@core/data/solve-store';
+import { SolveFilterState } from '@core/data/solve-filter-state';
+import { SolveFilterBar } from '@shared/solve-filter-bar';
 import { MISTAKES, STAGES, Solve, formatTime, mean, sessionStats } from '@domain/stats';
 import { Router } from '@angular/router';
 import { usePref } from '@core/pref';
@@ -18,6 +20,7 @@ interface Cell {
 @Component({
   selector: 'app-progress-page',
   standalone: true,
+  imports: [SolveFilterBar],
   template: `
     <section class="card summary">
       <div>
@@ -81,6 +84,11 @@ interface Cell {
       <div class="muted small">
         Target for this set: {{ target() }} s. Click a case to practise it.
       </div>
+    </section>
+
+    <section class="card">
+      <div class="label">Filter the two tables below</div>
+      <app-solve-filter-bar />
     </section>
 
     <section class="card">
@@ -294,6 +302,7 @@ export class ProgressPage {
   readonly algs = inject(AlgService);
   readonly store = inject(SolveStore);
   readonly plan = inject(PlanService);
+  private readonly view = inject(SolveFilterState);
   private readonly learning = inject(LearningSettings);
   private readonly router = inject(Router);
 
@@ -360,14 +369,16 @@ export class ProgressPage {
     STAGES.map((st) => ({
       ...st,
       s: sessionStats(
-        this.store.randomSolves().filter((s: Solve) => (s.stage ?? 'full') === st.id),
+        this.view
+          .solves()
+          .filter((s: Solve) => s.mode === 'random' && (s.stage ?? 'full') === st.id),
       ),
     })).filter((r) => r.s.count > 0 || r.id === 'full'),
   );
 
   readonly mistakes = computed(() => {
     const counts = new Map<string, number>();
-    for (const s of this.store.solves().slice(-300))
+    for (const s of this.view.solves().slice(-300))
       for (const t of s.tags ?? []) counts.set(t, (counts.get(t) ?? 0) + 1);
     return MISTAKES.map((m) => ({ ...m, n: counts.get(m.id) ?? 0 }))
       .filter((m) => m.n > 0)

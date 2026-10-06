@@ -83,13 +83,15 @@ export function pendingKeys(ops: readonly Op[]): {
 /** What the API sends for one solve in a sync page. */
 export interface RemoteSolve extends Omit<
   Solve,
-  'setId' | 'caseId' | 'auf' | 'inspectionMs' | 'stage' | 'tags'
+  'setId' | 'caseId' | 'auf' | 'inspectionMs' | 'stage' | 'tags' | 'cube' | 'method'
 > {
   setId?: string | null;
   caseId?: string | null;
   auf?: number | null;
   inspectionMs?: number | null;
   stage?: Solve['stage'] | null;
+  cube?: string | null;
+  method?: string | null;
   tags?: string[] | null;
   rev: number;
   deleted: boolean;
@@ -110,6 +112,8 @@ export function fromRemote(r: RemoteSolve): Solve {
   if (r.auf !== null && r.auf !== undefined) s.auf = r.auf;
   if (r.inspectionMs !== null && r.inspectionMs !== undefined) s.inspectionMs = r.inspectionMs;
   if (r.stage) s.stage = r.stage;
+  if (r.cube) s.cube = r.cube;
+  if (r.method) s.method = r.method;
   if (r.tags) s.tags = r.tags;
   return s;
 }

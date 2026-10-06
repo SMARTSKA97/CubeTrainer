@@ -13,8 +13,9 @@ internal static class InsightEndpoints
     {
         var g = api.MapGroup(string.Empty).RequireAuthorization();
 
-        g.MapGet("/stats", async (string? mode, string? caseId, HttpContext ctx, StatsService svc, CancellationToken ct) =>
-            (await svc.ComputeAsync(ctx.User.UserId()!.Value, mode, caseId, ct)).ToHttp()).WithTags("Stats");
+        // Optional filters: from/to (epoch ms, inclusive), cube, method, stage ("full", "cross", ...).
+        g.MapGet("/stats", async (string? mode, string? caseId, long? from, long? to, string? cube, string? method, string? stage, HttpContext ctx, StatsService svc, CancellationToken ct) =>
+            (await svc.ComputeAsync(ctx.User.UserId()!.Value, mode, caseId, ct, new StatsFilter(from, to, cube, method, stage))).ToHttp()).WithTags("Stats");
 
         g.MapGet("/cases/stats", async (HttpContext ctx, StatsService svc, CancellationToken ct) =>
             Results.Ok(await svc.PerCaseAsync(ctx.User.UserId()!.Value, ct))).WithTags("Stats");

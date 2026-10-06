@@ -7,6 +7,7 @@ public static class SolveValidator
     public const int MaxTimeMs = 24 * 60 * 60 * 1000;
     public const int MaxTags = 12;
     public const int MaxTagLength = 24;
+    public const int MaxLabelLength = 48;
 
     /// <summary>Returns an error message, or null when the solve is acceptable.</summary>
     public static string? Validate(Solve s)
@@ -21,6 +22,7 @@ public static class SolveValidator
         if (s.CaseId is { Length: > 64 } || s.SetId is { Length: > 64 }) return "caseId/setId too long.";
         if (s.Auf is < 0 or > 3) return "auf must be 0-3.";
         if (s.InspectionMs is < 0) return "inspectionMs must not be negative.";
+        if (s.Cube is { Length: > MaxLabelLength } || s.Method is { Length: > MaxLabelLength }) return $"cube and method must be at most {MaxLabelLength} characters.";
         if (!Stages.IsValid(s.Stage)) return $"stage must be one of: {string.Join(", ", Stages.All)}.";
         return ValidateTags(s.Tags);
     }

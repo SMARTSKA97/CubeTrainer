@@ -102,6 +102,8 @@ public sealed class PostgresSolveRepository(CubeDbContext db) : ISolveRepository
         row.Auf = src.Auf;
         row.InspectionMs = src.InspectionMs;
         row.Stage = src.Stage;
+        row.Cube = src.Cube;
+        row.Method = src.Method;
         row.Tags = src.Tags;
     }
 }

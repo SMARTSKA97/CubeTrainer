@@ -6,10 +6,12 @@ namespace CubeTrainer.Application.Stats;
 
 public sealed class StatsService(ISolveRepository solves)
 {
-    public async Task<Result<StatsResult>> ComputeAsync(Guid userId, string? mode, string? caseId, CancellationToken ct)
+    public async Task<Result<StatsResult>> ComputeAsync(Guid userId, string? mode, string? caseId, CancellationToken ct, StatsFilter? filter = null)
     {
         if (mode is not null && !SolveModes.IsValid(mode)) return Result<StatsResult>.Fail(ErrorKind.Validation, "invalid_mode", "mode must be 'random' or 'case'.");
-        return Result<StatsResult>.Ok(StatsCalculator.Compute(await solves.ListAsync(userId, mode, caseId, ct)));
+        if (filter is { FromMs: { } from, ToMs: { } to } && from > to) return Result<StatsResult>.Fail(ErrorKind.Validation, "invalid_range", "'from' must not be after 'to'.");
+        var list = await solves.ListAsync(userId, mode, caseId, ct);
+        return Result<StatsResult>.Ok(StatsCalculator.Compute(filter is null ? list : filter.Apply(list)));
     }
 
     public async Task<IReadOnlyDictionary<string, StatsResult>> PerCaseAsync(Guid userId, CancellationToken ct)

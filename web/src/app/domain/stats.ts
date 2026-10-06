@@ -38,6 +38,9 @@ export interface Solve {
   inspectionMs?: number;
   /** timer solves: which stage was practised (missing = full solve) */
   stage?: Stage;
+  /** the cube and method in use when the solve was made (stamped from the profile) */
+  cube?: string;
+  method?: string;
   /** mistake tags (see MISTAKES) */
   tags?: string[];
 }

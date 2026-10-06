@@ -48,6 +48,8 @@ public sealed class CubeDbContext(DbContextOptions<CubeDbContext> options) : DbC
             e.Property(x => x.Auf).HasColumnName("auf");
             e.Property(x => x.InspectionMs).HasColumnName("inspection_ms");
             e.Property(x => x.Stage).HasColumnName("stage");
+            e.Property(x => x.Cube).HasColumnName("cube");
+            e.Property(x => x.Method).HasColumnName("method");
             e.Property(x => x.Tags).HasColumnName("tags");
             e.Ignore(x => x.EffectiveMs);
         });

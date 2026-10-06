@@ -138,7 +138,7 @@ tools/   J-Perm HTML -> algs.json
 ```
 
 ## API
-Everything is under `/api/v1`: `GET/POST /solves`, `POST /solves/bulk`, `PATCH /solves/{id}` (penalty, tags), `DELETE /solves/{id}`, `DELETE /solves?mode=`, `GET /stats?mode=&caseId=`, `GET /cases/stats`, `GET /cases/status`, `PUT /cases/{id}/status`, `GET /summary?tz=`.
+Everything is under `/api/v1`: `GET/POST /solves`, `POST /solves/bulk`, `PATCH /solves/{id}` (penalty, tags), `DELETE /solves/{id}`, `DELETE /solves?mode=`, `GET /stats?mode=&caseId=&from=&to=&cube=&method=&stage=`, `GET /cases/stats`, `GET /cases/status`, `PUT /cases/{id}/status`, `GET /summary?tz=`.
 Health: `/health/live`, `/health/ready`. Errors are RFC 9457 `application/problem+json`. OpenAPI document at `/openapi/v1.json` in Development (full build).
 The schema comes only from `db/migrations` (Flyway); see `docs/ARCHITECTURE.md`.
 
@@ -192,6 +192,11 @@ appears once its keys are configured, see DEPLOY.md). See ADR 0005.
 
 Register with email confirmation, sign in (JWT + rotating refresh cookie), forgot/reset password, change password,
 active sessions, sign out everywhere, profile and account deletion. Guest mode still works.
+
+## Phase 4: filtered personal stats (done)
+
+Solves remember the cube and method from your profile. History and Progress have a filter bar (period, cube, method); `GET /stats` accepts
+`from`, `to`, `cube`, `method`, `stage`. See ADR 0008. Change your main cube in Settings and new solves are labeled with it.
 
 ## Phase 2: two-step verification (done)
 

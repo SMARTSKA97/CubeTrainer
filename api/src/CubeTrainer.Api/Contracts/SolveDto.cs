@@ -32,6 +32,12 @@ public sealed class SolveDto
     /// <summary>"full" (or null), "cross", "f2l", "oll", "pll" or "ll".</summary>
     public string? Stage { get; init; }
 
+    /// <summary>The cube used, e.g. "GAN 13".</summary>
+    public string? Cube { get; init; }
+
+    /// <summary>The method in use, e.g. "cfop".</summary>
+    public string? Method { get; init; }
+
     /// <summary>Mistake tags such as "pause" or "recog".</summary>
     public string[]? Tags { get; init; }
 
@@ -62,6 +68,8 @@ public sealed class SolveDto
         Auf = Auf,
         InspectionMs = InspectionMs,
         Stage = Stage,
+        Cube = Cube,
+        Method = Method,
         Tags = Tags,
     };
 
@@ -78,6 +86,8 @@ public sealed class SolveDto
         Auf = s.Auf,
         InspectionMs = s.InspectionMs,
         Stage = s.Stage,
+        Cube = s.Cube,
+        Method = s.Method,
         Tags = s.Tags,
         Rev = s.Rev,
         Deleted = s.DeletedAt is not null,

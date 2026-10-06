@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { AlgService } from '@core/data/alg-service';
 import { RetryService } from '@core/data/retry';
 import { SolveStore } from '@core/data/solve-store';
+import { SolveFilterState } from '@core/data/solve-filter-state';
+import { SolveFilterBar } from '@shared/solve-filter-bar';
 import {
   MISTAKES,
   Solve,
@@ -18,7 +20,12 @@ type Filter = 'all' | 'random' | 'case';
 @Component({
   selector: 'app-history-page',
   standalone: true,
+  imports: [SolveFilterBar],
   template: `
+    <section class="card">
+      <app-solve-filter-bar />
+    </section>
+
     <section class="card">
       <div class="row">
         <div class="seg">
@@ -294,6 +301,7 @@ type Filter = 'all' | 'random' | 'case';
 })
 export class HistoryPage {
   readonly store = inject(SolveStore);
+  private readonly view = inject(SolveFilterState);
   private readonly algs = inject(AlgService);
   private readonly retryService = inject(RetryService);
   private readonly router = inject(Router);
@@ -316,7 +324,7 @@ export class HistoryPage {
 
   /** oldest -> newest */
   readonly list = computed(() =>
-    this.store.solves().filter((s) => this.filter() === 'all' || s.mode === this.filter()),
+    this.view.solves().filter((s) => this.filter() === 'all' || s.mode === this.filter()),
   );
   readonly stats = computed(() => sessionStats(this.list()));
 

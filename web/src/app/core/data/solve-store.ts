@@ -122,7 +122,14 @@ export class SolveStore {
   // ------------------------------------------------------------------ mutations
 
   async add(solve: Omit<Solve, 'id' | 'at'>): Promise<Solve> {
-    const full: Solve = { ...solve, id: newId(), at: Date.now() };
+    const profile = this.auth.user();
+    const full: Solve = {
+      ...solve,
+      // stamped from the profile so stats can be filtered per cube and method later
+      ...stamp(solve.cube ?? profile?.cubeModel, solve.method ?? profile?.cubeMethod),
+      id: newId(),
+      at: Date.now(),
+    };
     this._solves.update((l) => [...l, full]);
     this.saveSolves();
     this.queue({ k: 'put', solve: full });
@@ -158,6 +165,7 @@ export class SolveStore {
         auf: raw.auf,
         inspectionMs: raw.inspectionMs,
         stage: raw.stage,
+        ...stamp(raw.cube, raw.method),
         tags: raw.tags,
       });
     }
@@ -433,4 +441,14 @@ export class SolveStore {
       return fallback;
     }
   }
+}
+
+/** Trimmed, non-empty cube/method labels as object spread. */
+function stamp(cube?: string | null, method?: string | null): Pick<Solve, 'cube' | 'method'> {
+  const out: Pick<Solve, 'cube' | 'method'> = {};
+  const c = cube?.trim().slice(0, 48);
+  const m = method?.trim().slice(0, 48);
+  if (c) out.cube = c;
+  if (m) out.method = m;
+  return out;
 }
