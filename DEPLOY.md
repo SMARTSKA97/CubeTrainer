@@ -328,7 +328,7 @@ The app checks this repository's GitHub Releases (at most once a day, plus **Upd
 4. The repository must be public (the app reads releases without a login). The repository name is baked in at build time (`UPDATES_REPO`, set automatically to the repository running the workflow).
 5. On the first update Android asks you to allow "Install unknown apps" for CubeTrainer; allow it, return to the app and press Update again.
 
-Signing in works with email and password (and two-step codes). Social login is web-only for now. Confirmation and reset links in emails open in the phone's browser; confirm there, then sign in in the app.
+Signing in works with email and password, two-step codes and social login (the provider page opens in the phone's browser and returns to the app; no extra provider settings, ADR 0013). Connecting or disconnecting providers is web-only for now. Confirmation and reset links in emails open in the phone's browser; confirm there, then sign in in the app.
 
 ## 9. Troubleshooting
 

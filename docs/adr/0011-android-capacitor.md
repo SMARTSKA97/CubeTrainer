@@ -9,7 +9,7 @@ Accepted.
   else. Reuse detection and the short reuse grace period still protect against a stolen or replayed token. Two-step verification works unchanged.
   Hardware-backed storage (Android Keystore) is a possible hardening step.
 * **Origin:** the app is served from `https://localhost` (`androidScheme: https`), so the API's `CORS_ORIGINS` must include `https://localhost`.
-* **Not in the app yet:** social login and account linking (they end in a browser cookie redirect), links in emails open in the browser (confirm there, then sign in
+* **Not in the app yet:** account linking in Settings (social sign-in itself was added later, ADR 0013), links in emails open in the browser (confirm there, then sign in
   in the app), push notifications, Play Store packaging (change `appId` first; it cannot change later).
 * **Build:** GitHub Actions workflow "Android APK" produces a debug-signed APK for sideloading, and a release-signed APK when keystore secrets exist.
   The API address is baked in at build time from the repository variable `API_BASE_URL`.

@@ -64,6 +64,62 @@ public sealed class ExternalApiTests : IClassFixture<WebApplicationFactory<Progr
     }
 
     [Fact]
+    public async Task The_android_app_signs_in_through_the_browser_and_collects_the_session_with_its_secret()
+    {
+        var verifier = "app-verifier-" + Guid.NewGuid().ToString("N");
+        var challenge = Convert.ToBase64String(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.ASCII.GetBytes(verifier))).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+
+        // A malformed challenge is refused up front.
+        Assert.Equal(HttpStatusCode.BadRequest, (await _host.Browser().GetAsync("/api/v1/auth/external/google/start?challenge=short")).StatusCode);
+
+        async Task<Uri> Trip()
+        {
+            var browser = _host.Browser(); // the phone's browser: its own cookie jar, no native header
+            await browser.GetAsync($"/api/v1/auth/external/google/start?challenge={challenge}");
+            var cb = await browser.GetAsync("/api/v1/auth/external/google/callback?code=good&state=state-123");
+            Assert.Equal(HttpStatusCode.Redirect, cb.StatusCode);
+            Assert.False(cb.Headers.Contains("Set-Cookie") && cb.Headers.GetValues("Set-Cookie").Any(c => c.StartsWith("ct_rt=", StringComparison.Ordinal)), "the app flow must not set the browser cookie");
+            return cb.Headers.Location!;
+        }
+
+        var first = await Trip();
+        Assert.Equal("cubetrainer", first.Scheme);
+        if (first.AbsolutePath.EndsWith("/complete", StringComparison.Ordinal))
+        {
+            var ticket = System.Web.HttpUtility.ParseQueryString(first.Query)["ticket"]!;
+            using var req = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/external/complete") { Content = JsonContent.Create(new { ticket, displayName = "App Social", handle = "app_social_it", country = "IN", birthYear = 1999, acceptTerms = true }) };
+            req.Headers.Add("X-Client-Type", "native");
+            var complete = await _host.Browser().SendAsync(req);
+            Assert.Equal(HttpStatusCode.OK, complete.StatusCode);
+            Assert.NotNull((await complete.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("refreshToken").GetString());
+        }
+
+        var done = await Trip();
+        Assert.Equal("auth", done.Host);
+        Assert.EndsWith("/done", done.AbsolutePath, StringComparison.Ordinal);
+        var code = System.Web.HttpUtility.ParseQueryString(done.Query)["code"]!;
+
+        async Task<HttpResponseMessage> Exchange(string c, string v, bool native)
+        {
+            using var req = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/external/app-exchange") { Content = JsonContent.Create(new { code = c, verifier = v }) };
+            if (native) req.Headers.Add("X-Client-Type", "native");
+            return await _host.Browser().SendAsync(req);
+        }
+
+        Assert.Equal(HttpStatusCode.BadRequest, (await Exchange(code, "not-the-verifier", true)).StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, (await Exchange(code, verifier, false)).StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, (await Exchange("garbage", verifier, true)).StatusCode);
+
+        var ok = await Exchange(code, verifier, true);
+        Assert.Equal(HttpStatusCode.OK, ok.StatusCode);
+        Assert.False(ok.Headers.Contains("Set-Cookie"));
+        var body = await ok.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.False(string.IsNullOrEmpty(body.GetProperty("accessToken").GetString()));
+        Assert.False(string.IsNullOrEmpty(body.GetProperty("refreshToken").GetString()));
+        Assert.Equal("social@example.com", body.GetProperty("user").GetProperty("email").GetString());
+    }
+
+    [Fact]
     public async Task A_callback_with_the_wrong_state_or_no_cookie_is_refused()
     {
         var http = _host.Browser();

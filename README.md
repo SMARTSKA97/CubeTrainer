@@ -195,12 +195,17 @@ appears once its keys are configured, see DEPLOY.md). See ADR 0005.
 Register with email confirmation, sign in (JWT + rotating refresh cookie), forgot/reset password, change password,
 active sessions, sign out everywhere, profile and account deletion. Guest mode still works.
 
+## Phase 9: social login in the Android app (done)
+
+"Continue with Google/..." opens the phone's browser and returns to the app through `cubetrainer://auth/...`; the app collects the session with a one-time code and a secret it kept (ADR 0013).
+No new provider settings. Needs the new app build (the deep-link entry is in the manifest), so install the next release once by hand if the in-app updater is not set up yet.
+
 ## Phase 7: Android app (done, sideload)
 
 A Capacitor wrapper around the same Angular app: offline-first, installable as an APK. Build it in GitHub: **Actions -> Android APK -> Run workflow**
 (needs the repository variable `API_BASE_URL`), then download the `cubetrainer-apk-*` artifact, copy it to the phone and install it
-("install unknown apps" must be allowed). Also add `https://localhost` to the API's `CORS_ORIGINS`. Email/password sign-in and 2FA work in the app;
-social login does not yet. Details and local build steps: `mobile/README.md`, ADR 0011, DEPLOY.md section 11.
+("install unknown apps" must be allowed). Also add `https://localhost` to the API's `CORS_ORIGINS`. Email/password sign-in, 2FA and social login (through the phone's browser, ADR 0013) work in the app;
+connecting providers in Settings does not yet. Details and local build steps: `mobile/README.md`, ADR 0011, DEPLOY.md section 11.
 
 **Updates without an app store (Phase 8):** push a tag like `android-v1.1.0` and the workflow publishes a signed APK as a GitHub Release with a changelog.
 Installed apps find it (Updates in the menu, or the banner at launch), show what changed and install it on one tap. Needs the signing secrets and a public repo; see DEPLOY.md 11b and ADR 0012.

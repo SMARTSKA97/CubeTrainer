@@ -20,7 +20,15 @@ internal static class ExternalAuthEndpoints
     private const string StateCookie = "ct_oauth";
     private const string StateCookiePath = "/api/v1/auth/external";
 
-    private sealed record StatePayload(string Provider, string State, string Verifier, Guid? LinkUserId, string ReturnUrl, DateTimeOffset Expires);
+    /// <summary>The Android app returns through this URL scheme (declared in its manifest); AppChallenge is set for app-initiated sign-ins.</summary>
+    internal const string AppScheme = "cubetrainer";
+
+    private sealed record StatePayload(string Provider, string State, string Verifier, Guid? LinkUserId, string ReturnUrl, DateTimeOffset Expires, string? AppChallenge = null);
+
+    /// <summary>A finished sign-in waiting for the app to collect it. Useless without the verifier whose SHA-256 is Challenge (PKCE).</summary>
+    private sealed record AppCodePayload(AuthSession Session, string Challenge, DateTimeOffset Expires);
+
+    public sealed record AppExchangeBody(string? Code, string? Verifier);
 
     private sealed record LinkPayload(Guid UserId, DateTimeOffset Expires);
 
@@ -32,10 +40,11 @@ internal static class ExternalAuthEndpoints
 
         g.MapGet("/providers", (IOAuthGateway gateway) => Results.Ok(gateway.EnabledProviders));
 
-        g.MapGet("/external/{provider}/start", (string provider, string? returnUrl, string? link, HttpContext ctx, IOAuthGateway gateway, IDataProtectionProvider dp, IOptions<WebOptions> web, TimeProvider clock) =>
+        g.MapGet("/external/{provider}/start", (string provider, string? returnUrl, string? link, string? challenge, HttpContext ctx, IOAuthGateway gateway, IDataProtectionProvider dp, IOptions<WebOptions> web, TimeProvider clock) =>
         {
             provider = provider.ToLowerInvariant();
             if (!gateway.IsEnabled(provider)) return Results.NotFound();
+            if (challenge is not null && (link is not null || !IsChallenge(challenge))) return Results.BadRequest();
 
             Guid? linkUser = null;
             if (!string.IsNullOrEmpty(link))
@@ -46,7 +55,7 @@ internal static class ExternalAuthEndpoints
             }
 
             var start = gateway.BuildStart(provider, CallbackUrl(ctx, provider));
-            var payload = new StatePayload(provider, start.State, start.CodeVerifier, linkUser, SafeReturn(returnUrl), clock.GetUtcNow().AddMinutes(10));
+            var payload = new StatePayload(provider, start.State, start.CodeVerifier, linkUser, SafeReturn(returnUrl), clock.GetUtcNow().AddMinutes(10), challenge);
             ctx.Response.Cookies.Append(StateCookie, Seal(dp, "state", payload), new CookieOptions
             {
                 HttpOnly = true,
@@ -75,13 +84,26 @@ internal static class ExternalAuthEndpoints
             }
 
             var linking = saved.LinkUserId is not null;
-            if (!string.IsNullOrEmpty(error) || string.IsNullOrEmpty(code)) return Fail(web.Value, linking, "external_denied");
+            var app = saved.AppChallenge is not null;
+            if (!string.IsNullOrEmpty(error) || string.IsNullOrEmpty(code)) return app ? ToApp("error", ("error", "external_denied")) : Fail(web.Value, linking, "external_denied");
 
             var profile = await gateway.ExchangeAsync(provider, code, CallbackUrl(ctx, provider), saved.Verifier, ct);
-            if (profile is null) return Fail(web.Value, linking, "external_failed");
+            if (profile is null) return app ? ToApp("error", ("error", "external_failed")) : Fail(web.Value, linking, "external_failed");
 
             var outcome = await external.SignInAsync(profile, saved.LinkUserId, ctx.Info(), ct);
-            if (!outcome.IsSuccess) return Fail(web.Value, linking, outcome.Error!.Code);
+            if (!outcome.IsSuccess) return app ? ToApp("error", ("error", outcome.Error!.Code)) : Fail(web.Value, linking, outcome.Error!.Code);
+
+            if (app)
+            {
+                // Hand the result to the app through its URL scheme. No cookie: the app has its own token storage.
+                return outcome.Value switch
+                {
+                    ExternalSignedIn signedIn => ToApp("done", ("code", Seal(dp, "app", new AppCodePayload(signedIn.Session, saved.AppChallenge!, clock.GetUtcNow().AddMinutes(2)))), ("returnUrl", saved.ReturnUrl)),
+                    ExternalTwoFactorRequired twoFactor => ToApp("two-factor", ("challenge", twoFactor.Challenge), ("returnUrl", saved.ReturnUrl)),
+                    ExternalNeedsProfile needs => ToApp("complete", ("ticket", external.IssueTicket(needs.Profile)), ("returnUrl", saved.ReturnUrl)),
+                    _ => ToApp("error", ("error", "external_failed")),
+                };
+            }
 
             switch (outcome.Value)
             {
@@ -97,6 +119,19 @@ internal static class ExternalAuthEndpoints
                 default:
                     return Fail(web.Value, linking, "external_failed");
             }
+        });
+
+        // The app trades the one-time code for a normal session. The code is sealed server side and only opens with the secret verifier that never left the app.
+        g.MapPost("/external/app-exchange", (AppExchangeBody body, HttpContext ctx, IDataProtectionProvider dp, TimeProvider clock) =>
+        {
+            var verifier = body.Verifier ?? string.Empty;
+            var payload = string.IsNullOrEmpty(body.Code) || verifier.Length == 0 ? null : Unseal<AppCodePayload>(dp, "app", body.Code, clock);
+            if (payload is null || !ctx.IsNative() || !CryptographicOperations.FixedTimeEquals(Encoding.ASCII.GetBytes(Challenge(verifier)), Encoding.ASCII.GetBytes(payload.Challenge)))
+            {
+                return Results.Problem(title: "Bad request", detail: "The sign-in code is invalid or expired.", statusCode: StatusCodes.Status400BadRequest, extensions: new Dictionary<string, object?> { ["code"] = "external_failed" });
+            }
+
+            return AuthEndpoints.SessionResponse(ctx, payload.Session);
         });
 
         g.MapGet("/external/ticket", (string? ticket, ExternalAuthService external) =>
@@ -127,6 +162,15 @@ internal static class ExternalAuthEndpoints
             (await external.UnlinkAsync(ctx.User.UserId()!.Value, provider.ToLowerInvariant(), ct)).ToHttp(_ => Results.NoContent()));
     }
 
+    /// <summary>base64url(SHA-256(verifier)), the PKCE S256 transform.</summary>
+    internal static string Challenge(string verifier) =>
+        Convert.ToBase64String(SHA256.HashData(Encoding.ASCII.GetBytes(verifier))).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+
+    private static bool IsChallenge(string s) => s.Length == 43 && s.All(c => char.IsAsciiLetterOrDigit(c) || c is '-' or '_');
+
+    private static IResult ToApp(string path, params (string Key, string Value)[] query) =>
+        Results.Redirect($"{AppScheme}://auth/{path}?{string.Join('&', query.Select(q => $"{q.Key}={Uri.EscapeDataString(q.Value)}"))}");
+
     private static string CallbackUrl(HttpContext ctx, string provider)
     {
         var configured = ctx.RequestServices.GetRequiredService<IOptions<ExternalAuthOptions>>().Value.CallbackBaseUrl;
@@ -155,7 +199,7 @@ internal static class ExternalAuthEndpoints
         try
         {
             var payload = JsonSerializer.Deserialize<T>(dp.CreateProtector("CubeTrainer.OAuth." + purpose).Unprotect(value));
-            var expires = payload switch { StatePayload s => s.Expires, LinkPayload l => l.Expires, _ => DateTimeOffset.MinValue };
+            var expires = payload switch { StatePayload s => s.Expires, LinkPayload l => l.Expires, AppCodePayload a => a.Expires, _ => DateTimeOffset.MinValue };
             return expires > clock.GetUtcNow() ? payload : null;
         }
         catch (Exception ex) when (ex is CryptographicException or JsonException or FormatException)

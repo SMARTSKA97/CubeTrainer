@@ -15,6 +15,7 @@ export const authGuard: CanActivateFn = async (_route, state) => {
 /** Login/register pages make no sense for someone already signed in. */
 export const guestOnlyGuard: CanActivateFn = async () => {
   const auth = inject(AuthStore);
+  const router = inject(Router); // inject() only works before the first await
   await auth.init();
-  return auth.signedIn() ? inject(Router).createUrlTree(['/settings']) : true;
+  return auth.signedIn() ? router.createUrlTree(['/settings']) : true;
 };

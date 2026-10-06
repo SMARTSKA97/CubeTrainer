@@ -22,6 +22,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <!-- Social sign-in comes back from the browser as cubetrainer://auth/... (see ADR 0013) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="cubetrainer" android:host="auth" />
+            </intent-filter>
+
         </activity>
 
         <provider

@@ -10,6 +10,7 @@ import { Location } from '@angular/common';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { authInterceptor } from '@core/auth/auth.interceptor';
 import { AuthStore } from '@core/auth/auth-store';
+import { NativeOAuth } from '@core/auth/native-oauth';
 import { initNativeShell } from '@core/native-shell';
 import { routes } from './app.routes';
 
@@ -22,7 +23,8 @@ export const appConfig: ApplicationConfig = {
     // Resume a previous sign-in in the background; the app does not wait for the server to wake up.
     provideAppInitializer(() => {
       void inject(AuthStore).init();
-      initNativeShell(inject(Location), '#0b0d12');
+      const oauth = inject(NativeOAuth);
+      initNativeShell(inject(Location), '#0b0d12', (url) => void oauth.handle(url));
     }),
   ],
 };

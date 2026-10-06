@@ -32,6 +32,7 @@
     "@angular/platform-browser": "^22.2.1",
     "@angular/router": "^22.2.1",
     "@capacitor/app": "^8.1.2",
+    "@capacitor/browser": "^8.0.5",
     "@capacitor/core": "^8.5.2",
     "@capacitor/preferences": "^8.0.1",
     "@capacitor/status-bar": "^8.0.4",

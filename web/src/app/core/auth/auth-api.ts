@@ -162,6 +162,14 @@ export class AuthApi {
     return `${apiBase()}/auth/external/${provider}/start?returnUrl=${encodeURIComponent(returnUrl)}`;
   }
 
+  /** Android app: trades the one-time code from the deep link plus the app's secret for a session (refresh token in the body). */
+  externalAppExchange(code: string, verifier: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(this.url('/auth/external/app-exchange'), {
+      code,
+      verifier,
+    });
+  }
+
   externalTicket(ticket: string): Observable<ExternalTicket> {
     return this.http.get<ExternalTicket>(this.url('/auth/external/ticket'), { params: { ticket } });
   }
