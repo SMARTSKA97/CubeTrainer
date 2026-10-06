@@ -21,11 +21,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: API_BASE_URL must be set
+      - name: API address
         run: |
           if [ -z "$API_URL" ]; then
-            echo "::error::Set the repository variable API_BASE_URL (Settings -> Secrets and variables -> Actions -> Variables). The app cannot find the server without it."
-            exit 1
+            if [ "$GITHUB_EVENT_NAME" = "push" ] && [ "${GITHUB_REF_TYPE}" = "branch" ]; then
+              # A branch push only checks that the native build works; the APK is not meant to be used.
+              echo "::warning::API_BASE_URL is not set: building with a placeholder address (build check only, do not install this APK)."
+              echo "API_URL=https://api.invalid" >> "$GITHUB_ENV"
+            else
+              echo "::error::Set the repository variable API_BASE_URL (Settings -> Secrets and variables -> Actions -> Variables). The app cannot find the server without it."
+              exit 1
+            fi
           fi
 
       - uses: actions/setup-node@v4
