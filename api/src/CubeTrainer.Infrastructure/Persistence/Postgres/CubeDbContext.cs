@@ -1,5 +1,6 @@
 using CubeTrainer.Domain.Cases;
 using CubeTrainer.Domain.Solves;
+using CubeTrainer.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace CubeTrainer.Infrastructure.Persistence.Postgres;
@@ -13,6 +14,12 @@ public sealed class CubeDbContext(DbContextOptions<CubeDbContext> options) : DbC
     public DbSet<Solve> Solves => Set<Solve>();
 
     public DbSet<CaseStatusEntry> CaseStatuses => Set<CaseStatusEntry>();
+
+    public DbSet<AppUser> Users => Set<AppUser>();
+
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+
+    public DbSet<UserToken> UserTokens => Set<UserToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -43,6 +50,65 @@ public sealed class CubeDbContext(DbContextOptions<CubeDbContext> options) : DbC
             e.HasKey(x => x.CaseId);
             e.Property(x => x.CaseId).HasColumnName("case_id");
             e.Property(x => x.Status).HasColumnName("status");
+        });
+
+        modelBuilder.Entity<AppUser>(e =>
+        {
+            e.ToTable("users");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
+            e.Property(x => x.Email).HasColumnName("email");
+            e.Property(x => x.NormalizedEmail).HasColumnName("normalized_email");
+            e.Property(x => x.EmailConfirmed).HasColumnName("email_confirmed");
+            e.Property(x => x.PasswordHash).HasColumnName("password_hash");
+            e.Property(x => x.SecurityStamp).HasColumnName("security_stamp");
+            e.Property(x => x.LockoutEnabled).HasColumnName("lockout_enabled");
+            e.Property(x => x.LockoutEnd).HasColumnName("lockout_end");
+            e.Property(x => x.AccessFailedCount).HasColumnName("access_failed_count");
+            e.Property(x => x.TwoFactorEnabled).HasColumnName("two_factor_enabled");
+            e.Property(x => x.Handle).HasColumnName("handle");
+            e.Property(x => x.NormalizedHandle).HasColumnName("normalized_handle");
+            e.Property(x => x.DisplayName).HasColumnName("display_name");
+            e.Property(x => x.Country).HasColumnName("country");
+            e.Property(x => x.BirthYear).HasColumnName("birth_year");
+            e.Property(x => x.CubeMethod).HasColumnName("cube_method");
+            e.Property(x => x.CubeModel).HasColumnName("cube_model");
+            e.Property(x => x.CubingSinceYear).HasColumnName("cubing_since_year");
+            e.Property(x => x.LeaderboardOptIn).HasColumnName("leaderboard_opt_in");
+            e.Property(x => x.TermsVersion).HasColumnName("terms_version");
+            e.Property(x => x.TermsAcceptedAt).HasColumnName("terms_accepted_at");
+            e.Property(x => x.CreatedAt).HasColumnName("created_at");
+            e.Property(x => x.UpdatedAt).HasColumnName("updated_at");
+        });
+
+        modelBuilder.Entity<RefreshToken>(e =>
+        {
+            e.ToTable("refresh_tokens");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
+            e.Property(x => x.UserId).HasColumnName("user_id");
+            e.Property(x => x.FamilyId).HasColumnName("family_id");
+            e.Property(x => x.TokenHash).HasColumnName("token_hash");
+            e.Property(x => x.CreatedAt).HasColumnName("created_at");
+            e.Property(x => x.ExpiresAt).HasColumnName("expires_at");
+            e.Property(x => x.FamilyExpiresAt).HasColumnName("family_expires_at");
+            e.Property(x => x.UsedAt).HasColumnName("used_at");
+            e.Property(x => x.RevokedAt).HasColumnName("revoked_at");
+            e.Property(x => x.UserAgent).HasColumnName("user_agent");
+            e.Property(x => x.Ip).HasColumnName("ip");
+        });
+
+        modelBuilder.Entity<UserToken>(e =>
+        {
+            e.ToTable("user_tokens");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
+            e.Property(x => x.UserId).HasColumnName("user_id");
+            e.Property(x => x.Purpose).HasColumnName("purpose");
+            e.Property(x => x.TokenHash).HasColumnName("token_hash");
+            e.Property(x => x.CreatedAt).HasColumnName("created_at");
+            e.Property(x => x.ExpiresAt).HasColumnName("expires_at");
+            e.Property(x => x.UsedAt).HasColumnName("used_at");
         });
     }
 }

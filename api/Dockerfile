@@ -2,6 +2,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 COPY Directory.Build.props .editorconfig ./
+COPY build/ build/
 COPY src/CubeTrainer.Domain/*.csproj src/CubeTrainer.Domain/
 COPY src/CubeTrainer.Application/*.csproj src/CubeTrainer.Application/
 COPY src/CubeTrainer.Infrastructure/*.csproj src/CubeTrainer.Infrastructure/

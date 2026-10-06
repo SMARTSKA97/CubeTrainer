@@ -109,3 +109,14 @@ F2L cases do not use the random-AUF option (it would move the pair out of its sl
 * **Deployment** (Neon + Render + Cloudflare Pages): see `DEPLOY.md`.
 
 Tests: `cd web && npm test` (Node >= 22.18).
+
+## Phase 1: accounts (done)
+
+Register with email confirmation, sign in (JWT + rotating refresh cookie), forgot/reset password, change password,
+active sessions, sign out everywhere, profile and account deletion. Guest mode still works. Not yet: TOTP (Phase 2),
+social login and per-user solve sync (Phase 3).
+
+### Age note
+Cubing itself suits roughly 6+, a guided 3x3 solve about 7-8+, and the timer/averages/spaced-repetition mechanics make sense around 8-10.
+Accounts and leaderboards are a privacy question: 13 (COPPA, GDPR-K 13-16), and under India's DPDP Act, parental consent under 18.
+`Auth:MinimumAge` defaults to 13; younger children can use guest mode.

@@ -1,4 +1,10 @@
 using CubeTrainer.Application.Abstractions;
+using CubeTrainer.Application.Auth;
+using CubeTrainer.Domain.Users;
+using Microsoft.Extensions.Logging;
+using CubeTrainer.Infrastructure.Email;
+using CubeTrainer.Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
 using CubeTrainer.Infrastructure.Persistence;
 using CubeTrainer.Infrastructure.Persistence.InMemory;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +22,7 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config, IHostEnvironment env)
     {
         var connectionString = ConnectionStrings.Resolve(config);
+        services.AddIdentityInfrastructure(config, env);
 
 #if POSTGRES
         if (connectionString is not null)
@@ -24,6 +31,9 @@ public static class DependencyInjection
             services.AddDbContext<CubeDbContext>(o => o.UseNpgsql(connectionString, n => n.EnableRetryOnFailure(3)));
             services.AddScoped<ISolveRepository, PostgresSolveRepository>();
             services.AddScoped<ICaseStatusRepository, PostgresCaseStatusRepository>();
+            services.AddScoped<IUserRepository, PostgresUserRepository>();
+            services.AddScoped<IRefreshTokenRepository, PostgresRefreshTokenRepository>();
+            services.AddScoped<IUserTokenRepository, PostgresUserTokenRepository>();
             services.AddHealthChecks().AddCheck<DatabaseHealthCheck>("database", tags: ["ready"]);
             return services;
         }
@@ -38,6 +48,54 @@ public static class DependencyInjection
 
         services.AddSingleton<ISolveRepository, InMemorySolveRepository>();
         services.AddSingleton<ICaseStatusRepository, InMemoryCaseStatusRepository>();
+        services.AddSingleton<IUserRepository, InMemoryUserRepository>();
+        services.AddSingleton<IRefreshTokenRepository, InMemoryRefreshTokenRepository>();
+        services.AddSingleton<IUserTokenRepository, InMemoryUserTokenRepository>();
+        return services;
+    }
+
+    private static IServiceCollection AddIdentityInfrastructure(this IServiceCollection services, IConfiguration config, IHostEnvironment env)
+    {
+        // ---- JWT signing key: mandatory outside Development so a default key can never reach production.
+        services.AddOptions<JwtOptions>().Bind(config.GetSection(JwtOptions.Section)).PostConfigure(o =>
+        {
+            if (string.IsNullOrWhiteSpace(o.SigningKey) && env.IsDevelopment()) o.SigningKey = "development-only-signing-key-do-not-use-in-production-0123456789";
+        }).Validate(
+            o => o.SigningKey.Length >= JwtKeys.MinKeyLength,
+            $"Jwt:SigningKey must be set to a random secret of at least {JwtKeys.MinKeyLength} characters (environment variable Jwt__SigningKey).").ValidateOnStart();
+        services.AddSingleton<IAccessTokenIssuer, JwtAccessTokenIssuer>();
+
+        // ---- Email: queue + background sender; Brevo in production, log output in development.
+        services.Configure<EmailOptions>(config.GetSection(EmailOptions.Section));
+        var email = config.GetSection(EmailOptions.Section).Get<EmailOptions>() ?? new EmailOptions();
+        if (string.Equals(email.Provider, "Brevo", StringComparison.OrdinalIgnoreCase))
+        {
+            if (string.IsNullOrWhiteSpace(email.BrevoApiKey)) throw new InvalidOperationException("Email:BrevoApiKey is required when Email:Provider=Brevo (environment variable Email__BrevoApiKey).");
+            services.AddHttpClient<IEmailSender, BrevoEmailSender>(c =>
+            {
+                c.BaseAddress = new Uri(email.BrevoBaseUrl);
+                c.Timeout = TimeSpan.FromSeconds(15);
+            });
+        }
+        else
+        {
+            if (env.IsProduction()) throw new InvalidOperationException("Email:Provider=Log only prints emails. Set Email:Provider=Brevo for production.");
+            services.AddSingleton<IEmailSender, LoggingEmailSender>();
+        }
+
+        services.AddSingleton<ChannelEmailQueue>();
+        services.AddSingleton<IEmailQueue>(sp => sp.GetRequiredService<ChannelEmailQueue>());
+        services.AddHostedService<EmailDispatcher>();
+        services.AddHostedService<TokenCleanupService>();
+
+        // ---- Breached-password check (Have I Been Pwned range API).
+        services.AddHttpClient<BreachedPasswordValidator>(c =>
+        {
+            c.BaseAddress = new Uri("https://api.pwnedpasswords.com");
+            c.Timeout = TimeSpan.FromSeconds(4);
+            c.DefaultRequestHeaders.Add("Add-Padding", "true");
+        });
+        services.AddScoped<IPasswordValidator<AppUser>>(sp => sp.GetRequiredService<BreachedPasswordValidator>());
         return services;
     }
 }

@@ -176,12 +176,24 @@ Schema changes are a new `db/migrations/V<n>__name.sql` file in the same commit 
 * Neon keeps point-in-time history on its free plan for a limited window; for a copy of your own:
   `pg_dump "<DATABASE_URL>" > cubetrainer.sql`.
 
-## 8. Honest security note
+## 8. Accounts (Phase 1): extra settings
 
-There is **no login** yet (Phase 1 adds it). The API is one person's data (solve times and case status), but anyone who finds
-the Render URL can read and delete it, because the API is open to non-browser clients regardless of CORS.
-That is fine for a personal trainer; before putting anything private behind it (Life OS), add
-authentication. Do not reuse the Neon database for anything else.
+Set these on the Render service (Environment):
+
+| Variable | Value |
+|---|---|
+| `Jwt__SigningKey` | a random 64+ character secret (`openssl rand -base64 64`). The API refuses to start without it. |
+| `Email__Provider` | `Brevo` (the `Log` provider is rejected in Production) |
+| `Email__BrevoApiKey` | Brevo API key (Brevo -> SMTP & API -> API keys) |
+| `Email__FromAddress` / `Email__FromName` | a sender on **your** domain, authenticated in Brevo (SPF + DKIM + DMARC), or mail lands in spam |
+| `Web__BaseUrl` | your Cloudflare Pages URL, used in email links |
+| `Auth__Cookie__SameSite` | `Lax` if web and API share a registrable domain (recommended: `app.example.com` + `api.example.com`); `None` only if they do not (needs HTTPS, and browsers may block third-party cookies) |
+| `Auth__MinimumAge` | 13 by default. Decide your policy (see the age note in the README), India's DPDP Act needs parental consent under 18. |
+
+The sign-in cookie is `HttpOnly`, so put web and API under one domain you own for the most reliable behaviour.
+
+**Still open:** solve endpoints are not user-scoped yet, so anyone who finds the API URL can read and delete the shared solve
+data. User-scoped storage and device sync arrive in Phase 3. Do not store anything private there until then.
 
 ## 9. Troubleshooting
 

@@ -8,6 +8,8 @@ internal static class ServiceCollectionExtensions
 {
     public const string GlobalLimiter = "global";
 
+    public const string AuthLimiter = "auth";
+
     /// <summary>Allowed browser origins: <c>Cors:Origins</c> plus the comma separated <c>CORS_ORIGINS</c> variable.</summary>
     public static IServiceCollection AddConfiguredCors(this IServiceCollection services, IConfiguration config)
     {
@@ -21,6 +23,7 @@ internal static class ServiceCollectionExtensions
             .WithOrigins(origins)
             .AllowAnyHeader()
             .AllowAnyMethod()
+            .AllowCredentials() // the refresh cookie
             .WithExposedHeaders("Retry-After")));
         return services;
     }
@@ -29,6 +32,7 @@ internal static class ServiceCollectionExtensions
     public static IServiceCollection AddApiRateLimiting(this IServiceCollection services, IConfiguration config)
     {
         var permit = config.GetValue("RateLimiting:PermitPerMinute", 300);
+        var authPermit = config.GetValue("RateLimiting:AuthPermitPerMinute", 20);
         services.AddRateLimiter(o =>
         {
             o.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -38,6 +42,10 @@ internal static class ServiceCollectionExtensions
                     : RateLimitPartition.GetFixedWindowLimiter(
                         ctx.Connection.RemoteIpAddress?.ToString() ?? "unknown",
                         _ => new FixedWindowRateLimiterOptions { PermitLimit = permit, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
+            // Sign-in, sign-up and password flows: much stricter, per client address.
+            o.AddPolicy(AuthLimiter, ctx => RateLimitPartition.GetFixedWindowLimiter(
+                ctx.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                _ => new FixedWindowRateLimiterOptions { PermitLimit = authPermit, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
             o.OnRejected = async (ctx, ct) =>
             {
                 if (ctx.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retry))

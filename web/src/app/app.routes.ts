@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard, guestOnlyGuard } from '@core/auth/auth.guards';
 
 const title = (name: string) => `${name} · CubeTrainer`;
 
@@ -44,6 +45,59 @@ export const routes: Routes = [
     path: 'history',
     title: title('History'),
     loadComponent: () => import('@features/history/history-page').then((m) => m.HistoryPage),
+  },
+  {
+    path: 'auth',
+    children: [
+      {
+        path: 'login',
+        title: title('Sign in'),
+        canActivate: [guestOnlyGuard],
+        loadComponent: () => import('@features/auth/login-page').then((m) => m.LoginPage),
+      },
+      {
+        path: 'register',
+        title: title('Create account'),
+        canActivate: [guestOnlyGuard],
+        loadComponent: () => import('@features/auth/register-page').then((m) => m.RegisterPage),
+      },
+      {
+        path: 'verify-email',
+        title: title('Confirm email'),
+        loadComponent: () =>
+          import('@features/auth/verify-email-page').then((m) => m.VerifyEmailPage),
+      },
+      {
+        path: 'forgot-password',
+        title: title('Forgot password'),
+        loadComponent: () =>
+          import('@features/auth/forgot-password-page').then((m) => m.ForgotPasswordPage),
+      },
+      {
+        path: 'reset-password',
+        title: title('Reset password'),
+        loadComponent: () =>
+          import('@features/auth/reset-password-page').then((m) => m.ResetPasswordPage),
+      },
+    ],
+  },
+  {
+    path: 'settings',
+    title: title('Settings'),
+    canActivate: [authGuard],
+    loadComponent: () => import('@features/settings/settings-page').then((m) => m.SettingsPage),
+  },
+  {
+    path: 'legal/terms',
+    title: title('Terms'),
+    data: { kind: 'terms' },
+    loadComponent: () => import('@features/legal/legal-page').then((m) => m.LegalPage),
+  },
+  {
+    path: 'legal/privacy',
+    title: title('Privacy'),
+    data: { kind: 'privacy' },
+    loadComponent: () => import('@features/legal/legal-page').then((m) => m.LegalPage),
   },
   { path: '**', redirectTo: 'today' },
 ];

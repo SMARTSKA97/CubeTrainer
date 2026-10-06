@@ -1,16 +1,41 @@
 // Run: node --import ./tests/register.mjs tests/plan.test.mjs
 import assert from 'node:assert/strict';
-import { buildPlan, boxOf, planProgress, streakDays, INTERVAL_DAYS } from '../src/app/domain/plan.ts';
+import {
+  buildPlan,
+  boxOf,
+  planProgress,
+  streakDays,
+  INTERVAL_DAYS,
+} from '../src/app/domain/plan.ts';
 
 let n = 0;
-const t = (name, fn) => { fn(); n++; console.log('ok  -', name); };
+const t = (name, fn) => {
+  fn();
+  n++;
+  console.log('ok  -', name);
+};
 const DAY = 86400000;
 const NOW = 1_800_000_000_000;
-const sv = (cid, daysAgo, ms = 4000, k = 0) => ({ id: `${cid}${daysAgo}${k}`, at: NOW - daysAgo * DAY - k * 1000, timeMs: ms, penalty: 'none', scramble: 's', mode: 'case', caseId: cid });
+const sv = (cid, daysAgo, ms = 4000, k = 0) => ({
+  id: `${cid}${daysAgo}${k}`,
+  at: NOW - daysAgo * DAY - k * 1000,
+  timeMs: ms,
+  penalty: 'none',
+  scramble: 's',
+  mode: 'case',
+  caseId: cid,
+});
 const T = () => 5000;
 const mkInput = (cases, solves, statuses = {}, extra = {}) => ({
-  cases, statuses, targetMs: T, activeSets: ['a'], now: NOW,
-  solvesByCase: new Map(cases.map((c) => [c.id, solves.filter((s) => s.caseId === c.id).sort((x, y) => x.at - y.at)])), ...extra,
+  cases,
+  statuses,
+  targetMs: T,
+  activeSets: ['a'],
+  now: NOW,
+  solvesByCase: new Map(
+    cases.map((c) => [c.id, solves.filter((s) => s.caseId === c.id).sort((x, y) => x.at - y.at)]),
+  ),
+  ...extra,
 });
 const cs = (...ids) => ids.map((id) => ({ id, set: 'a' }));
 
@@ -31,7 +56,13 @@ t('plan: new cases are capped, nothing else due', () => {
 t('plan: finished case reappears only when its interval has passed', () => {
   // good on 3 separate days -> box 3 -> 7 day interval
   const hist = [12, 11, 10].map((d) => sv('f', d));
-  const resting = buildPlan(mkInput(cs('f'), [...hist, sv('f', 3)].slice(0, 3).map((s) => ({ ...s, at: s.at + 7 * DAY })), { f: 'finished' }));
+  const resting = buildPlan(
+    mkInput(
+      cs('f'),
+      [...hist, sv('f', 3)].slice(0, 3).map((s) => ({ ...s, at: s.at + 7 * DAY })),
+      { f: 'finished' },
+    ),
+  );
   // last solve 3 days ago, interval 7 -> not due (cases: only 'f', no new)
   assert.equal(resting.length, 0);
   const due = buildPlan(mkInput(cs('f'), hist, { f: 'finished' }));

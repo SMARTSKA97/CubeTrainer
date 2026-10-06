@@ -4,7 +4,11 @@ import { Cube, FACES, randomScramble } from '../src/app/domain/cube.ts';
 import { solveCross, crossLengths } from '../src/app/domain/cross-solver.ts';
 
 let n = 0;
-const t = (name, fn) => { fn(); n++; console.log('ok  -', name); };
+const t = (name, fn) => {
+  fn();
+  n++;
+  console.log('ok  -', name);
+};
 
 function crossSolved(cube, face) {
   const solved = new Cube();
@@ -19,7 +23,7 @@ function crossSolved(cube, face) {
 
 t('solved cube needs 0 moves; one turn needs one move', () => {
   assert.equal(solveCross('', 'D').length, 0);
-  assert.equal(solveCross("R", 'D').length, 1);
+  assert.equal(solveCross('R', 'D').length, 1);
   assert.equal(solveCross("U R2 F'", 'D').length <= 3, true);
 });
 
@@ -37,9 +41,9 @@ t('solution really solves the cross on every face (random scrambles)', () => {
 });
 
 t('optimal: no shorter sequence exists for a known 2-move cross', () => {
-  const sol = solveCross("R U", 'D');
+  const sol = solveCross('R U', 'D');
   assert.ok(sol.length <= 2);
-  assert.equal(Object.keys(crossLengths("R U F")).length, 6);
+  assert.equal(Object.keys(crossLengths('R U F')).length, 6);
 });
 
 console.log(`\n${n} test groups passed`);

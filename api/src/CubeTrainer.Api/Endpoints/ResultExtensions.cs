@@ -11,9 +11,18 @@ internal static class ResultExtensions
     public static IResult Problem(Error e) => e.Kind switch
     {
         ErrorKind.NotFound => Results.Problem(title: "Not found", detail: e.Message, statusCode: StatusCodes.Status404NotFound, extensions: Ext(e)),
+        ErrorKind.Unauthorized => Results.Problem(title: "Unauthorized", detail: e.Message, statusCode: StatusCodes.Status401Unauthorized, extensions: Ext(e)),
+        ErrorKind.Forbidden => Results.Problem(title: "Forbidden", detail: e.Message, statusCode: StatusCodes.Status403Forbidden, extensions: Ext(e)),
+        ErrorKind.Conflict => Results.Problem(title: "Conflict", detail: e.Message, statusCode: StatusCodes.Status409Conflict, extensions: Ext(e)),
+        ErrorKind.TooManyRequests => Results.Problem(title: "Too many requests", detail: e.Message, statusCode: StatusCodes.Status429TooManyRequests, extensions: Ext(e)),
         _ => Results.Problem(title: "Validation failed", detail: e.Message, statusCode: StatusCodes.Status400BadRequest, extensions: Ext(e)),
     };
 
     // `code` is a stable machine-readable value; `error` mirrors `detail` for older clients.
-    private static Dictionary<string, object?> Ext(Error e) => new() { ["code"] = e.Code, ["error"] = e.Message };
+    private static Dictionary<string, object?> Ext(Error e)
+    {
+        var ext = new Dictionary<string, object?> { ["code"] = e.Code, ["error"] = e.Message };
+        if (e.Details is { Count: > 0 }) ext["errors"] = e.Details;
+        return ext;
+    }
 }

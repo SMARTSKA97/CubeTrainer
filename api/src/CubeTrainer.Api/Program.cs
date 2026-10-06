@@ -18,11 +18,13 @@ if (!builder.Environment.IsDevelopment())
     builder.Logging.AddJsonConsole();
 }
 
-builder.Services.AddApplication();
+builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration, builder.Environment);
 builder.Services.AddConfiguredCors(builder.Configuration);
 builder.Services.AddApiRateLimiting(builder.Configuration);
 builder.Services.AddProxyHeaders(builder.Configuration);
+builder.Services.AddBearerAuthentication();
+builder.Services.Configure<CookieSettings>(builder.Configuration.GetSection(CookieSettings.Section));
 builder.Services.AddProblemDetails(o => o.CustomizeProblemDetails = ctx =>
     ctx.ProblemDetails.Extensions["traceId"] = System.Diagnostics.Activity.Current?.Id ?? ctx.HttpContext.TraceIdentifier);
 builder.Services.ConfigureHttpJsonOptions(o => o.SerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never);
@@ -39,6 +41,8 @@ app.UseStatusCodePages();
 app.UseMiddleware<SecurityHeadersMiddleware>();
 app.UseCors();
 app.UseRateLimiter();
+app.UseAuthentication();
+app.UseAuthorization();
 
 #if OPENAPI
 if (app.Environment.IsDevelopment()) app.MapOpenApi(); // /openapi/v1.json
@@ -51,6 +55,8 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = r => r
 // Versioned API. v1 is the current contract; breaking changes go to /api/v2 side by side.
 var v1 = app.MapGroup("/api/v1");
 v1.MapGet("/health", () => Results.Ok(new { status = "ok", time = DateTimeOffset.UtcNow })).WithTags("Health");
+v1.MapAuthEndpoints();
+v1.MapMeEndpoints();
 v1.MapSolveEndpoints();
 v1.MapInsightEndpoints();
 

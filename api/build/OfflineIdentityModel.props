@@ -1,0 +1,16 @@
+<Project>
+  <!--
+    Only for sandboxes without NuGet access (-p:OfflineBuild=true -p:OfflineIdentityModelDir=<folder with the
+    Microsoft.IdentityModel.*.dll files that ship inside the .NET SDK under DotnetTools/dotnet-user-jwts>).
+    CI and Docker use the real Microsoft.AspNetCore.Authentication.JwtBearer package instead.
+  -->
+  <ItemGroup Condition="'$(OfflineBuild)' == 'true' And '$(OfflineIdentityModelDir)' != ''">
+    <Reference Include="Microsoft.IdentityModel.Abstractions"><HintPath>$(OfflineIdentityModelDir)/Microsoft.IdentityModel.Abstractions.dll</HintPath></Reference>
+    <Reference Include="Microsoft.IdentityModel.Logging"><HintPath>$(OfflineIdentityModelDir)/Microsoft.IdentityModel.Logging.dll</HintPath></Reference>
+    <Reference Include="Microsoft.IdentityModel.Tokens"><HintPath>$(OfflineIdentityModelDir)/Microsoft.IdentityModel.Tokens.dll</HintPath></Reference>
+    <Reference Include="Microsoft.IdentityModel.JsonWebTokens"><HintPath>$(OfflineIdentityModelDir)/Microsoft.IdentityModel.JsonWebTokens.dll</HintPath></Reference>
+  </ItemGroup>
+  <PropertyGroup Condition="'$(OfflineBuild)' == 'true'">
+    <DefineConstants>$(DefineConstants);OFFLINE</DefineConstants>
+  </PropertyGroup>
+</Project>
