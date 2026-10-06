@@ -1,11 +1,12 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { DangerSection } from './danger-section';
+import { IdentitiesSection } from './identities-section';
 import { ProfileSection } from './profile-section';
 import { SecuritySection } from './security-section';
 
 @Component({
   selector: 'app-settings-page',
-  imports: [ProfileSection, SecuritySection, DangerSection],
+  imports: [ProfileSection, SecuritySection, IdentitiesSection, DangerSection],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host {
@@ -23,7 +24,12 @@ import { SecuritySection } from './security-section';
     <h1>Account settings</h1>
     <app-profile-section />
     <app-security-section />
+    <app-identities-section [linked]="linked()" [linkError]="linkError()" />
     <app-danger-section />
   `,
 })
-export class SettingsPage {}
+export class SettingsPage {
+  /** Bound from the query string after returning from a provider. */
+  readonly linked = input<string>();
+  readonly linkError = input<string>();
+}

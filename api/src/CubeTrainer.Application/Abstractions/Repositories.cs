@@ -1,32 +1,6 @@
-using CubeTrainer.Domain.Cases;
-using CubeTrainer.Domain.Solves;
 using CubeTrainer.Domain.Users;
 
 namespace CubeTrainer.Application.Abstractions;
-
-public interface ISolveRepository
-{
-    /// <summary>Solves ordered oldest to newest.</summary>
-    Task<IReadOnlyList<Solve>> ListAsync(string? mode, string? caseId, CancellationToken ct);
-
-    /// <summary>Insert, or overwrite when the id already exists (clients retry and re-sync).</summary>
-    Task UpsertAsync(IReadOnlyCollection<Solve> solves, CancellationToken ct);
-
-    /// <summary>Change the penalty and/or the tags (null = unchanged). False when the id is unknown.</summary>
-    Task<bool> UpdateAsync(Guid id, string? penalty, string[]? tags, CancellationToken ct);
-
-    Task<bool> DeleteAsync(Guid id, CancellationToken ct);
-
-    /// <summary>Delete every solve, or only those of one mode. Returns how many were removed.</summary>
-    Task<int> DeleteAllAsync(string? mode, CancellationToken ct);
-}
-
-public interface ICaseStatusRepository
-{
-    Task<IReadOnlyDictionary<string, string>> GetAllAsync(CancellationToken ct);
-
-    Task SetAsync(string caseId, string status, CancellationToken ct);
-}
 
 public interface IUserRepository
 {
@@ -76,4 +50,16 @@ public interface IUserTokenRepository
 
     /// <summary>Invalidates older unused tokens of a purpose so only the newest email works.</summary>
     Task InvalidateAsync(Guid userId, string purpose, DateTimeOffset now, CancellationToken ct);
+}
+
+public interface IExternalLoginRepository
+{
+    Task<ExternalLogin?> FindAsync(string provider, string subject, CancellationToken ct);
+
+    Task<IReadOnlyList<ExternalLogin>> ListForUserAsync(Guid userId, CancellationToken ct);
+
+    /// <summary>False when this provider account (or this provider for this user) is already linked somewhere.</summary>
+    Task<bool> TryAddAsync(ExternalLogin login, CancellationToken ct);
+
+    Task<bool> DeleteAsync(Guid userId, string provider, CancellationToken ct);
 }

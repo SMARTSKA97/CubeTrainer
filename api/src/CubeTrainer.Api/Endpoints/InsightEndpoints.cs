@@ -1,4 +1,5 @@
 using CubeTrainer.Api.Contracts;
+using CubeTrainer.Api.Hosting;
 using CubeTrainer.Application.Cases;
 using CubeTrainer.Application.Stats;
 using CubeTrainer.Application.Summary;
@@ -10,20 +11,22 @@ internal static class InsightEndpoints
 {
     public static void MapInsightEndpoints(this RouteGroupBuilder api)
     {
-        api.MapGet("/stats", async (string? mode, string? caseId, StatsService svc, CancellationToken ct) =>
-            (await svc.ComputeAsync(mode, caseId, ct)).ToHttp()).WithTags("Stats");
+        var g = api.MapGroup(string.Empty).RequireAuthorization();
 
-        api.MapGet("/cases/stats", async (StatsService svc, CancellationToken ct) =>
-            Results.Ok(await svc.PerCaseAsync(ct))).WithTags("Stats");
+        g.MapGet("/stats", async (string? mode, string? caseId, HttpContext ctx, StatsService svc, CancellationToken ct) =>
+            (await svc.ComputeAsync(ctx.User.UserId()!.Value, mode, caseId, ct)).ToHttp()).WithTags("Stats");
+
+        g.MapGet("/cases/stats", async (HttpContext ctx, StatsService svc, CancellationToken ct) =>
+            Results.Ok(await svc.PerCaseAsync(ctx.User.UserId()!.Value, ct))).WithTags("Stats");
 
         // Daily-practice summary for dashboards. tz = minutes ahead of UTC, e.g. 330 for India.
-        api.MapGet("/summary", async (int? tz, SummaryService svc, CancellationToken ct) =>
-            Results.Ok(await svc.GetAsync(tz ?? 0, ct))).WithTags("Summary");
+        g.MapGet("/summary", async (int? tz, HttpContext ctx, SummaryService svc, CancellationToken ct) =>
+            Results.Ok(await svc.GetAsync(ctx.User.UserId()!.Value, tz ?? 0, ct))).WithTags("Summary");
 
-        api.MapGet("/cases/status", async (CaseStatusService svc, CancellationToken ct) =>
-            Results.Ok(await svc.GetAllAsync(ct))).WithTags("Cases");
+        g.MapGet("/cases/status", async (HttpContext ctx, CaseStatusService svc, CancellationToken ct) =>
+            Results.Ok(await svc.GetAllAsync(ctx.User.UserId()!.Value, ct))).WithTags("Cases");
 
-        api.MapPut("/cases/{caseId}/status", async (string caseId, StatusUpdate body, CaseStatusService svc, CancellationToken ct) =>
-            (await svc.SetAsync(caseId, body.Status, ct)).ToHttp(_ => Results.NoContent())).WithTags("Cases");
+        g.MapPut("/cases/{caseId}/status", async (string caseId, StatusUpdate body, HttpContext ctx, CaseStatusService svc, CancellationToken ct) =>
+            (await svc.SetAsync(ctx.User.UserId()!.Value, caseId, body.Status, ct)).ToHttp(_ => Results.NoContent())).WithTags("Cases");
     }
 }

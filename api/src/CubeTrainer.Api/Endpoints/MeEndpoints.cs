@@ -18,7 +18,7 @@ internal static class MeEndpoints
 
         g.MapDelete("/", async ([Microsoft.AspNetCore.Mvc.FromBody] AuthEndpoints.PasswordBody body, HttpContext ctx, AuthService auth, CancellationToken ct) =>
         {
-            var result = await auth.DeleteAccountAsync(ctx.User.UserId()!.Value, body.Password, ct);
+            var result = await auth.DeleteAccountAsync(ctx.User.UserId()!.Value, body.Password, body.ConfirmHandle, ct);
             if (result.IsSuccess) ctx.ClearRefreshCookie();
             return result.ToHttp(_ => Results.NoContent());
         });

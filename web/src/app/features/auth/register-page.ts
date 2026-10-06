@@ -16,12 +16,13 @@ import { regionFromLocale, toProblem } from '@core/auth/auth-utils';
 import { countryOptions } from '@core/auth/countries';
 import { PasswordField } from '@shared/password-field';
 import { AuthCard } from './auth-card';
+import { SocialButtons } from './social-buttons';
 
 const HANDLE = /^[A-Za-z][A-Za-z0-9_]{2,19}$/;
 
 @Component({
   selector: 'app-register-page',
-  imports: [ReactiveFormsModule, RouterLink, AuthCard, PasswordField],
+  imports: [ReactiveFormsModule, RouterLink, AuthCard, PasswordField, SocialButtons],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './auth-form.css',
   template: `
@@ -54,6 +55,7 @@ const HANDLE = /^[A-Za-z][A-Za-z0-9_]{2,19}$/;
         title="Create your account"
         subtitle="Free. Your history is backed up, and later you can sync devices and join leaderboards."
       >
+        <app-social-buttons />
         <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
           @if (error(); as e) {
             <p class="banner error" role="alert">{{ e }}</p>

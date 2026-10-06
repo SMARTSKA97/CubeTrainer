@@ -35,6 +35,12 @@ public sealed class SolveDto
     /// <summary>Mistake tags such as "pause" or "recog".</summary>
     public string[]? Tags { get; init; }
 
+    /// <summary>Change number (responses only; ignored when sent). Sync clients remember the highest one they have seen.</summary>
+    public long Rev { get; init; }
+
+    /// <summary>True for a tombstone: the solve was deleted (sync responses only).</summary>
+    public bool Deleted { get; init; }
+
     /// <summary>Time including penalty, or null for a DNF.</summary>
     public int? Effective => Penalty switch
     {
@@ -73,9 +79,16 @@ public sealed class SolveDto
         InspectionMs = s.InspectionMs,
         Stage = s.Stage,
         Tags = s.Tags,
+        Rev = s.Rev,
+        Deleted = s.DeletedAt is not null,
     };
 }
 
 public sealed record SolveUpdate(string? Penalty, string[]? Tags);
 
 public sealed record StatusUpdate(string? Status);
+
+public sealed record CaseStatusDto(string CaseId, string Status, long Rev);
+
+/// <summary>One page of changes. Send <c>cursor</c> back as <c>since</c>; keep going while <c>hasMore</c> is true.</summary>
+public sealed record SyncChangesDto(long Cursor, bool HasMore, IReadOnlyList<SolveDto> Solves, IReadOnlyList<CaseStatusDto> CaseStatuses);

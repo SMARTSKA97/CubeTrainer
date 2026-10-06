@@ -76,6 +76,11 @@ export class AuthStore {
     this.clear();
   }
 
+  /** Takes over a session the API just created (social sign-up finished in the browser). */
+  acceptSession(res: AuthResponse): void {
+    this.accept(res);
+  }
+
   setUser(user: UserProfile): void {
     this._user.set(user);
   }

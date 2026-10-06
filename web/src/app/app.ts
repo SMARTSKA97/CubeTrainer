@@ -20,9 +20,7 @@ import { SolveStore } from '@core/data/solve-store';
         <a routerLink="/progress" routerLinkActive="active">Progress</a>
         <a routerLink="/history" routerLinkActive="active">History</a>
       </nav>
-      <span class="badge" [attr.data-b]="store.backend()" [title]="badgeTitle()">{{
-        badge()
-      }}</span>
+      <span class="badge" [attr.data-b]="store.sync()" [title]="badgeTitle()">{{ badge() }}</span>
       @if (auth.ready()) {
         <span class="acct">
           @if (auth.user(); as u) {
@@ -43,6 +41,20 @@ import { SolveStore } from '@core/data/solve-store';
         >
         <a routerLink="/auth/register" class="btn small primary">Create account</a>
         <button class="btn small" type="button" (click)="hideBanner()">Not now</button>
+      </aside>
+    }
+    @if (store.guestImport(); as g) {
+      <aside class="guest" role="note">
+        <span
+          >This device has {{ g.count }} solve{{ g.count === 1 ? '' : 's' }} recorded as a guest.
+          Add {{ g.count === 1 ? 'it' : 'them' }} to your account?</span
+        >
+        <button class="btn small primary" type="button" (click)="store.acceptGuestImport()">
+          Add to my account
+        </button>
+        <button class="btn small" type="button" (click)="store.dismissGuestImport()">
+          Keep separate
+        </button>
       </aside>
     }
     <main><router-outlet /></main>
@@ -97,7 +109,12 @@ import { SolveStore } from '@core/data/solve-store';
       border: 1px solid var(--line);
       color: var(--muted);
     }
-    .badge[data-b='api'] {
+    .badge[data-b='offline'],
+    .badge[data-b='error'] {
+      color: #f59e0b;
+      border-color: #7c4a03;
+    }
+    .badge[data-b='synced'] {
       color: #22c55e;
       border-color: #1f5f3a;
     }
@@ -153,12 +170,29 @@ export class App {
     document.addEventListener('change', (e) => (e.target as HTMLElement | null)?.blur?.());
   }
 
-  badge = () =>
-    ({ checking: 'Connecting…', api: 'Synced to server', local: 'Saved in this browser' })[
-      this.store.backend()
-    ];
+  badge = () => {
+    const pending = this.store.pending();
+    switch (this.store.sync()) {
+      case 'guest':
+        return 'Saved on this device';
+      case 'syncing':
+        return 'Syncing…';
+      case 'synced':
+        return 'Synced';
+      case 'offline':
+        return pending ? `Offline · ${pending} waiting` : 'Offline';
+      default:
+        return pending ? `Sync problem · ${pending} waiting` : 'Sync problem';
+    }
+  };
   badgeTitle = () =>
-    this.store.backend() === 'local'
-      ? 'The API is not reachable, so solves are stored only in this browser (localStorage).'
-      : 'Solves are mirrored to the PostgreSQL database through the .NET API.';
+    ({
+      guest:
+        'Guest mode: solves are stored only in this browser. Create an account to back them up and use other devices.',
+      syncing: 'Sending your changes and fetching changes from your other devices.',
+      synced: 'Your solves are backed up to your account and up to date.',
+      offline: 'No connection. Everything keeps working and uploads when you are back online.',
+      error:
+        'The server rejected or could not process a sync request. It will retry automatically.',
+    })[this.store.sync()];
 }

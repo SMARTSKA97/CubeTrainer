@@ -5,6 +5,7 @@ import {
   passwordStrength,
   describeAgent,
   regionFromLocale,
+  externalErrorMessage,
 } from '../src/app/core/auth/auth-utils.ts';
 
 let n = 0;
@@ -56,5 +57,10 @@ t('regionFromLocale', () => {
   assert.equal(regionFromLocale('en-IN'), 'IN');
   assert.equal(regionFromLocale('en'), null);
   assert.equal(regionFromLocale(undefined), null);
+});
+t('externalErrorMessage', () => {
+  assert.equal(externalErrorMessage(undefined), null);
+  assert.match(externalErrorMessage('external_denied'), /cancelled/);
+  assert.match(externalErrorMessage('something_new'), /failed/);
 });
 console.log(`\n${n} passed`);

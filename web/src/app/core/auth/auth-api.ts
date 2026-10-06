@@ -1,11 +1,15 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { apiBase } from '@core/config';
 import {
   AuthPolicy,
   AuthResponse,
+  CompleteExternalPayload,
+  ExternalTicket,
+  IdentitiesView,
   ProfileUpdatePayload,
+  ProviderInfo,
   RegisterPayload,
   SessionInfo,
   UserProfile,
@@ -88,8 +92,8 @@ export class AuthApi {
     return this.http.patch<UserProfile>(this.url('/me'), body);
   }
 
-  deleteAccount(password: string): Observable<void> {
-    return this.http.delete<void>(this.url('/me'), { body: { password } });
+  deleteAccount(password: string | null, confirmHandle: string | null = null): Observable<void> {
+    return this.http.delete<void>(this.url('/me'), { body: { password, confirmHandle } });
   }
 
   sessions(): Observable<SessionInfo[]> {
@@ -98,5 +102,46 @@ export class AuthApi {
 
   revokeSession(sessionId: string): Observable<void> {
     return this.http.delete<void>(this.url(`/me/sessions/${sessionId}`));
+  }
+
+  // ---- social login
+
+  providers(): Observable<ProviderInfo[]> {
+    return this.http.get<ProviderInfo[]>(this.url('/auth/providers'));
+  }
+
+  /** A full-page navigation target: the API sends the browser on to the provider. */
+  externalStartUrl(provider: string, returnUrl: string): string {
+    return `${apiBase()}/auth/external/${provider}/start?returnUrl=${encodeURIComponent(returnUrl)}`;
+  }
+
+  externalTicket(ticket: string): Observable<ExternalTicket> {
+    return this.http.get<ExternalTicket>(this.url('/auth/external/ticket'), { params: { ticket } });
+  }
+
+  /** 200 with a session, or 202 {verifyEmail:true} when the address still needs confirming. */
+  externalComplete(
+    body: CompleteExternalPayload,
+  ): Observable<HttpResponse<AuthResponse | { verifyEmail: boolean }>> {
+    return this.http.post<AuthResponse | { verifyEmail: boolean }>(
+      this.url('/auth/external/complete'),
+      body,
+      {
+        ...this.cookies,
+        observe: 'response',
+      },
+    );
+  }
+
+  identities(): Observable<IdentitiesView> {
+    return this.http.get<IdentitiesView>(this.url('/me/identities'));
+  }
+
+  linkStart(provider: string): Observable<{ url: string }> {
+    return this.http.post<{ url: string }>(this.url(`/me/identities/${provider}/link-start`), null);
+  }
+
+  unlink(provider: string): Observable<void> {
+    return this.http.delete<void>(this.url(`/me/identities/${provider}`));
   }
 }

@@ -56,6 +56,7 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = r => r
 var v1 = app.MapGroup("/api/v1");
 v1.MapGet("/health", () => Results.Ok(new { status = "ok", time = DateTimeOffset.UtcNow })).WithTags("Health");
 v1.MapAuthEndpoints();
+v1.MapExternalAuthEndpoints();
 v1.MapMeEndpoints();
 v1.MapSolveEndpoints();
 v1.MapInsightEndpoints();

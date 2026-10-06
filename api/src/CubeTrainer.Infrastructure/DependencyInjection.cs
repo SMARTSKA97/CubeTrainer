@@ -2,8 +2,11 @@ using CubeTrainer.Application.Abstractions;
 using CubeTrainer.Application.Auth;
 using CubeTrainer.Domain.Users;
 using Microsoft.Extensions.Logging;
+using CubeTrainer.Application.Auth.External;
 using CubeTrainer.Infrastructure.Email;
+using CubeTrainer.Infrastructure.External;
 using CubeTrainer.Infrastructure.Identity;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using CubeTrainer.Infrastructure.Persistence;
 using CubeTrainer.Infrastructure.Persistence.InMemory;
@@ -34,6 +37,7 @@ public static class DependencyInjection
             services.AddScoped<IUserRepository, PostgresUserRepository>();
             services.AddScoped<IRefreshTokenRepository, PostgresRefreshTokenRepository>();
             services.AddScoped<IUserTokenRepository, PostgresUserTokenRepository>();
+            services.AddScoped<IExternalLoginRepository, PostgresExternalLoginRepository>();
             services.AddHealthChecks().AddCheck<DatabaseHealthCheck>("database", tags: ["ready"]);
             return services;
         }
@@ -51,6 +55,7 @@ public static class DependencyInjection
         services.AddSingleton<IUserRepository, InMemoryUserRepository>();
         services.AddSingleton<IRefreshTokenRepository, InMemoryRefreshTokenRepository>();
         services.AddSingleton<IUserTokenRepository, InMemoryUserTokenRepository>();
+        services.AddSingleton<IExternalLoginRepository, InMemoryExternalLoginRepository>();
         return services;
     }
 
@@ -64,6 +69,13 @@ public static class DependencyInjection
             o => o.SigningKey.Length >= JwtKeys.MinKeyLength,
             $"Jwt:SigningKey must be set to a random secret of at least {JwtKeys.MinKeyLength} characters (environment variable Jwt__SigningKey).").ValidateOnStart();
         services.AddSingleton<IAccessTokenIssuer, JwtAccessTokenIssuer>();
+
+        // ---- Social login: providers switch on when ExternalAuth:Providers:<id>:ClientId/ClientSecret are set.
+        services.Configure<ExternalAuthOptions>(config.GetSection(ExternalAuthOptions.Section));
+        services.AddDataProtection().SetApplicationName("CubeTrainer");
+        services.AddSingleton<IExternalTicketProtector, TicketProtector>();
+        services.AddHttpClient("oauth", c => c.Timeout = TimeSpan.FromSeconds(15));
+        services.AddSingleton<IOAuthGateway, OAuthGateway>();
 
         // ---- Email: queue + background sender; Brevo in production, log output in development.
         services.Configure<EmailOptions>(config.GetSection(EmailOptions.Section));

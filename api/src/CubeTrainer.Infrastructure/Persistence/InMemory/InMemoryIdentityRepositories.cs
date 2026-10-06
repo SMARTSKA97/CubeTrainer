@@ -155,3 +155,34 @@ public sealed class InMemoryUserTokenRepository : IUserTokenRepository
         return Task.CompletedTask;
     }
 }
+
+public sealed class InMemoryExternalLoginRepository : IExternalLoginRepository
+{
+    private readonly object _gate = new();
+    private readonly List<ExternalLogin> _logins = [];
+
+    public Task<ExternalLogin?> FindAsync(string provider, string subject, CancellationToken ct)
+    {
+        lock (_gate) return Task.FromResult(_logins.FirstOrDefault(l => l.Provider == provider && l.Subject == subject));
+    }
+
+    public Task<IReadOnlyList<ExternalLogin>> ListForUserAsync(Guid userId, CancellationToken ct)
+    {
+        lock (_gate) return Task.FromResult<IReadOnlyList<ExternalLogin>>(_logins.Where(l => l.UserId == userId).OrderBy(l => l.CreatedAt).ToList());
+    }
+
+    public Task<bool> TryAddAsync(ExternalLogin login, CancellationToken ct)
+    {
+        lock (_gate)
+        {
+            if (_logins.Any(l => (l.Provider == login.Provider && l.Subject == login.Subject) || (l.UserId == login.UserId && l.Provider == login.Provider))) return Task.FromResult(false);
+            _logins.Add(login);
+            return Task.FromResult(true);
+        }
+    }
+
+    public Task<bool> DeleteAsync(Guid userId, string provider, CancellationToken ct)
+    {
+        lock (_gate) return Task.FromResult(_logins.RemoveAll(l => l.UserId == userId && l.Provider == provider) > 0);
+    }
+}

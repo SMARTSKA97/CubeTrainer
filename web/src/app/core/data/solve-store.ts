@@ -1,12 +1,43 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, effect, inject, signal, untracked } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { CaseStatus, Penalty, Solve } from '@domain/stats';
 import { LearningSettings } from './learning-settings';
 import { evaluateCase } from '@domain/learning';
-import { inject } from '@angular/core';
-import { apiBase } from '@core/config';
+import { AuthStore } from '@core/auth/auth-store';
+import { SyncApi } from './sync-api';
+import {
+  Op,
+  enqueue,
+  isRetryable,
+  mergeRemoteSolves,
+  mergeRemoteStatuses,
+  pendingKeys,
+} from './sync-logic';
 
-const LS_SOLVES = 'cubetrainer.solves.v1';
-const LS_STATUS = 'cubetrainer.status.v1';
+interface Slot {
+  solves: string;
+  status: string;
+  outbox: string;
+  cursor: string;
+}
+
+/** Guests keep the original keys; every account gets its own set, so people sharing a device never see each other's data. */
+const GUEST: Slot = {
+  solves: 'cubetrainer.solves.v1',
+  status: 'cubetrainer.status.v1',
+  outbox: '',
+  cursor: '',
+};
+const slotFor = (userId: string): Slot => ({
+  solves: `cubetrainer.u.${userId}.solves`,
+  status: `cubetrainer.u.${userId}.status`,
+  outbox: `cubetrainer.u.${userId}.outbox`,
+  cursor: `cubetrainer.u.${userId}.cursor`,
+});
+const dismissKey = (userId: string) => `cubetrainer.u.${userId}.guestImportDismissed`;
+
+export type SyncState = 'guest' | 'syncing' | 'synced' | 'offline' | 'error';
 
 /** crypto.randomUUID only exists in secure contexts (https / localhost); fall back for http://192.168.x.x on a phone. */
 function newId(): string {
@@ -24,16 +55,34 @@ function newId(): string {
 /**
  * Solve history and per-case learning status.
  *
- * Everything is saved in localStorage first, so the app works offline and without the API. When the
- * API answers, the same data is mirrored to PostgreSQL and any solves that only exist locally are
- * pushed up on start-up.
+ * Guests: everything lives in localStorage on this device.
+ * Signed in: localStorage is a per-account offline copy. Changes go into an outbox and are pushed to the API
+ * (in order, retried until accepted); then everything that changed on the server since our cursor is pulled,
+ * so edits and deletes made on another device show up here. See sync-logic.ts for the rules.
  */
 @Injectable({ providedIn: 'root' })
 export class SolveStore {
-  private readonly _solves = signal<Solve[]>(this.readLocal<Solve[]>(LS_SOLVES, []));
-  private readonly _status = signal<Record<string, CaseStatus>>(this.readLocal(LS_STATUS, {}));
-  readonly backend = signal<'checking' | 'api' | 'local'>('checking');
+  private readonly auth = inject(AuthStore);
+  private readonly api = inject(SyncApi);
   private readonly learning = inject(LearningSettings);
+
+  private slot: Slot = GUEST;
+  private owner: string | null = null;
+  private outbox: Op[] = [];
+  private inflight = 0;
+  private cursor = 0;
+  private syncing = false;
+  private again = false;
+  private timer: ReturnType<typeof setTimeout> | undefined;
+
+  private readonly _solves = signal<Solve[]>(this.readLocal<Solve[]>(GUEST.solves, []));
+  private readonly _status = signal<Record<string, CaseStatus>>(this.readLocal(GUEST.status, {}));
+  private readonly _pending = signal(0);
+
+  readonly sync = signal<SyncState>('guest');
+  readonly pending = this._pending.asReadonly();
+  /** Set after sign-in when this device holds guest solves that are not in the account yet. */
+  readonly guestImport = signal<{ count: number } | null>(null);
   /** set when the last solve changed a case status automatically: {caseId, from, to, reason} */
   readonly lastAutoChange = signal<{
     caseId: string;
@@ -47,7 +96,17 @@ export class SolveStore {
   readonly status = this._status.asReadonly();
 
   constructor() {
-    void this.connect();
+    effect(() => {
+      const id = this.auth.user()?.id ?? null;
+      untracked(() => this.activate(id));
+    });
+    window.addEventListener('online', () => this.requestSync());
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') this.requestSync();
+    });
+    setInterval(() => {
+      if (document.visibilityState === 'visible') this.requestSync();
+    }, 60_000);
   }
 
   // -------------------------------------------------------------------- queries
@@ -65,8 +124,8 @@ export class SolveStore {
   async add(solve: Omit<Solve, 'id' | 'at'>): Promise<Solve> {
     const full: Solve = { ...solve, id: newId(), at: Date.now() };
     this._solves.update((l) => [...l, full]);
-    this.saveLocal();
-    void this.send('POST', `${apiBase()}/solves`, full);
+    this.saveSolves();
+    this.queue({ k: 'put', solve: full });
     if (full.mode === 'case' && full.caseId) this.reevaluate(full.caseId, full.setId);
     return full;
   }
@@ -104,8 +163,8 @@ export class SolveStore {
     }
     if (fresh.length) {
       this._solves.update((l) => [...l, ...fresh]);
-      this.saveLocal();
-      if (this.backend() === 'api') void this.send('POST', `${apiBase()}/solves/bulk`, fresh);
+      this.saveSolves();
+      for (const s of fresh) this.queue({ k: 'put', solve: s });
       for (const caseId of new Set(
         fresh.filter((s) => s.mode === 'case' && s.caseId).map((s) => s.caseId!),
       ))
@@ -116,14 +175,14 @@ export class SolveStore {
 
   async setPenalty(id: string, penalty: Penalty) {
     this._solves.update((l) => l.map((s) => (s.id === id ? { ...s, penalty } : s)));
-    this.saveLocal();
-    void this.send('PATCH', `${apiBase()}/solves/${id}`, { penalty });
+    this.saveSolves();
+    this.queue({ k: 'patch', id, penalty });
   }
 
   async setTags(id: string, tags: string[]) {
     this._solves.update((l) => l.map((s) => (s.id === id ? { ...s, tags } : s)));
-    this.saveLocal();
-    void this.send('PATCH', `${apiBase()}/solves/${id}`, { tags });
+    this.saveSolves();
+    this.queue({ k: 'patch', id, tags });
   }
 
   /** Recompute a case's status from its timings (auto-learning). Manual changes stay until the next solve. */
@@ -154,81 +213,216 @@ export class SolveStore {
 
   async remove(id: string) {
     this._solves.update((l) => l.filter((s) => s.id !== id));
-    this.saveLocal();
-    void this.send('DELETE', `${apiBase()}/solves/${id}`);
+    this.saveSolves();
+    this.queue({ k: 'del', id });
   }
 
   async clear(mode?: 'random' | 'case') {
     this._solves.update((l) => (mode ? l.filter((s) => s.mode !== mode) : []));
-    this.saveLocal();
-    void this.send('DELETE', `${apiBase()}/solves${mode ? `?mode=${mode}` : ''}`);
+    this.saveSolves();
+    this.queue({ k: 'clear', mode });
   }
 
   setStatus(caseId: string, status: CaseStatus) {
     this._status.update((m) => ({ ...m, [caseId]: status }));
-    localStorage.setItem(LS_STATUS, JSON.stringify(this._status()));
-    void this.send('PUT', `${apiBase()}/cases/${encodeURIComponent(caseId)}/status`, { status });
+    this.saveStatus();
+    this.queue({ k: 'status', caseId, status });
   }
 
   statusOf(caseId: string): CaseStatus {
     return this._status()[caseId] ?? 'unlearned';
   }
 
-  // ------------------------------------------------------------------ plumbing
+  // ------------------------------------------------------------ guest -> account
 
-  private retries = 0;
+  /** Adds the solves recorded on this device as a guest to the signed-in account, then clears the guest copy. */
+  acceptGuestImport(): void {
+    if (!this.owner) return;
+    const guestSolves = this.readLocal<Solve[]>(GUEST.solves, []);
+    const guestStatus = this.readLocal<Record<string, CaseStatus>>(GUEST.status, {});
+    const known = new Set(this._solves().map((s) => s.id));
+    const fresh = guestSolves.filter((s) => !known.has(s.id));
+    if (fresh.length) {
+      this._solves.update((l) => [...l, ...fresh]);
+      this.saveSolves();
+      for (const s of fresh) this.queue({ k: 'put', solve: s });
+    }
+    for (const [caseId, status] of Object.entries(guestStatus))
+      if (!(caseId in this._status())) this.setStatus(caseId, status);
+    localStorage.removeItem(GUEST.solves);
+    localStorage.removeItem(GUEST.status);
+    this.guestImport.set(null);
+  }
 
-  /**
-   * Talk to the API. A free Render service sleeps when idle and needs up to ~a minute to wake, so the
-   * first request gets a long timeout; meanwhile everything works from localStorage and is pushed later.
-   */
-  private async connect() {
+  /** Keep the guest data on this device and stop asking. */
+  dismissGuestImport(): void {
+    if (this.owner) localStorage.setItem(dismissKey(this.owner), '1');
+    this.guestImport.set(null);
+  }
+
+  // --------------------------------------------------------------- sync engine
+
+  /** Switch to another account's local copy (or back to the guest copy). */
+  private activate(userId: string | null): void {
+    if (userId === this.owner) return;
+    const previous = this.owner;
+    const hadPending = this.outbox.length > 0;
+    this.owner = userId;
+    clearTimeout(this.timer);
+    this.inflight = 0;
+
+    // Signing out on a shared device should not leave the account's data behind, unless it has changes not yet uploaded.
+    if (previous && !hadPending)
+      for (const k of Object.values(slotFor(previous))) localStorage.removeItem(k);
+
+    this.slot = userId ? slotFor(userId) : GUEST;
+    this._solves.set(this.readLocal<Solve[]>(this.slot.solves, []));
+    this._status.set(this.readLocal(this.slot.status, {}));
+    this.outbox = userId ? this.readLocal<Op[]>(this.slot.outbox, []) : [];
+    this.cursor = userId ? this.readLocal<number>(this.slot.cursor, 0) : 0;
+    this._pending.set(this.outbox.length);
+    this.lastAutoChange.set(null);
+
+    if (!userId) {
+      this.sync.set('guest');
+      this.guestImport.set(null);
+      return;
+    }
+    const guestCount = this.readLocal<Solve[]>(GUEST.solves, []).length;
+    const dismissed = localStorage.getItem(dismissKey(userId)) === '1';
+    this.guestImport.set(guestCount > 0 && !dismissed ? { count: guestCount } : null);
+    this.sync.set('syncing');
+    this.requestSync();
+  }
+
+  private queue(op: Op): void {
+    if (!this.owner) return; // guests have no server copy
+    const head = this.outbox.slice(0, this.inflight); // already being sent: leave untouched
+    this.outbox = [...head, ...enqueue(this.outbox.slice(this.inflight), op)];
+    this.saveOutbox();
+    this.requestSync(400);
+  }
+
+  /** Ask for a sync soon. Calls made while one is running are folded into one follow-up run. */
+  requestSync(delayMs = 0): void {
+    if (!this.owner) return;
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => void this.runSync(), delayMs);
+  }
+
+  private async runSync(): Promise<void> {
+    const owner = this.owner;
+    if (!owner) return;
+    if (this.syncing) {
+      this.again = true;
+      return;
+    }
+    this.syncing = true;
+    this.sync.set('syncing');
     try {
-      const res = await fetch(`${apiBase()}/solves`, {
-        headers: { accept: 'application/json' },
-        signal: AbortSignal.timeout(75000),
-      });
-      if (!res.ok) throw new Error(String(res.status));
-      const remote = (await res.json()) as Solve[];
-      const remoteIds = new Set(remote.map((r) => r.id));
-      const localOnly = this._solves().filter((s) => !remoteIds.has(s.id));
-      if (localOnly.length) {
-        await fetch(`${apiBase()}/solves/bulk`, {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify(localOnly),
-        });
+      await this.flush(owner);
+      await this.pull(owner);
+      if (this.owner === owner) this.sync.set('synced');
+    } catch (err) {
+      const status = err instanceof HttpErrorResponse ? err.status : 0;
+      if (this.owner === owner) this.sync.set(status === 0 ? 'offline' : 'error');
+      if (this.owner === owner) this.requestSync(30_000);
+    } finally {
+      this.syncing = false;
+      if (this.again) {
+        this.again = false;
+        this.requestSync(200);
       }
-      this._solves.set([...remote, ...localOnly]);
-      this.saveLocal();
-
-      const sres = await fetch(`${apiBase()}/cases/status`);
-      if (sres.ok) {
-        const remoteStatus = (await sres.json()) as Record<string, CaseStatus>;
-        this._status.set({ ...remoteStatus, ...this._status() });
-      }
-      this.backend.set('api');
-    } catch {
-      this.backend.set('local');
-      if (this.retries++ < 5) setTimeout(() => void this.connect(), 30000);
     }
   }
 
-  private async send(method: string, url: string, body?: unknown) {
-    if (this.backend() !== 'api') return;
-    try {
-      await fetch(url, {
-        method,
-        headers: body === undefined ? undefined : { 'content-type': 'application/json' },
-        body: body === undefined ? undefined : JSON.stringify(body),
-      });
-    } catch {
-      // The local copy is authoritative; the next start-up sync pushes anything missed.
+  /** Sends queued changes in order. Stops (keeping them) on a temporary failure; drops ones the server will never accept. */
+  private async flush(owner: string): Promise<void> {
+    while (this.owner === owner && this.outbox.length) {
+      const first = this.outbox[0];
+      let count = 1;
+      let request;
+      if (first.k === 'put') {
+        const puts: Solve[] = [];
+        while (
+          count <= this.outbox.length &&
+          puts.length < 500 &&
+          this.outbox[count - 1]?.k === 'put'
+        ) {
+          puts.push((this.outbox[count - 1] as Extract<Op, { k: 'put' }>).solve);
+          count++;
+        }
+        count -= 1;
+        request = this.api.putMany(puts);
+      } else if (first.k === 'patch') {
+        request = this.api.patch(first.id, { penalty: first.penalty, tags: first.tags });
+      } else if (first.k === 'del') {
+        request = this.api.remove(first.id);
+      } else if (first.k === 'clear') {
+        request = this.api.clear(first.mode);
+      } else {
+        request = this.api.setStatus(first.caseId, first.status);
+      }
+
+      this.inflight = count;
+      try {
+        await firstValueFrom(request);
+      } catch (err) {
+        const status = err instanceof HttpErrorResponse ? err.status : 0;
+        if (isRetryable(status)) {
+          this.inflight = 0;
+          throw err;
+        }
+        // 400/404/...: this change can never succeed (e.g. deleting something already gone); do not block the queue.
+      }
+      this.inflight = 0;
+      if (this.owner !== owner) return;
+      this.outbox = this.outbox.slice(count);
+      this.saveOutbox();
     }
   }
 
-  private saveLocal() {
-    localStorage.setItem(LS_SOLVES, JSON.stringify(this._solves()));
+  /** Pulls pages of server changes after our cursor and merges them, leaving rows with queued local changes alone. */
+  private async pull(owner: string): Promise<void> {
+    for (;;) {
+      const page = await firstValueFrom(this.api.changes(this.cursor));
+      if (this.owner !== owner) return;
+      const keys = pendingKeys(this.outbox);
+      if (page.solves.length && !keys.clearAll) {
+        this._solves.set(mergeRemoteSolves(this._solves(), page.solves, keys.solves));
+        this.saveSolves();
+      }
+      if (page.caseStatuses.length) {
+        this._status.set(mergeRemoteStatuses(this._status(), page.caseStatuses, keys.cases));
+        this.saveStatus();
+      }
+      this.cursor = page.cursor;
+      if (this.slot.cursor) localStorage.setItem(this.slot.cursor, String(this.cursor));
+      if (!page.hasMore) return;
+    }
+  }
+
+  // ------------------------------------------------------------------- storage
+
+  private saveSolves() {
+    this.write(this.slot.solves, this._solves());
+  }
+
+  private saveStatus() {
+    this.write(this.slot.status, this._status());
+  }
+
+  private saveOutbox() {
+    this._pending.set(this.outbox.length);
+    if (this.slot.outbox) this.write(this.slot.outbox, this.outbox);
+  }
+
+  private write(key: string, value: unknown) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      /* storage full or blocked: the in-memory copy still works for this session */
+    }
   }
 
   private readLocal<T>(key: string, fallback: T): T {

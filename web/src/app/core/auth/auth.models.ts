@@ -72,3 +72,39 @@ export const CUBE_METHODS: readonly { value: string; label: string }[] = [
   { value: 'beginner', label: 'Beginner (layer by layer)' },
   { value: 'other', label: 'Other' },
 ];
+
+export interface ProviderInfo {
+  id: string;
+  name: string;
+}
+
+export interface ExternalTicket {
+  provider: string;
+  email: string | null;
+  emailVerified: boolean;
+  name: string | null;
+}
+
+export interface CompleteExternalPayload {
+  ticket: string;
+  email?: string | null;
+  displayName: string;
+  handle: string;
+  country: string;
+  birthYear: number;
+  cubeMethod: string | null;
+  cubeModel: string | null;
+  cubingYears: number | null;
+  acceptTerms: boolean;
+}
+
+export interface LinkedIdentity {
+  provider: string;
+  email: string | null;
+  linkedAt: string;
+}
+
+export interface IdentitiesView {
+  hasPassword: boolean;
+  linked: LinkedIdentity[];
+}

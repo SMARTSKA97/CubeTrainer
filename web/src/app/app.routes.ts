@@ -62,6 +62,18 @@ export const routes: Routes = [
         loadComponent: () => import('@features/auth/register-page').then((m) => m.RegisterPage),
       },
       {
+        path: 'external/done',
+        title: title('Signing in'),
+        loadComponent: () =>
+          import('@features/auth/external-done-page').then((m) => m.ExternalDonePage),
+      },
+      {
+        path: 'external/complete',
+        title: title('Finish sign-up'),
+        loadComponent: () =>
+          import('@features/auth/external-complete-page').then((m) => m.ExternalCompletePage),
+      },
+      {
         path: 'verify-email',
         title: title('Confirm email'),
         loadComponent: () =>

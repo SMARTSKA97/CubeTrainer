@@ -21,6 +21,8 @@ public sealed class CubeDbContext(DbContextOptions<CubeDbContext> options) : DbC
 
     public DbSet<UserToken> UserTokens => Set<UserToken>();
 
+    public DbSet<ExternalLogin> ExternalLogins => Set<ExternalLogin>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ArgumentNullException.ThrowIfNull(modelBuilder);
@@ -28,8 +30,12 @@ public sealed class CubeDbContext(DbContextOptions<CubeDbContext> options) : DbC
         modelBuilder.Entity<Solve>(e =>
         {
             e.ToTable("solves");
-            e.HasKey(x => x.Id);
+            e.HasKey(x => new { x.UserId, x.Id });
+            e.Property(x => x.UserId).HasColumnName("user_id").ValueGeneratedNever();
             e.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
+            // Assigned by a database trigger on every write (see V3 migration); the app never sends it.
+            e.Property(x => x.Rev).HasColumnName("rev").ValueGeneratedOnAddOrUpdate();
+            e.Property(x => x.DeletedAt).HasColumnName("deleted_at");
             e.Property(x => x.AtMs).HasColumnName("at_ms");
             e.Property(x => x.TimeMs).HasColumnName("time_ms");
             e.Property(x => x.Penalty).HasColumnName("penalty");
@@ -47,8 +53,10 @@ public sealed class CubeDbContext(DbContextOptions<CubeDbContext> options) : DbC
         modelBuilder.Entity<CaseStatusEntry>(e =>
         {
             e.ToTable("case_status");
-            e.HasKey(x => x.CaseId);
-            e.Property(x => x.CaseId).HasColumnName("case_id");
+            e.HasKey(x => new { x.UserId, x.CaseId });
+            e.Property(x => x.UserId).HasColumnName("user_id").ValueGeneratedNever();
+            e.Property(x => x.CaseId).HasColumnName("case_id").ValueGeneratedNever();
+            e.Property(x => x.Rev).HasColumnName("rev").ValueGeneratedOnAddOrUpdate();
             e.Property(x => x.Status).HasColumnName("status");
         });
 
@@ -96,6 +104,18 @@ public sealed class CubeDbContext(DbContextOptions<CubeDbContext> options) : DbC
             e.Property(x => x.RevokedAt).HasColumnName("revoked_at");
             e.Property(x => x.UserAgent).HasColumnName("user_agent");
             e.Property(x => x.Ip).HasColumnName("ip");
+        });
+
+        modelBuilder.Entity<ExternalLogin>(e =>
+        {
+            e.ToTable("external_logins");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
+            e.Property(x => x.UserId).HasColumnName("user_id");
+            e.Property(x => x.Provider).HasColumnName("provider");
+            e.Property(x => x.Subject).HasColumnName("subject");
+            e.Property(x => x.Email).HasColumnName("email");
+            e.Property(x => x.CreatedAt).HasColumnName("created_at");
         });
 
         modelBuilder.Entity<UserToken>(e =>

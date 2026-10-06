@@ -14,7 +14,11 @@ public static class CaseStatuses
 /// <summary>Learning status of one algorithm case ("pll-04", "f2l-basic-12" ...).</summary>
 public sealed class CaseStatusEntry
 {
+    public Guid UserId { get; set; }
+
     public string CaseId { get; set; } = string.Empty;
+
+    public long Rev { get; set; }
 
     public string Status { get; set; } = CaseStatuses.Unlearned;
 }

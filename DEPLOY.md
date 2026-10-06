@@ -192,8 +192,38 @@ Set these on the Render service (Environment):
 
 The sign-in cookie is `HttpOnly`, so put web and API under one domain you own for the most reliable behaviour.
 
-**Still open:** solve endpoints are not user-scoped yet, so anyone who finds the API URL can read and delete the shared solve
-data. User-scoped storage and device sync arrive in Phase 3. Do not store anything private there until then.
+### Your solves belong to your account (Phase 3)
+
+* Every solve and case status now has an owner, and the solve, stats and summary endpoints require sign-in.
+* Migration `V3` **renames** the old shared tables to `legacy_solves` / `legacy_case_status` (nothing is deleted) and creates
+  per-user tables. The previous API release stops working the moment V3 is applied, so deploy the new API right after the
+  migration (the CI `deploy` job does both in order). Old rows are not shown in the app; export them first from the
+  History page (**Export JSON**) and **Import JSON** after signing in, or `DROP TABLE legacy_solves, legacy_case_status;` once you no longer need them.
+* Deletes are kept as tombstones so your other devices learn about them. A cleanup job can purge old tombstones later.
+
+## 8b. Social login (Google, Microsoft, GitHub, Facebook)
+
+Each button appears only after you configure that provider. Create an OAuth app with the provider, and use this redirect URL
+(replace the host with your public **API** URL, or the web URL if you proxy `/api` through it):
+
+`https://<api-host>/api/v1/auth/external/<provider>/callback` with `<provider>` = `google`, `microsoft`, `github` or `facebook`.
+
+Then set on Render:
+
+| Variable | Value |
+|---|---|
+| `ExternalAuth__Providers__google__ClientId` / `__ClientSecret` | from Google Cloud Console -> APIs & Services -> Credentials (OAuth client, type Web) |
+| `ExternalAuth__Providers__microsoft__ClientId` / `__ClientSecret` | Azure portal -> App registrations (supported accounts: personal + organisational) |
+| `ExternalAuth__Providers__github__ClientId` / `__ClientSecret` | GitHub -> Settings -> Developer settings -> OAuth Apps |
+| `ExternalAuth__Providers__facebook__ClientId` / `__ClientSecret` | Meta for Developers -> Facebook Login |
+| `ExternalAuth__CallbackBaseUrl` | the public API base URL, if it differs from what the API sees (behind a proxy) |
+
+How it behaves: a new person picks a username, country and birth year after the provider confirms who they are. An existing
+password account is linked automatically only when the provider has verified the same email; otherwise the person signs in
+and connects the provider in Settings. Accounts without a password delete themselves by typing their username.
+
+Data Protection keys (used for the short-lived sign-in state) live in memory, so a redeploy during a sign-in just asks the
+person to try again. No action needed.
 
 ## 9. Troubleshooting
 

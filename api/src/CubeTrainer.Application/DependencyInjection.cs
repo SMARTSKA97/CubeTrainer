@@ -1,9 +1,11 @@
 using CubeTrainer.Application.Auth;
+using CubeTrainer.Application.Auth.External;
 using CubeTrainer.Application.Auth.Identity;
 using CubeTrainer.Application.Cases;
 using CubeTrainer.Application.Solves;
 using CubeTrainer.Application.Stats;
 using CubeTrainer.Application.Summary;
+using CubeTrainer.Application.Sync;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,12 +20,14 @@ public static class DependencyInjection
         services.AddScoped<StatsService>();
         services.AddScoped<CaseStatusService>();
         services.AddScoped<SummaryService>();
+        services.AddScoped<SyncService>();
 
         var auth = config.GetSection(AuthOptions.Section).Get<AuthOptions>() ?? new AuthOptions();
         services.Configure<AuthOptions>(config.GetSection(AuthOptions.Section));
         services.Configure<WebOptions>(config.GetSection(WebOptions.Section));
         services.AddCubeTrainerIdentity(auth);
         services.AddScoped<AuthService>();
+        services.AddScoped<ExternalAuthService>();
         return services;
     }
 }

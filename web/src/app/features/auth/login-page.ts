@@ -1,17 +1,18 @@
-import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { AuthApi } from '@core/auth/auth-api';
 import { AuthStore } from '@core/auth/auth-store';
-import { toProblem } from '@core/auth/auth-utils';
+import { externalErrorMessage, toProblem } from '@core/auth/auth-utils';
 import { PasswordField } from '@shared/password-field';
 import { AuthCard } from './auth-card';
+import { SocialButtons } from './social-buttons';
 import { safeReturnUrl } from './safe-redirect';
 
 @Component({
   selector: 'app-login-page',
-  imports: [ReactiveFormsModule, RouterLink, AuthCard, PasswordField],
+  imports: [ReactiveFormsModule, RouterLink, AuthCard, PasswordField, SocialButtons],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './auth-form.css',
   template: `
@@ -19,8 +20,9 @@ import { safeReturnUrl } from './safe-redirect';
       title="Sign in"
       subtitle="Welcome back. Your solves stay on this device until you sign in on another one."
     >
+      <app-social-buttons [returnUrl]="safeReturn()" />
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-        @if (error(); as e) {
+        @if (shownError(); as e) {
           <p class="banner error" role="alert">{{ e }}</p>
         }
         @if (notVerified()) {
@@ -63,22 +65,28 @@ export class LoginPage {
 
   /** Bound from the ?returnUrl= query parameter. */
   readonly returnUrl = input<string>();
+  /** Bound from ?error=<code> after a failed social sign-in. */
+  readonly error = input<string>();
+  protected readonly safeReturn = computed(() => safeReturnUrl(this.returnUrl()));
 
   protected readonly form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
   });
   protected readonly busy = signal(false);
-  protected readonly error = signal<string | null>(null);
+  protected readonly failure = signal<string | null>(null);
+  protected readonly shownError = computed(
+    () => this.failure() ?? externalErrorMessage(this.error()),
+  );
   protected readonly notVerified = signal(false);
   protected readonly resent = signal(false);
 
   protected async submit(): Promise<void> {
-    this.error.set(null);
+    this.failure.set(null);
     this.notVerified.set(false);
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      this.error.set('Enter your email and password.');
+      this.failure.set('Enter your email and password.');
       return;
     }
     this.busy.set(true);
@@ -89,7 +97,7 @@ export class LoginPage {
     } catch (err) {
       const p = toProblem(err);
       this.notVerified.set(p.code === 'email_not_verified');
-      this.error.set(p.message);
+      this.failure.set(p.message);
     } finally {
       this.busy.set(false);
     }
@@ -101,7 +109,7 @@ export class LoginPage {
       await firstValueFrom(this.api.resendVerification(this.form.controls.email.value.trim()));
       this.resent.set(true);
     } catch (err) {
-      this.error.set(toProblem(err).message);
+      this.failure.set(toProblem(err).message);
     } finally {
       this.busy.set(false);
     }

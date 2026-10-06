@@ -316,11 +316,20 @@ public sealed class AuthService(
         return saved.Succeeded ? Result<UserProfile>.Ok(UserProfile.From(user)) : Result<UserProfile>.Fail(ErrorKind.Conflict, "update_failed", "Could not save your changes.");
     }
 
-    public async Task<Result<Unit>> DeleteAccountAsync(Guid userId, string? password, CancellationToken ct)
+    /// <param name="password">Required for accounts that have a password.</param>
+    /// <param name="confirmHandle">Accounts that only use social login confirm by typing their username instead.</param>
+    public async Task<Result<Unit>> DeleteAccountAsync(Guid userId, string? password, string? confirmHandle, CancellationToken ct)
     {
         var user = await userRepo.FindByIdAsync(userId, ct);
         if (user is null) return NoUser();
-        if (string.IsNullOrEmpty(password) || user.PasswordHash is null || !await users.CheckPasswordAsync(user, password))
+        if (user.PasswordHash is null)
+        {
+            if (!string.Equals(confirmHandle?.Trim(), user.Handle, StringComparison.OrdinalIgnoreCase))
+            {
+                return Result<Unit>.Fail(ErrorKind.Validation, "wrong_confirmation", "Type your username to confirm.");
+            }
+        }
+        else if (string.IsNullOrEmpty(password) || !await users.CheckPasswordAsync(user, password))
         {
             return Result<Unit>.Fail(ErrorKind.Validation, "wrong_password", "Your password is incorrect.");
         }
@@ -350,6 +359,16 @@ public sealed class AuthService(
     }
 
     // ------------------------------------------------------------------ helpers
+
+    /// <summary>Starts a brand-new sign-in for a user whose identity was already proven (used by social login).</summary>
+    internal Task<AuthSession> StartSignInAsync(AppUser user, ClientInfo client, CancellationToken ct) =>
+        StartSessionAsync(user, familyId: null, familyExpiresAt: null, client, ct);
+
+    internal async Task SendVerificationEmailAsync(AppUser user, CancellationToken ct)
+    {
+        var token = await NewEmailTokenAsync(user, UserTokenPurposes.VerifyEmail, TimeSpan.FromHours(_auth.VerifyEmailHours), ct);
+        await mailQueue.EnqueueAsync(AuthEmails.VerifyEmail(user.Email, user.DisplayName, Link("verify-email", token), _auth.VerifyEmailHours), ct);
+    }
 
     private async Task<AuthSession> StartSessionAsync(AppUser user, Guid? familyId, DateTimeOffset? familyExpiresAt, ClientInfo client, CancellationToken ct)
     {

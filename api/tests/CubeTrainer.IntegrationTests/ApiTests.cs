@@ -9,12 +9,16 @@ namespace CubeTrainer.IntegrationTests;
 /// End-to-end through the real HTTP pipeline. Uses the in-memory store, or Postgres when DATABASE_URL is set
 /// (CI sets it to a Flyway-migrated service container, so the same tests then cover the SQL mapping).
 /// </summary>
-public sealed class ApiTests : IClassFixture<WebApplicationFactory<Program>>
+public sealed class ApiTests : IClassFixture<WebApplicationFactory<Program>>, IAsyncLifetime
 {
-    private readonly HttpClient _http;
+    private readonly ApiHost _host;
+    private HttpClient _http = null!;
 
-    public ApiTests(WebApplicationFactory<Program> factory) =>
-        _http = factory.WithWebHostBuilder(b => b.UseSetting("environment", "Development")).CreateClient();
+    public ApiTests(WebApplicationFactory<Program> factory) => _host = new ApiHost(factory);
+
+    public async Task InitializeAsync() => _http = await _host.SignedInAsync();
+
+    public Task DisposeAsync() => Task.CompletedTask;
 
     private static object NewSolve(Guid id, int timeMs = 12345, string penalty = "none") =>
         new { id, at = 1_700_000_000_000L, timeMs, penalty, scramble = "R U R' U'", mode = "random" };
@@ -26,6 +30,63 @@ public sealed class ApiTests : IClassFixture<WebApplicationFactory<Program>>
         Assert.Equal(HttpStatusCode.OK, res.StatusCode);
         Assert.Equal("nosniff", res.Headers.GetValues("X-Content-Type-Options").Single());
         Assert.Equal("DENY", res.Headers.GetValues("X-Frame-Options").Single());
+    }
+
+    [Fact]
+    public async Task Solve_and_stats_endpoints_require_sign_in()
+    {
+        var anon = _host.Anonymous();
+        foreach (var path in new[] { "/api/v1/solves", "/api/v1/stats", "/api/v1/summary", "/api/v1/cases/status", "/api/v1/sync/changes" })
+            Assert.Equal(HttpStatusCode.Unauthorized, (await anon.GetAsync(path)).StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await anon.PostAsJsonAsync("/api/v1/solves", NewSolve(Guid.NewGuid()))).StatusCode);
+    }
+
+    [Fact]
+    public async Task One_users_solves_are_invisible_and_untouchable_to_another()
+    {
+        var other = await _host.SignedInAsync();
+        var id = Guid.NewGuid();
+        Assert.Equal(HttpStatusCode.OK, (await _http.PostAsJsonAsync("/api/v1/solves", NewSolve(id))).StatusCode);
+
+        var theirs = await other.GetFromJsonAsync<JsonElement>("/api/v1/solves");
+        Assert.Equal(0, theirs.GetArrayLength());
+        Assert.Equal(HttpStatusCode.NotFound, (await other.DeleteAsync($"/api/v1/solves/{id}")).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await other.PatchAsJsonAsync($"/api/v1/solves/{id}", new { penalty = "dnf" })).StatusCode);
+
+        // Uploading the same id as someone else creates the caller's own row; it does not overwrite the original.
+        Assert.Equal(HttpStatusCode.OK, (await other.PostAsJsonAsync("/api/v1/solves", NewSolve(id, timeMs: 99999))).StatusCode);
+        var mine = await _http.GetFromJsonAsync<JsonElement>("/api/v1/solves");
+        Assert.Equal(12345, mine.EnumerateArray().Single(e => e.GetProperty("id").GetGuid() == id).GetProperty("timeMs").GetInt32());
+    }
+
+    [Fact]
+    public async Task Sync_delivers_edits_deletes_and_case_status_after_a_cursor()
+    {
+        var keep = Guid.NewGuid();
+        var drop = Guid.NewGuid();
+        await _http.PostAsJsonAsync("/api/v1/solves/bulk", new[] { NewSolve(keep), NewSolve(drop) });
+        await _http.PutAsJsonAsync("/api/v1/cases/IT-9/status", new { status = "finished" });
+
+        var first = await _http.GetFromJsonAsync<JsonElement>("/api/v1/sync/changes?since=0");
+        Assert.Equal(2, first.GetProperty("solves").GetArrayLength());
+        Assert.Equal("finished", first.GetProperty("caseStatuses")[0].GetProperty("status").GetString());
+        var cursor = first.GetProperty("cursor").GetInt64();
+
+        await _http.PatchAsJsonAsync($"/api/v1/solves/{keep}", new { penalty = "dnf" });
+        await _http.DeleteAsync($"/api/v1/solves/{drop}");
+
+        var next = await _http.GetFromJsonAsync<JsonElement>($"/api/v1/sync/changes?since={cursor}");
+        var changed = next.GetProperty("solves").EnumerateArray().ToDictionary(e => e.GetProperty("id").GetGuid());
+        Assert.Equal("dnf", changed[keep].GetProperty("penalty").GetString());
+        Assert.False(changed[keep].GetProperty("deleted").GetBoolean());
+        Assert.True(changed[drop].GetProperty("deleted").GetBoolean());
+        Assert.Equal(0, next.GetProperty("caseStatuses").GetArrayLength());
+        Assert.True(next.GetProperty("cursor").GetInt64() > cursor);
+
+        // A stale device re-uploading the deleted solve must not resurrect it.
+        await _http.PostAsJsonAsync("/api/v1/solves", NewSolve(drop));
+        var live = await _http.GetFromJsonAsync<JsonElement>("/api/v1/solves");
+        Assert.DoesNotContain(live.EnumerateArray(), e => e.GetProperty("id").GetGuid() == drop);
     }
 
     [Fact]

@@ -3,7 +3,16 @@ namespace CubeTrainer.Domain.Solves;
 /// <summary>One timed attempt, either on a random scramble or on a trained case.</summary>
 public sealed class Solve
 {
+    /// <summary>Owner. Every row belongs to exactly one account.</summary>
+    public Guid UserId { get; set; }
+
     public Guid Id { get; set; }
+
+    /// <summary>Change number assigned by the database on every write; clients sync by it.</summary>
+    public long Rev { get; set; }
+
+    /// <summary>Set when the solve was deleted. The row stays as a tombstone so other devices learn about the delete.</summary>
+    public DateTimeOffset? DeletedAt { get; set; }
 
     /// <summary>Epoch milliseconds when the solve finished.</summary>
     public long AtMs { get; set; }
@@ -42,7 +51,10 @@ public sealed class Solve
 
     public Solve Copy() => new()
     {
+        UserId = UserId,
         Id = Id,
+        Rev = Rev,
+        DeletedAt = DeletedAt,
         AtMs = AtMs,
         TimeMs = TimeMs,
         Penalty = Penalty,

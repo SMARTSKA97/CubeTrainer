@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -26,11 +26,18 @@ import { PasswordField } from '@shared/password-field';
           @if (error(); as e) {
             <p class="banner error" role="alert">{{ e }}</p>
           }
-          <app-password-field
-            [control]="form.controls.password"
-            label="Confirm with your password"
-            autocomplete="current-password"
-          />
+          @if (hasPassword()) {
+            <app-password-field
+              [control]="form.controls.password"
+              label="Confirm with your password"
+              autocomplete="current-password"
+            />
+          } @else {
+            <label class="field">
+              Type your username ({{ handle() }}) to confirm
+              <input type="text" formControlName="password" autocomplete="off" spellcheck="false" />
+            </label>
+          }
           <div class="row">
             <button class="btn danger" type="submit" [disabled]="busy()">Delete permanently</button>
             <button class="btn" type="button" (click)="open.set(false)">Cancel</button>
@@ -49,13 +56,25 @@ export class DangerSection {
   protected readonly busy = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly form = this.fb.group({ password: ['', Validators.required] });
+  /** Accounts that only use social login confirm with their username instead of a password. */
+  protected readonly hasPassword = signal(true);
+  protected readonly handle = computed(() => this.auth.user()?.handle ?? '');
+
+  constructor() {
+    void firstValueFrom(this.api.identities())
+      .then((v) => this.hasPassword.set(v.hasPassword))
+      .catch(() => undefined);
+  }
 
   protected async remove(): Promise<void> {
     if (this.form.invalid) return;
     this.busy.set(true);
     this.error.set(null);
     try {
-      await firstValueFrom(this.api.deleteAccount(this.form.controls.password.value));
+      const typed = this.form.controls.password.value;
+      await firstValueFrom(
+        this.hasPassword() ? this.api.deleteAccount(typed) : this.api.deleteAccount(null, typed),
+      );
       this.auth.expire();
       await this.router.navigateByUrl('/today');
     } catch (err) {

@@ -109,3 +109,30 @@ public sealed class PostgresUserTokenRepository(CubeDbContext db) : IUserTokenRe
     public async Task InvalidateAsync(Guid userId, string purpose, DateTimeOffset now, CancellationToken ct) =>
         await db.UserTokens.Where(t => t.UserId == userId && t.Purpose == purpose && t.UsedAt == null).ExecuteUpdateAsync(s => s.SetProperty(t => t.UsedAt, now), ct);
 }
+
+public sealed class PostgresExternalLoginRepository(CubeDbContext db) : IExternalLoginRepository
+{
+    public Task<ExternalLogin?> FindAsync(string provider, string subject, CancellationToken ct) =>
+        db.ExternalLogins.AsNoTracking().FirstOrDefaultAsync(l => l.Provider == provider && l.Subject == subject, ct);
+
+    public async Task<IReadOnlyList<ExternalLogin>> ListForUserAsync(Guid userId, CancellationToken ct) =>
+        await db.ExternalLogins.AsNoTracking().Where(l => l.UserId == userId).OrderBy(l => l.CreatedAt).ToListAsync(ct);
+
+    public async Task<bool> TryAddAsync(ExternalLogin login, CancellationToken ct)
+    {
+        db.ExternalLogins.Add(login);
+        try
+        {
+            await db.SaveChangesAsync(ct);
+            return true;
+        }
+        catch (DbUpdateException)
+        {
+            db.ChangeTracker.Clear(); // unique (provider, subject) or (user, provider) already taken
+            return false;
+        }
+    }
+
+    public async Task<bool> DeleteAsync(Guid userId, string provider, CancellationToken ct) =>
+        await db.ExternalLogins.Where(l => l.UserId == userId && l.Provider == provider).ExecuteDeleteAsync(ct) > 0;
+}

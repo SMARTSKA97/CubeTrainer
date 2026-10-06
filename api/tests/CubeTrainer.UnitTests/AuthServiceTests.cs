@@ -248,8 +248,8 @@ public class AuthServiceTests
     {
         var f = new AuthFixture();
         var s = await f.RegisteredAndSignedInAsync();
-        Assert.Equal("wrong_password", (await f.Auth.DeleteAccountAsync(s.User.Id, "nope nope nope", default)).Error!.Code);
-        Assert.True((await f.Auth.DeleteAccountAsync(s.User.Id, AuthFixture.Password, default)).IsSuccess);
+        Assert.Equal("wrong_password", (await f.Auth.DeleteAccountAsync(s.User.Id, "nope nope nope", null, default)).Error!.Code);
+        Assert.True((await f.Auth.DeleteAccountAsync(s.User.Id, AuthFixture.Password, null, default)).IsSuccess);
         Assert.Equal("user_not_found", (await f.Auth.GetProfileAsync(s.User.Id, default)).Error!.Code);
         Assert.False((await f.Auth.LoginAsync("sub@example.com", AuthFixture.Password, AuthFixture.Client(), default)).IsSuccess);
         Assert.True((await f.Auth.HandleAvailableAsync("cuber_sub", default)).Value);

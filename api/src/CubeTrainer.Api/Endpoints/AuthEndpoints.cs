@@ -19,7 +19,7 @@ internal static class AuthEndpoints
 
     public sealed record ChangePasswordBody(string? CurrentPassword, string? NewPassword);
 
-    public sealed record PasswordBody(string? Password);
+    public sealed record PasswordBody(string? Password, string? ConfirmHandle = null);
 
     public static void MapAuthEndpoints(this RouteGroupBuilder api)
     {
@@ -85,7 +85,7 @@ internal static class AuthEndpoints
             (await auth.ChangePasswordAsync(ctx.User.UserId()!.Value, body.CurrentPassword, body.NewPassword, ctx.User.SessionId() ?? Guid.Empty, ct)).ToHttp(_ => Results.NoContent()));
     }
 
-    private static IResult SessionResponse(HttpContext ctx, AuthSession s)
+    internal static IResult SessionResponse(HttpContext ctx, AuthSession s)
     {
         ctx.Response.Headers.CacheControl = "no-store";
         if (ctx.IsNative())

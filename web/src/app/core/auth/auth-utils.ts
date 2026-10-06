@@ -94,3 +94,20 @@ export function regionFromLocale(locale: string | undefined): string | null {
   const m = /^[a-z]{2,3}[-_]([A-Za-z]{2})\b/.exec(locale ?? '');
   return m ? m[1].toUpperCase() : null;
 }
+
+/** Messages for the ?error= / ?linkError= codes the social-login redirects carry. */
+const EXTERNAL_ERRORS: Record<string, string> = {
+  external_denied: 'Sign-in was cancelled.',
+  external_failed: 'The provider did not complete the sign-in. Please try again.',
+  state_mismatch: 'That sign-in attempt expired. Please try again.',
+  link_expired: 'That request expired. Please try again.',
+  email_in_use:
+    'An account with this email already exists. Sign in with your password, then connect the provider in Settings.',
+  identity_in_use: 'That account is already connected to a different CubeTrainer account.',
+  email_not_verified: 'Confirm your email address first.',
+};
+
+export function externalErrorMessage(code: string | null | undefined): string | null {
+  if (!code) return null;
+  return EXTERNAL_ERRORS[code] ?? 'Sign-in failed. Please try again.';
+}
