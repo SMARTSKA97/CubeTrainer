@@ -63,3 +63,16 @@ public interface IExternalLoginRepository
 
     Task<bool> DeleteAsync(Guid userId, string provider, CancellationToken ct);
 }
+
+public interface IRecoveryCodeRepository
+{
+    /// <summary>Replaces every code of the user with this new set (old ones stop working).</summary>
+    Task ReplaceAllAsync(Guid userId, IReadOnlyList<string> codeHashes, DateTimeOffset now, CancellationToken ct);
+
+    /// <summary>Atomically spends a code. False when it is unknown or already used.</summary>
+    Task<bool> TryUseAsync(Guid userId, string codeHash, DateTimeOffset now, CancellationToken ct);
+
+    Task<int> CountUnusedAsync(Guid userId, CancellationToken ct);
+
+    Task DeleteAllAsync(Guid userId, CancellationToken ct);
+}

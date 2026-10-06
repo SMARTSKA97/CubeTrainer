@@ -108,3 +108,23 @@ export interface IdentitiesView {
   hasPassword: boolean;
   linked: LinkedIdentity[];
 }
+
+/** The password step passed but the account has two-step verification on: answer with a code. */
+export interface TwoFactorRequired {
+  twoFactorRequired: true;
+  challenge: string;
+}
+
+export interface TwoFactorStatus {
+  enabled: boolean;
+  recoveryCodesLeft: number;
+}
+
+export interface TwoFactorSetup {
+  secret: string;
+  otpAuthUri: string;
+}
+
+export interface RecoveryCodeSet {
+  codes: string[];
+}

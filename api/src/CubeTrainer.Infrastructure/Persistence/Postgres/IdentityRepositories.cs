@@ -136,3 +136,23 @@ public sealed class PostgresExternalLoginRepository(CubeDbContext db) : IExterna
     public async Task<bool> DeleteAsync(Guid userId, string provider, CancellationToken ct) =>
         await db.ExternalLogins.Where(l => l.UserId == userId && l.Provider == provider).ExecuteDeleteAsync(ct) > 0;
 }
+
+public sealed class PostgresRecoveryCodeRepository(CubeDbContext db) : IRecoveryCodeRepository
+{
+    public async Task ReplaceAllAsync(Guid userId, IReadOnlyList<string> codeHashes, DateTimeOffset now, CancellationToken ct)
+    {
+        await db.RecoveryCodes.Where(c => c.UserId == userId).ExecuteDeleteAsync(ct);
+        foreach (var hash in codeHashes) db.RecoveryCodes.Add(new RecoveryCode { Id = Guid.CreateVersion7(), UserId = userId, CodeHash = hash, CreatedAt = now });
+        await db.SaveChangesAsync(ct);
+    }
+
+    public async Task<bool> TryUseAsync(Guid userId, string codeHash, DateTimeOffset now, CancellationToken ct) =>
+        await db.RecoveryCodes.Where(c => c.UserId == userId && c.CodeHash == codeHash && c.UsedAt == null)
+            .ExecuteUpdateAsync(u => u.SetProperty(c => c.UsedAt, (DateTimeOffset?)now), ct) > 0;
+
+    public async Task<int> CountUnusedAsync(Guid userId, CancellationToken ct) =>
+        await db.RecoveryCodes.CountAsync(c => c.UserId == userId && c.UsedAt == null, ct);
+
+    public async Task DeleteAllAsync(Guid userId, CancellationToken ct) =>
+        await db.RecoveryCodes.Where(c => c.UserId == userId).ExecuteDeleteAsync(ct);
+}

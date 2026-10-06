@@ -186,6 +186,7 @@ Set these on the Render service (Environment):
 | Variable | Value |
 |---|---|
 | `Jwt__SigningKey` | a random 64+ character secret (`openssl rand -base64 64`). The API refuses to start without it. |
+| `Totp__EncryptionKey` | exactly 32 random bytes, base64 (`openssl rand -base64 32`). Encrypts authenticator secrets; the API refuses to start without it. **Keep it safe and never change it casually**: if it is lost or replaced, everyone's authenticator secret becomes unreadable and users with 2FA on can only get in with a recovery code. |
 | `Email__Provider` | `Brevo` (the `Log` provider is rejected in Production) |
 | `Email__BrevoApiKey` | Brevo API key (Brevo -> SMTP & API -> API keys) |
 | `Email__FromAddress` / `Email__FromName` | a sender on **your** domain, authenticated in Brevo (SPF + DKIM + DMARC), or mail lands in spam |

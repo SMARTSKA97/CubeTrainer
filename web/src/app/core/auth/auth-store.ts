@@ -51,8 +51,16 @@ export class AuthStore {
     return this.accessToken;
   }
 
-  async login(email: string, password: string): Promise<void> {
-    this.accept(await firstValueFrom(this.api.login(email, password)));
+  /** Resolves with a challenge when the account needs a second step, otherwise signs in and resolves with null. */
+  async login(email: string, password: string): Promise<string | null> {
+    const res = await firstValueFrom(this.api.login(email, password));
+    if ('twoFactorRequired' in res) return res.challenge;
+    this.accept(res);
+    return null;
+  }
+
+  async completeTwoFactor(challenge: string, code: string): Promise<void> {
+    this.accept(await firstValueFrom(this.api.loginTwoFactor(challenge, code)));
   }
 
   /** Exchanges the refresh cookie for a new access token. Concurrent callers share one request. */

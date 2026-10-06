@@ -3,6 +3,7 @@ using CubeTrainer.Application;
 using CubeTrainer.Application.Abstractions;
 using CubeTrainer.Application.Auth;
 using CubeTrainer.Application.Auth.External;
+using CubeTrainer.Application.Auth.TwoFactor;
 using CubeTrainer.Domain.Users;
 using CubeTrainer.Infrastructure.Persistence.InMemory;
 using Microsoft.Extensions.Configuration;
@@ -58,6 +59,30 @@ internal sealed class FakeTicketProtector(TimeProvider clock) : IExternalTicketP
         _issued.TryGetValue(ticket, out var e) && e.Expires > clock.GetUtcNow() ? e.Profile : null;
 }
 
+/// <summary>Reversible stand-in for AES-GCM (tests only).</summary>
+internal sealed class FakeSecretProtector : ITotpSecretProtector
+{
+    public string Protect(byte[] secret) => "enc:" + Convert.ToBase64String(secret);
+
+    public byte[]? Unprotect(string stored) => stored.StartsWith("enc:", StringComparison.Ordinal) ? Convert.FromBase64String(stored[4..]) : null;
+}
+
+/// <summary>Expiring challenge (tests only).</summary>
+internal sealed class FakeChallenge(TimeProvider clock) : ITwoFactorChallenge
+{
+    private readonly Dictionary<string, (Guid User, DateTimeOffset Expires)> _issued = [];
+
+    public string Issue(Guid userId, TimeSpan lifetime)
+    {
+        var c = Guid.NewGuid().ToString("N");
+        _issued[c] = (userId, clock.GetUtcNow().Add(lifetime));
+        return c;
+    }
+
+    public Guid? Read(string challenge) =>
+        _issued.TryGetValue(challenge, out var e) && e.Expires > clock.GetUtcNow() ? e.User : null;
+}
+
 /// <summary>The real AuthService wired to in-memory repositories, a fake clock and a capturing mailbox.</summary>
 internal sealed class AuthFixture
 {
@@ -75,11 +100,16 @@ internal sealed class AuthFixture
         services.AddSingleton<IUserTokenRepository, InMemoryUserTokenRepository>();
         services.AddSingleton<IExternalLoginRepository, InMemoryExternalLoginRepository>();
         services.AddSingleton<IExternalTicketProtector, FakeTicketProtector>();
+        services.AddSingleton<IRecoveryCodeRepository, InMemoryRecoveryCodeRepository>();
+        services.AddSingleton<ITotpSecretProtector, FakeSecretProtector>();
+        services.AddSingleton<ITwoFactorChallenge, FakeChallenge>();
         services.AddSingleton<IAccessTokenIssuer, FakeAccessTokenIssuer>();
         services.AddSingleton<IEmailQueue>(Mail);
         Provider = services.BuildServiceProvider();
         Auth = Provider.GetRequiredService<AuthService>();
         External = Provider.GetRequiredService<ExternalAuthService>();
+        TwoFactor = Provider.GetRequiredService<TwoFactorService>();
+        Users = Provider.GetRequiredService<IUserRepository>();
     }
 
     public TestClock Clock { get; } = new();
@@ -91,6 +121,10 @@ internal sealed class AuthFixture
     public AuthService Auth { get; }
 
     public ExternalAuthService External { get; }
+
+    public TwoFactorService TwoFactor { get; }
+
+    public IUserRepository Users { get; }
 
     public static ClientInfo Client(string agent = "test-agent") => new("203.0.113.9", agent);
 
@@ -108,3 +142,4 @@ internal sealed class AuthFixture
         return session.Value!;
     }
 }
+

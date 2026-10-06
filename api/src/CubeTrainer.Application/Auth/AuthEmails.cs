@@ -33,6 +33,15 @@ public static class AuthEmails
         null, null,
         "If this was not you, reset your password immediately and contact support.");
 
+    public static EmailMessage TwoFactorChanged(string to, string name, bool enabled) => Build(
+        to, name, enabled ? "Two-step verification is on for CubeTrainer" : "Two-step verification was turned off",
+        enabled ? "Two-step verification is on" : "Two-step verification was turned off",
+        enabled
+            ? "Signing in to your CubeTrainer account now needs a code from your authenticator app."
+            : "Your CubeTrainer account no longer asks for an authenticator code when you sign in.",
+        null, null,
+        "If this was not you, reset your password immediately and sign in to review your account.");
+
     private static EmailMessage Build(string to, string name, string subject, string heading, string body, string? button, string? link, string footer)
     {
         var h = WebUtility.HtmlEncode(heading);

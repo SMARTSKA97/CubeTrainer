@@ -3,6 +3,7 @@ using CubeTrainer.Application.Auth;
 using CubeTrainer.Domain.Users;
 using Microsoft.Extensions.Logging;
 using CubeTrainer.Application.Auth.External;
+using CubeTrainer.Application.Auth.TwoFactor;
 using CubeTrainer.Infrastructure.Email;
 using CubeTrainer.Infrastructure.External;
 using CubeTrainer.Infrastructure.Identity;
@@ -38,6 +39,7 @@ public static class DependencyInjection
             services.AddScoped<IRefreshTokenRepository, PostgresRefreshTokenRepository>();
             services.AddScoped<IUserTokenRepository, PostgresUserTokenRepository>();
             services.AddScoped<IExternalLoginRepository, PostgresExternalLoginRepository>();
+            services.AddScoped<IRecoveryCodeRepository, PostgresRecoveryCodeRepository>();
             services.AddHealthChecks().AddCheck<DatabaseHealthCheck>("database", tags: ["ready"]);
             return services;
         }
@@ -56,6 +58,7 @@ public static class DependencyInjection
         services.AddSingleton<IRefreshTokenRepository, InMemoryRefreshTokenRepository>();
         services.AddSingleton<IUserTokenRepository, InMemoryUserTokenRepository>();
         services.AddSingleton<IExternalLoginRepository, InMemoryExternalLoginRepository>();
+        services.AddSingleton<IRecoveryCodeRepository, InMemoryRecoveryCodeRepository>();
         return services;
     }
 
@@ -69,6 +72,16 @@ public static class DependencyInjection
             o => o.SigningKey.Length >= JwtKeys.MinKeyLength,
             $"Jwt:SigningKey must be set to a random secret of at least {JwtKeys.MinKeyLength} characters (environment variable Jwt__SigningKey).").ValidateOnStart();
         services.AddSingleton<IAccessTokenIssuer, JwtAccessTokenIssuer>();
+
+        // ---- Two-step verification: authenticator secrets are encrypted with a key from configuration (Totp__EncryptionKey).
+        services.AddOptions<TotpOptions>().Bind(config.GetSection(TotpOptions.Section)).PostConfigure(o =>
+        {
+            if (string.IsNullOrWhiteSpace(o.EncryptionKey) && env.IsDevelopment()) o.EncryptionKey = Convert.ToBase64String(System.Security.Cryptography.SHA256.HashData("cubetrainer-development-only-totp-key"u8));
+        }).Validate(
+            o => TotpOptions.IsValidKey(o.EncryptionKey),
+            "Totp:EncryptionKey must be 32 random bytes, base64 encoded (generate with: openssl rand -base64 32; environment variable Totp__EncryptionKey).").ValidateOnStart();
+        services.AddSingleton<ITotpSecretProtector, AesGcmTotpSecretProtector>();
+        services.AddSingleton<ITwoFactorChallenge, TwoFactorChallenge>();
 
         // ---- Social login: providers switch on when ExternalAuth:Providers:<id>:ClientId/ClientSecret are set.
         services.Configure<ExternalAuthOptions>(config.GetSection(ExternalAuthOptions.Section));

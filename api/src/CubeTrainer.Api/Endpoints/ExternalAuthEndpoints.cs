@@ -88,6 +88,8 @@ internal static class ExternalAuthEndpoints
                 case ExternalSignedIn signedIn:
                     ctx.SetRefreshCookie(signedIn.Session.RefreshToken, signedIn.Session.RefreshExpiresAt);
                     return ToWeb(web.Value, "/auth/external/done", ("returnUrl", saved.ReturnUrl));
+                case ExternalTwoFactorRequired twoFactor:
+                    return ToWeb(web.Value, "/auth/two-factor", ("challenge", twoFactor.Challenge), ("returnUrl", saved.ReturnUrl));
                 case ExternalLinked linked:
                     return ToWeb(web.Value, "/settings", ("linked", linked.Provider));
                 case ExternalNeedsProfile needs:

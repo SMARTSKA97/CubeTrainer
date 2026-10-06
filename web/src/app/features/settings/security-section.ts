@@ -69,14 +69,6 @@ import { PasswordField } from '@shared/password-field';
         <button class="btn" type="button" (click)="everywhere()">Sign out everywhere</button>
       </p>
     </section>
-
-    <section class="card">
-      <h2>Two-step verification</h2>
-      <p class="muted">
-        Authenticator-app codes are coming next. Linked accounts (Google, Microsoft, GitHub) arrive
-        after that.
-      </p>
-    </section>
   `,
 })
 export class SecuritySection {

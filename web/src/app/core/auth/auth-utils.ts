@@ -111,3 +111,14 @@ export function externalErrorMessage(code: string | null | undefined): string | 
   if (!code) return null;
   return EXTERNAL_ERRORS[code] ?? 'Sign-in failed. Please try again.';
 }
+
+/** Plain-text version of the recovery codes for the "download" button. */
+export function recoveryCodesText(codes: readonly string[], account: string): string {
+  return [
+    `CubeTrainer recovery codes for ${account}`,
+    'Each code works once. Keep them somewhere safe.',
+    '',
+    ...codes,
+    '',
+  ].join('\n');
+}

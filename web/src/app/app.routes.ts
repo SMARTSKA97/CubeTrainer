@@ -62,6 +62,11 @@ export const routes: Routes = [
         loadComponent: () => import('@features/auth/register-page').then((m) => m.RegisterPage),
       },
       {
+        path: 'two-factor',
+        title: title('Two-step verification'),
+        loadComponent: () => import('@features/auth/two-factor-page').then((m) => m.TwoFactorPage),
+      },
+      {
         path: 'external/done',
         title: title('Signing in'),
         loadComponent: () =>

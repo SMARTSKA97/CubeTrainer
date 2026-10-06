@@ -1,5 +1,6 @@
 using CubeTrainer.Application.Auth;
 using CubeTrainer.Application.Auth.External;
+using CubeTrainer.Application.Auth.TwoFactor;
 using CubeTrainer.Application.Auth.Identity;
 using CubeTrainer.Application.Cases;
 using CubeTrainer.Application.Solves;
@@ -28,6 +29,7 @@ public static class DependencyInjection
         services.AddCubeTrainerIdentity(auth);
         services.AddScoped<AuthService>();
         services.AddScoped<ExternalAuthService>();
+        services.AddScoped<TwoFactorService>();
         return services;
     }
 }

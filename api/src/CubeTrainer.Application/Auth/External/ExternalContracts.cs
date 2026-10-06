@@ -32,6 +32,9 @@ public abstract record ExternalOutcome;
 
 public sealed record ExternalSignedIn(AuthSession Session) : ExternalOutcome;
 
+/// <summary>The account has two-step verification on: the browser must be sent to the code page first.</summary>
+public sealed record ExternalTwoFactorRequired(string Challenge) : ExternalOutcome;
+
 public sealed record ExternalLinked(string Provider) : ExternalOutcome;
 
 public sealed record ExternalNeedsProfile(ExternalProfile Profile) : ExternalOutcome;

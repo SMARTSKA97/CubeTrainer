@@ -1,4 +1,5 @@
 using CubeTrainer.Application.Abstractions;
+using CubeTrainer.Application.Auth.TwoFactor;
 using CubeTrainer.Application.Common;
 using CubeTrainer.Domain.Users;
 using Microsoft.AspNetCore.Identity;
@@ -20,6 +21,7 @@ public sealed class ExternalAuthService(
     IExternalLoginRepository logins,
     IRefreshTokenRepository refreshTokens,
     AuthService auth,
+    ITwoFactorChallenge challenges,
     IExternalTicketProtector tickets,
     IOptions<AuthOptions> authOptions,
     TimeProvider clock)
@@ -52,7 +54,7 @@ public sealed class ExternalAuthService(
             var owner = await userRepo.FindByIdAsync(existing.UserId, ct);
             return owner is null
                 ? Fail(ErrorKind.NotFound, "user_not_found", "Account not found.")
-                : Ok(new ExternalSignedIn(await auth.StartSignInAsync(owner, client, ct)));
+                : await SignedInOrChallengeAsync(owner, client, ct);
         }
 
         if (profile.Email is not null && await users.FindByEmailAsync(profile.Email) is { } sameEmail)
@@ -77,7 +79,7 @@ public sealed class ExternalAuthService(
                 return Fail(ErrorKind.Conflict, "identity_in_use", "This account is already connected elsewhere.");
             }
 
-            return Ok(new ExternalSignedIn(await auth.StartSignInAsync(sameEmail, client, ct)));
+            return await SignedInOrChallengeAsync(sameEmail, client, ct);
         }
 
         return Ok(new ExternalNeedsProfile(profile));
@@ -199,6 +201,12 @@ public sealed class ExternalAuthService(
         await logins.DeleteAsync(userId, provider, ct);
         return Result<Unit>.Ok(Unit.Value);
     }
+
+    /// <summary>Provider sign-in must not be a way around two-step verification.</summary>
+    private async Task<Result<ExternalOutcome>> SignedInOrChallengeAsync(AppUser user, ClientInfo client, CancellationToken ct) =>
+        user.TwoFactorEnabled
+            ? Ok(new ExternalTwoFactorRequired(challenges.Issue(user.Id, AuthService.ChallengeLifetime)))
+            : Ok(new ExternalSignedIn(await auth.StartSignInAsync(user, client, ct)));
 
     private ExternalLogin NewLogin(Guid userId, ExternalProfile p) => new()
     {

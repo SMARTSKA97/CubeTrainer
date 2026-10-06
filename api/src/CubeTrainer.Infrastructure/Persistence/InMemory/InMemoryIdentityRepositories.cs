@@ -186,3 +186,42 @@ public sealed class InMemoryExternalLoginRepository : IExternalLoginRepository
         lock (_gate) return Task.FromResult(_logins.RemoveAll(l => l.UserId == userId && l.Provider == provider) > 0);
     }
 }
+
+public sealed class InMemoryRecoveryCodeRepository : IRecoveryCodeRepository
+{
+    private readonly object _gate = new();
+    private readonly List<RecoveryCode> _codes = [];
+
+    public Task ReplaceAllAsync(Guid userId, IReadOnlyList<string> codeHashes, DateTimeOffset now, CancellationToken ct)
+    {
+        lock (_gate)
+        {
+            _codes.RemoveAll(c => c.UserId == userId);
+            _codes.AddRange(codeHashes.Select(h => new RecoveryCode { Id = Guid.CreateVersion7(), UserId = userId, CodeHash = h, CreatedAt = now }));
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public Task<bool> TryUseAsync(Guid userId, string codeHash, DateTimeOffset now, CancellationToken ct)
+    {
+        lock (_gate)
+        {
+            var code = _codes.FirstOrDefault(c => c.UserId == userId && c.CodeHash == codeHash && c.UsedAt is null);
+            if (code is null) return Task.FromResult(false);
+            code.UsedAt = now;
+            return Task.FromResult(true);
+        }
+    }
+
+    public Task<int> CountUnusedAsync(Guid userId, CancellationToken ct)
+    {
+        lock (_gate) return Task.FromResult(_codes.Count(c => c.UserId == userId && c.UsedAt is null));
+    }
+
+    public Task DeleteAllAsync(Guid userId, CancellationToken ct)
+    {
+        lock (_gate) _codes.RemoveAll(c => c.UserId == userId);
+        return Task.CompletedTask;
+    }
+}

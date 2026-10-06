@@ -10,8 +10,12 @@ import {
   IdentitiesView,
   ProfileUpdatePayload,
   ProviderInfo,
+  RecoveryCodeSet,
   RegisterPayload,
   SessionInfo,
+  TwoFactorRequired,
+  TwoFactorSetup,
+  TwoFactorStatus,
   UserProfile,
 } from './auth.models';
 
@@ -50,8 +54,41 @@ export class AuthApi {
     return this.http.post<void>(this.url('/auth/resend-verification'), { email });
   }
 
-  login(email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(this.url('/auth/login'), { email, password }, this.cookies);
+  login(email: string, password: string): Observable<AuthResponse | TwoFactorRequired> {
+    return this.http.post<AuthResponse | TwoFactorRequired>(
+      this.url('/auth/login'),
+      { email, password },
+      this.cookies,
+    );
+  }
+
+  /** Second sign-in step: the challenge from login (or the social redirect) plus an app code or a recovery code. */
+  loginTwoFactor(challenge: string, code: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(
+      this.url('/auth/login/2fa'),
+      { challenge, code },
+      this.cookies,
+    );
+  }
+
+  twoFactorStatus(): Observable<TwoFactorStatus> {
+    return this.http.get<TwoFactorStatus>(this.url('/auth/2fa'));
+  }
+
+  twoFactorSetup(password: string | null): Observable<TwoFactorSetup> {
+    return this.http.post<TwoFactorSetup>(this.url('/auth/2fa/setup'), { password });
+  }
+
+  twoFactorEnable(code: string): Observable<RecoveryCodeSet> {
+    return this.http.post<RecoveryCodeSet>(this.url('/auth/2fa/enable'), { code });
+  }
+
+  twoFactorDisable(password: string | null, code: string): Observable<void> {
+    return this.http.post<void>(this.url('/auth/2fa/disable'), { password, code });
+  }
+
+  twoFactorRecoveryCodes(code: string): Observable<RecoveryCodeSet> {
+    return this.http.post<RecoveryCodeSet>(this.url('/auth/2fa/recovery-codes'), { code });
   }
 
   refresh(): Observable<AuthResponse> {

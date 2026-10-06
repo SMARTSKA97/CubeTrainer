@@ -6,6 +6,7 @@ import {
   describeAgent,
   regionFromLocale,
   externalErrorMessage,
+  recoveryCodesText,
 } from '../src/app/core/auth/auth-utils.ts';
 
 let n = 0;
@@ -62,5 +63,10 @@ t('externalErrorMessage', () => {
   assert.equal(externalErrorMessage(undefined), null);
   assert.match(externalErrorMessage('external_denied'), /cancelled/);
   assert.match(externalErrorMessage('something_new'), /failed/);
+});
+t('recovery codes download text', () => {
+  const text = recoveryCodesText(['AAAAA-BBBBB', 'CCCCC-DDDDD'], 'a@b.com');
+  assert.match(text, /a@b\.com/);
+  assert.ok(text.includes('AAAAA-BBBBB\nCCCCC-DDDDD'));
 });
 console.log(`\n${n} passed`);

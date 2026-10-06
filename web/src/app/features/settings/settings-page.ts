@@ -3,10 +3,11 @@ import { DangerSection } from './danger-section';
 import { IdentitiesSection } from './identities-section';
 import { ProfileSection } from './profile-section';
 import { SecuritySection } from './security-section';
+import { TwoFactorSection } from './two-factor-section';
 
 @Component({
   selector: 'app-settings-page',
-  imports: [ProfileSection, SecuritySection, IdentitiesSection, DangerSection],
+  imports: [ProfileSection, SecuritySection, TwoFactorSection, IdentitiesSection, DangerSection],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host {
@@ -24,6 +25,7 @@ import { SecuritySection } from './security-section';
     <h1>Account settings</h1>
     <app-profile-section />
     <app-security-section />
+    <app-two-factor-section />
     <app-identities-section [linked]="linked()" [linkError]="linkError()" />
     <app-danger-section />
   `,

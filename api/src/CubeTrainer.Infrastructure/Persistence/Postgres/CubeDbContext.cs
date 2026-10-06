@@ -23,6 +23,8 @@ public sealed class CubeDbContext(DbContextOptions<CubeDbContext> options) : DbC
 
     public DbSet<ExternalLogin> ExternalLogins => Set<ExternalLogin>();
 
+    public DbSet<RecoveryCode> RecoveryCodes => Set<RecoveryCode>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ArgumentNullException.ThrowIfNull(modelBuilder);
@@ -74,6 +76,8 @@ public sealed class CubeDbContext(DbContextOptions<CubeDbContext> options) : DbC
             e.Property(x => x.LockoutEnd).HasColumnName("lockout_end");
             e.Property(x => x.AccessFailedCount).HasColumnName("access_failed_count");
             e.Property(x => x.TwoFactorEnabled).HasColumnName("two_factor_enabled");
+            e.Property(x => x.TotpSecret).HasColumnName("totp_secret");
+            e.Property(x => x.TotpLastStep).HasColumnName("totp_last_step");
             e.Property(x => x.Handle).HasColumnName("handle");
             e.Property(x => x.NormalizedHandle).HasColumnName("normalized_handle");
             e.Property(x => x.DisplayName).HasColumnName("display_name");
@@ -104,6 +108,17 @@ public sealed class CubeDbContext(DbContextOptions<CubeDbContext> options) : DbC
             e.Property(x => x.RevokedAt).HasColumnName("revoked_at");
             e.Property(x => x.UserAgent).HasColumnName("user_agent");
             e.Property(x => x.Ip).HasColumnName("ip");
+        });
+
+        modelBuilder.Entity<RecoveryCode>(e =>
+        {
+            e.ToTable("recovery_codes");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
+            e.Property(x => x.UserId).HasColumnName("user_id");
+            e.Property(x => x.CodeHash).HasColumnName("code_hash");
+            e.Property(x => x.CreatedAt).HasColumnName("created_at");
+            e.Property(x => x.UsedAt).HasColumnName("used_at");
         });
 
         modelBuilder.Entity<ExternalLogin>(e =>

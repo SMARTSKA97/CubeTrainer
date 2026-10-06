@@ -92,7 +92,13 @@ export class LoginPage {
     this.busy.set(true);
     try {
       const { email, password } = this.form.getRawValue();
-      await this.auth.login(email.trim(), password);
+      const challenge = await this.auth.login(email.trim(), password);
+      if (challenge) {
+        await this.router.navigate(['/auth/two-factor'], {
+          queryParams: { challenge, returnUrl: this.returnUrl() },
+        });
+        return;
+      }
       await this.router.navigateByUrl(safeReturnUrl(this.returnUrl()));
     } catch (err) {
       const p = toProblem(err);

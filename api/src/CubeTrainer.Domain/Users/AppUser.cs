@@ -24,6 +24,12 @@ public sealed class AppUser
 
     public bool TwoFactorEnabled { get; set; }
 
+    /// <summary>Authenticator-app secret, encrypted at rest. Present while 2FA is being set up and while it is on.</summary>
+    public string? TotpSecret { get; set; }
+
+    /// <summary>Time step of the last accepted code; a code from the same or an earlier step is a replay.</summary>
+    public long? TotpLastStep { get; set; }
+
     public string Handle { get; set; } = string.Empty;
 
     public string NormalizedHandle { get; set; } = string.Empty;

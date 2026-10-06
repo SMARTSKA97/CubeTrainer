@@ -1,4 +1,5 @@
 using CubeTrainer.Application.Abstractions;
+using CubeTrainer.Application.Auth.TwoFactor;
 using CubeTrainer.Application.Common;
 using CubeTrainer.Domain.Users;
 using Microsoft.AspNetCore.Identity;
@@ -19,6 +20,7 @@ public sealed class AuthService(
     IUserTokenRepository userTokens,
     IAccessTokenIssuer accessTokens,
     IEmailQueue mailQueue,
+    ITwoFactorChallenge challenges,
     IOptions<AuthOptions> authOptions,
     IOptions<WebOptions> webOptions,
     TimeProvider clock)
@@ -140,33 +142,51 @@ public sealed class AuthService(
 
     // ------------------------------------------------------------------ sign in
 
+    public static readonly TimeSpan ChallengeLifetime = TimeSpan.FromMinutes(5);
+
+    /// <summary>Password sign-in for callers that cannot handle a second step: fails with "two_factor_required" when one is needed.</summary>
     public async Task<Result<AuthSession>> LoginAsync(string? emailAddress, string? password, ClientInfo client, CancellationToken ct)
+    {
+        var outcome = await PasswordSignInAsync(emailAddress, password, client, ct);
+        if (!outcome.IsSuccess) return Result<AuthSession>.Fail(outcome.Error!);
+        return outcome.Value!.Session is { } session
+            ? Result<AuthSession>.Ok(session)
+            : Result<AuthSession>.Fail(ErrorKind.Forbidden, "two_factor_required", "Enter the code from your authenticator app.");
+    }
+
+    public async Task<Result<LoginOutcome>> PasswordSignInAsync(string? emailAddress, string? password, ClientInfo client, CancellationToken ct)
     {
         var user = string.IsNullOrWhiteSpace(emailAddress) ? null : await users.FindByEmailAsync(emailAddress.Trim());
         if (user is null || string.IsNullOrEmpty(password))
         {
             _ = users.PasswordHasher.HashPassword(new AppUser(), password ?? "x"); // equalise timing with a real check
-            return Result<AuthSession>.Fail(ErrorKind.Unauthorized, "invalid_credentials", "Email or password is incorrect.");
+            return Result<LoginOutcome>.Fail(ErrorKind.Unauthorized, "invalid_credentials", "Email or password is incorrect.");
         }
 
         if (await users.IsLockedOutAsync(user))
         {
-            return Result<AuthSession>.Fail(ErrorKind.TooManyRequests, "locked_out", $"Too many failed attempts. Try again in {_auth.LockoutMinutes} minutes or reset your password.");
+            return Result<LoginOutcome>.Fail(ErrorKind.TooManyRequests, "locked_out", $"Too many failed attempts. Try again in {_auth.LockoutMinutes} minutes or reset your password.");
         }
 
         if (!await users.CheckPasswordAsync(user, password))
         {
             await users.AccessFailedAsync(user);
-            return Result<AuthSession>.Fail(ErrorKind.Unauthorized, "invalid_credentials", "Email or password is incorrect.");
+            return Result<LoginOutcome>.Fail(ErrorKind.Unauthorized, "invalid_credentials", "Email or password is incorrect.");
         }
 
         await users.ResetAccessFailedCountAsync(user);
         if (_auth.RequireConfirmedEmail && !user.EmailConfirmed)
         {
-            return Result<AuthSession>.Fail(ErrorKind.Forbidden, "email_not_verified", "Confirm your email address first. We can send the link again.");
+            return Result<LoginOutcome>.Fail(ErrorKind.Forbidden, "email_not_verified", "Confirm your email address first. We can send the link again.");
         }
 
-        return Result<AuthSession>.Ok(await StartSessionAsync(user, familyId: null, familyExpiresAt: null, client, ct));
+        if (user.TwoFactorEnabled)
+        {
+            // Password was right, but a code from the authenticator app is still needed. Nothing is issued yet.
+            return Result<LoginOutcome>.Ok(new LoginOutcome(null, challenges.Issue(user.Id, ChallengeLifetime)));
+        }
+
+        return Result<LoginOutcome>.Ok(new LoginOutcome(await StartSessionAsync(user, familyId: null, familyExpiresAt: null, client, ct), null));
     }
 
     public async Task<Result<AuthSession>> RefreshAsync(string? refreshToken, ClientInfo client, CancellationToken ct)
