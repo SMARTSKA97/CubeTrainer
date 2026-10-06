@@ -19,6 +19,7 @@ import { SolveStore } from '@core/data/solve-store';
         <a routerLink="/algorithms" routerLinkActive="active">Algorithms</a>
         <a routerLink="/progress" routerLinkActive="active">Progress</a>
         <a routerLink="/history" routerLinkActive="active">History</a>
+        <a routerLink="/leaderboards" routerLinkActive="active">Leaderboards</a>
       </nav>
       <span class="badge" [attr.data-b]="store.sync()" [title]="badgeTitle()">{{ badge() }}</span>
       @if (auth.ready()) {

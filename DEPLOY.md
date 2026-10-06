@@ -44,7 +44,7 @@ openssl rand -base64 32   # Totp__EncryptionKey  (losing it locks 2FA users out;
 | `Web__BaseUrl` | yes | public web URL, no trailing slash (email links) |
 | `CORS_ORIGINS` | yes | the same web URL (comma-separate several) |
 | `Auth__Cookie__SameSite` | no | `Lax` when web and API share a domain (section 8d); otherwise `None` |
-| `Auth__MinimumAge` | no | `13` default; your policy (see README age note) |
+| `Auth__MinimumAge` | no | `13` (current decision; see README age note) |
 | `ExternalAuth__CallbackBaseUrl` | no | public API URL if the API cannot tell (section 8b) |
 | `ExternalAuth__Providers__<id>__ClientId` / `__ClientSecret` | no | per provider, switches its button on |
 
@@ -239,7 +239,7 @@ Set these on the Render service (Environment):
 | `Email__FromAddress` / `Email__FromName` | a sender on **your** domain, authenticated in Brevo (SPF + DKIM + DMARC), or mail lands in spam |
 | `Web__BaseUrl` | your Cloudflare Pages URL, used in email links |
 | `Auth__Cookie__SameSite` | `Lax` if web and API share a registrable domain (recommended: `app.example.com` + `api.example.com`); `None` only if they do not (needs HTTPS, and browsers may block third-party cookies) |
-| `Auth__MinimumAge` | 13 by default. Decide your policy (see the age note in the README), India's DPDP Act needs parental consent under 18. |
+| `Auth__MinimumAge` | `13` (the current decision, also the default). India's DPDP Act asks for parental consent under 18: get legal advice before a public launch (see the age note in the README). |
 
 The sign-in cookie is `HttpOnly`, so put web and API under one domain you own for the most reliable behaviour.
 

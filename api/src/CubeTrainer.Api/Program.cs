@@ -60,6 +60,7 @@ v1.MapExternalAuthEndpoints();
 v1.MapMeEndpoints();
 v1.MapSolveEndpoints();
 v1.MapInsightEndpoints();
+v1.MapLeaderboardEndpoints();
 
 app.Run();
 

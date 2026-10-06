@@ -47,6 +47,12 @@ export const routes: Routes = [
     loadComponent: () => import('@features/history/history-page').then((m) => m.HistoryPage),
   },
   {
+    path: 'leaderboards',
+    title: title('Leaderboards'),
+    loadComponent: () =>
+      import('@features/leaderboards/leaderboards-page').then((m) => m.LeaderboardsPage),
+  },
+  {
     path: 'auth',
     children: [
       {

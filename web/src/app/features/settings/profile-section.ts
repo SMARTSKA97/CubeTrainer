@@ -55,7 +55,7 @@ import { countryOptions } from '@core/auth/countries';
         /></label>
         <label class="check"
           ><input type="checkbox" formControlName="leaderboardOptIn" /> Show me on public
-          leaderboards (when they launch)</label
+          leaderboards (username, country and method are shown)</label
         >
         <div class="row">
           <button class="btn primary" type="submit" [disabled]="busy() || form.pristine">

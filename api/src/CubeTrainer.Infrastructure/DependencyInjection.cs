@@ -40,6 +40,7 @@ public static class DependencyInjection
             services.AddScoped<IUserTokenRepository, PostgresUserTokenRepository>();
             services.AddScoped<IExternalLoginRepository, PostgresExternalLoginRepository>();
             services.AddScoped<IRecoveryCodeRepository, PostgresRecoveryCodeRepository>();
+            services.AddScoped<ILeaderboardRepository, PostgresLeaderboardRepository>();
             services.AddHealthChecks().AddCheck<DatabaseHealthCheck>("database", tags: ["ready"]);
             return services;
         }
@@ -59,6 +60,7 @@ public static class DependencyInjection
         services.AddSingleton<IUserTokenRepository, InMemoryUserTokenRepository>();
         services.AddSingleton<IExternalLoginRepository, InMemoryExternalLoginRepository>();
         services.AddSingleton<IRecoveryCodeRepository, InMemoryRecoveryCodeRepository>();
+        services.AddSingleton<ILeaderboardRepository, InMemoryLeaderboardRepository>();
         return services;
     }
 
@@ -113,6 +115,7 @@ public static class DependencyInjection
         services.AddHostedService<EmailDispatcher>();
         services.AddOptions<RetentionOptions>().Bind(config.GetSection(RetentionOptions.Section)).Validate(o => o.TombstoneDays is >= 7 and <= 3650, "Retention:TombstoneDays must be between 7 and 3650.");
         services.AddHostedService<TokenCleanupService>();
+        services.AddHostedService<LeaderboardRefreshService>();
 
         // ---- Breached-password check (Have I Been Pwned range API).
         services.AddHttpClient<BreachedPasswordValidator>(c =>

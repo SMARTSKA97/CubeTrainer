@@ -17,6 +17,9 @@ public interface IUserRepository
     Task<bool> TryUpdateAsync(AppUser user, CancellationToken ct);
 
     Task DeleteAsync(Guid id, CancellationToken ct);
+
+    /// <summary>Ids of people who opted in to leaderboards.</summary>
+    Task<IReadOnlyList<Guid>> ListLeaderboardOptInIdsAsync(CancellationToken ct);
 }
 
 public interface IRefreshTokenRepository
@@ -75,4 +78,20 @@ public interface IRecoveryCodeRepository
     Task<int> CountUnusedAsync(Guid userId, CancellationToken ct);
 
     Task DeleteAllAsync(Guid userId, CancellationToken ct);
+}
+
+public sealed record LeaderboardRow(int Rank, string Handle, string Country, string? Method, int ValueMs, long AchievedAtMs);
+
+/// <summary>Ranked results. Queries only ever include people who are opted in and have a confirmed email.</summary>
+public interface ILeaderboardRepository
+{
+    Task ReplaceForUserAsync(Guid userId, IReadOnlyList<CubeTrainer.Domain.Leaderboards.LeaderboardEntry> entries, CancellationToken ct);
+
+    Task<IReadOnlyList<CubeTrainer.Domain.Leaderboards.LeaderboardEntry>> ForUserAsync(Guid userId, CancellationToken ct);
+
+    /// <summary>Best first; ties go to whoever got there first. Ranks are 1-based and tied results share a rank.</summary>
+    Task<IReadOnlyList<LeaderboardRow>> QueryAsync(string metric, string period, string? country, string? method, int limit, CancellationToken ct);
+
+    /// <summary>The person's position among all opted-in people (no filters), or null if they have no entry.</summary>
+    Task<int?> RankOfAsync(Guid userId, string metric, string period, CancellationToken ct);
 }

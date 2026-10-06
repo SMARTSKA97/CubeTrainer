@@ -1,3 +1,4 @@
+using CubeTrainer.Domain.Leaderboards;
 using CubeTrainer.Domain.Cases;
 using CubeTrainer.Domain.Solves;
 using CubeTrainer.Domain.Users;
@@ -24,6 +25,8 @@ public sealed class CubeDbContext(DbContextOptions<CubeDbContext> options) : DbC
     public DbSet<ExternalLogin> ExternalLogins => Set<ExternalLogin>();
 
     public DbSet<RecoveryCode> RecoveryCodes => Set<RecoveryCode>();
+
+    public DbSet<LeaderboardEntry> LeaderboardEntries => Set<LeaderboardEntry>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -110,6 +113,18 @@ public sealed class CubeDbContext(DbContextOptions<CubeDbContext> options) : DbC
             e.Property(x => x.RevokedAt).HasColumnName("revoked_at");
             e.Property(x => x.UserAgent).HasColumnName("user_agent");
             e.Property(x => x.Ip).HasColumnName("ip");
+        });
+
+        modelBuilder.Entity<LeaderboardEntry>(e =>
+        {
+            e.ToTable("leaderboard_entries");
+            e.HasKey(x => new { x.UserId, x.Metric, x.Period });
+            e.Property(x => x.UserId).HasColumnName("user_id");
+            e.Property(x => x.Metric).HasColumnName("metric");
+            e.Property(x => x.Period).HasColumnName("period");
+            e.Property(x => x.ValueMs).HasColumnName("value_ms");
+            e.Property(x => x.AchievedAtMs).HasColumnName("achieved_at_ms");
+            e.Property(x => x.UpdatedAt).HasColumnName("updated_at");
         });
 
         modelBuilder.Entity<RecoveryCode>(e =>

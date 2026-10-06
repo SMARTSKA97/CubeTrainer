@@ -8,6 +8,11 @@ public sealed class InMemoryUserRepository : IUserRepository
     private readonly object _gate = new();
     private readonly Dictionary<Guid, AppUser> _users = [];
 
+    public Task<IReadOnlyList<Guid>> ListLeaderboardOptInIdsAsync(CancellationToken ct)
+    {
+        lock (_gate) return Task.FromResult<IReadOnlyList<Guid>>(_users.Values.Where(u => u.LeaderboardOptIn && u.EmailConfirmed).Select(u => u.Id).ToList());
+    }
+
     public Task<AppUser?> FindByIdAsync(Guid id, CancellationToken ct)
     {
         lock (_gate) return Task.FromResult(_users.TryGetValue(id, out var u) ? u.Copy() : null);

@@ -84,6 +84,7 @@ All settings are ASP.NET Core configuration: environment variables use `__` for 
 | `Cors__Origins__0` / `CORS_ORIGINS` | `http://localhost:4200` | allowed browser origins |
 | `ExternalAuth__Providers__<google\|microsoft\|github\|facebook>__ClientId/ClientSecret` | off | a button appears once both are set; redirect URL `http://localhost:4200/api/v1/auth/external/<provider>/callback` |
 | `RateLimiting__AuthPermitPerMinute` | `20` | raise it for automated tests |
+| `Leaderboards__RefreshMinutes` | `10` | how often leaderboard results are rebuilt (0 = off; your own results still refresh when you open the page) |
 | `Retention__TombstoneDays` | `90` | how long deleted solves are remembered so other devices can learn of the delete |
 
 Two-step verification needs no setup locally: Settings -> Two-step verification shows a QR code; any authenticator app works.
@@ -194,6 +195,12 @@ appears once its keys are configured, see DEPLOY.md). See ADR 0005.
 Register with email confirmation, sign in (JWT + rotating refresh cookie), forgot/reset password, change password,
 active sessions, sign out everywhere, profile and account deletion. Guest mode still works.
 
+## Phase 6: leaderboards (done)
+
+Opt in on the Leaderboards page or in Settings. Best single / Ao5 / Ao12, all time or last 30 days, filter by country and method. Only opted-in people appear
+(username, country, method). Results are self-reported, so treat the boards as friendly competition; see ADR 0010 for the limits.
+`GET /api/v1/leaderboards/{single|ao5|ao12}?period=all|30d&country=&method=&limit=` (public), `GET /api/v1/leaderboards/me` (signed in).
+
 ## Phase 5: privacy and housekeeping (done)
 
 Settings -> Your data -> **Download my data** (`GET /me/export`: profile, solves, case progress, linked accounts; no secrets). Deleted solves are purged for good after
@@ -211,4 +218,6 @@ Optional authenticator-app (TOTP, RFC 6238) 2FA: set up with a QR code in Settin
 ### Age note
 Cubing itself suits roughly 6+, a guided 3x3 solve about 7-8+, and the timer/averages/spaced-repetition mechanics make sense around 8-10.
 Accounts and leaderboards are a privacy question: 13 (COPPA, GDPR-K 13-16), and under India's DPDP Act, parental consent under 18.
-`Auth:MinimumAge` defaults to 13; younger children can use guest mode.
+**Decision (October 2026): minimum age 13**, self-declared at sign-up (`Auth:MinimumAge`, default 13); younger children can use guest mode.
+Under India's DPDP Act, people under 18 need verifiable parental consent, which this app does not implement yet. The 13 policy is the owner's current
+decision and should be confirmed by a lawyer together with the Terms and Privacy pages before a public launch. Raising it is one setting.

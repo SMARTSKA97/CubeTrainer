@@ -50,6 +50,9 @@ public sealed class PostgresUserRepository(CubeDbContext db) : IUserRepository
     public async Task DeleteAsync(Guid id, CancellationToken ct) =>
         await db.Users.Where(u => u.Id == id).ExecuteDeleteAsync(ct);
 
+    public async Task<IReadOnlyList<Guid>> ListLeaderboardOptInIdsAsync(CancellationToken ct) =>
+        await db.Users.AsNoTracking().Where(u => u.LeaderboardOptIn && u.EmailConfirmed).Select(u => u.Id).ToListAsync(ct);
+
     private async Task<bool> ConflictsAsync(AppUser user, CancellationToken ct)
     {
         db.ChangeTracker.Clear();

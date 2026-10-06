@@ -103,6 +103,7 @@ internal sealed class AuthFixture
         services.AddSingleton<IRecoveryCodeRepository, InMemoryRecoveryCodeRepository>();
         services.AddSingleton<ISolveRepository, InMemorySolveRepository>();
         services.AddSingleton<ICaseStatusRepository, InMemoryCaseStatusRepository>();
+        services.AddSingleton<ILeaderboardRepository, InMemoryLeaderboardRepository>();
         services.AddSingleton<ITotpSecretProtector, FakeSecretProtector>();
         services.AddSingleton<ITwoFactorChallenge, FakeChallenge>();
         services.AddSingleton<IAccessTokenIssuer, FakeAccessTokenIssuer>();
