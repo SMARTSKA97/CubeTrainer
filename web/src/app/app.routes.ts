@@ -111,6 +111,11 @@ export const routes: Routes = [
     loadComponent: () => import('@features/settings/settings-page').then((m) => m.SettingsPage),
   },
   {
+    path: 'update',
+    title: title('App updates'),
+    loadComponent: () => import('@features/update/update-page').then((m) => m.UpdatePage),
+  },
+  {
     path: 'legal/terms',
     title: title('Terms'),
     data: { kind: 'terms' },

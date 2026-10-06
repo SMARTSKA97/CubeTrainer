@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { AppUpdateSection } from './app-update-section';
 import { DangerSection } from './danger-section';
 import { IdentitiesSection } from './identities-section';
 import { ProfileSection } from './profile-section';
@@ -7,7 +8,14 @@ import { TwoFactorSection } from './two-factor-section';
 
 @Component({
   selector: 'app-settings-page',
-  imports: [ProfileSection, SecuritySection, TwoFactorSection, IdentitiesSection, DangerSection],
+  imports: [
+    AppUpdateSection,
+    ProfileSection,
+    SecuritySection,
+    TwoFactorSection,
+    IdentitiesSection,
+    DangerSection,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host {
@@ -23,6 +31,7 @@ import { TwoFactorSection } from './two-factor-section';
   `,
   template: `
     <h1>Account settings</h1>
+    <app-update-section />
     <app-profile-section />
     <app-security-section />
     <app-two-factor-section />

@@ -318,6 +318,16 @@ cookies (Safari, some Chrome settings) will keep asking people to sign in again.
    Secrets: `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`. The workflow then also builds `app-release.apk`.
 5. Before a Play Store release change `appId` in `mobile/capacitor.config.json` (and the `applicationId`/`namespace` in `mobile/android/app/build.gradle`) to an id on your own domain; it cannot be changed after publishing.
 
+### 11b. Publishing updates (in-app updater, like Obtainium / Orion Store)
+
+The app checks this repository's GitHub Releases (at most once a day, plus **Updates -> Check for updates**), shows the changelog, downloads the APK and opens Android's installer.
+
+1. The keystore secrets from step 4 are **required** for releases: Android only installs an update signed with the same key as the installed app. A debug APK from a normal run cannot update another one.
+2. To release: `git tag android-v1.1.0 && git push origin android-v1.1.0`. The workflow builds the signed APK and creates the release `CubeTrainer 1.1.0` with `CubeTrainer-1.1.0.apk`, its `.sha256`, and a changelog made from the commit subjects since the previous `android-v*` tag. Add `mobile/release-notes/1.1.0.md` before tagging to put a hand-written summary above the commit list.
+3. The version in the tag must be higher than the installed one (it is compared as numbers: 1.10.0 is newer than 1.9.0). The first install has to be done by hand (step 3 or the release's APK); updates come from inside the app after that.
+4. The repository must be public (the app reads releases without a login). The repository name is baked in at build time (`UPDATES_REPO`, set automatically to the repository running the workflow).
+5. On the first update Android asks you to allow "Install unknown apps" for CubeTrainer; allow it, return to the app and press Update again.
+
 Signing in works with email and password (and two-step codes). Social login is web-only for now. Confirmation and reset links in emails open in the phone's browser; confirm there, then sign in in the app.
 
 ## 9. Troubleshooting

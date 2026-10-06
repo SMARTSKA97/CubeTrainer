@@ -2,6 +2,7 @@ import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/cor
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthStore } from '@core/auth/auth-store';
 import { SolveStore } from '@core/data/solve-store';
+import { AppUpdateStore } from '@core/update/app-update-store';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,9 @@ import { SolveStore } from '@core/data/solve-store';
         <a routerLink="/progress" routerLinkActive="active">Progress</a>
         <a routerLink="/history" routerLinkActive="active">History</a>
         <a routerLink="/leaderboards" routerLinkActive="active">Leaderboards</a>
+        @if (updates.enabled) {
+          <a routerLink="/update" routerLinkActive="active">Updates</a>
+        }
       </nav>
       <span class="badge" [attr.data-b]="store.sync()" [title]="badgeTitle()">{{ badge() }}</span>
       @if (auth.ready()) {
@@ -42,6 +46,13 @@ import { SolveStore } from '@core/data/solve-store';
         >
         <a routerLink="/auth/register" class="btn small primary">Create account</a>
         <button class="btn small" type="button" (click)="hideBanner()">Not now</button>
+      </aside>
+    }
+    @if (updates.banner(); as _) {
+      <aside class="guest" role="note">
+        <span>CubeTrainer {{ updates.update()?.version }} is available.</span>
+        <a routerLink="/update" class="btn small primary">See what's new</a>
+        <button class="btn small" type="button" (click)="updates.dismissed.set(true)">Later</button>
       </aside>
     }
     @if (store.guestImport(); as g) {
@@ -155,6 +166,7 @@ import { SolveStore } from '@core/data/solve-store';
 export class App {
   readonly store = inject(SolveStore);
   readonly auth = inject(AuthStore);
+  readonly updates = inject(AppUpdateStore);
   readonly bannerHidden = signal(sessionStorage.getItem('ct.guestBanner') === '0');
 
   hideBanner(): void {
@@ -167,6 +179,7 @@ export class App {
   }
 
   constructor() {
+    void this.updates.autoCheck();
     // Drop focus after changing a dropdown / checkbox so Space goes to the timer, not to the control.
     document.addEventListener('change', (e) => (e.target as HTMLElement | null)?.blur?.());
   }

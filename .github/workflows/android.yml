@@ -5,6 +5,7 @@ name: Android APK
 #   - on a tag like android-v1.2.0
 #   - on pushes to main that touch mobile/ (to catch a broken native build early)
 # Needs the repository variable API_BASE_URL (your public API, e.g. https://api.example.com).
+# Pushing a tag android-vX.Y.Z also publishes a GitHub Release (signed APK + changelog); the app's in-app updater reads those releases.
 # Optional signing secrets for a release APK: ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD.
 on:
   workflow_dispatch:
@@ -13,13 +14,32 @@ on:
     branches: [main]
     paths: ['mobile/**', '.github/workflows/android.yml']
 
+permissions:
+  contents: write # only used to create the release on android-v* tags
+
 jobs:
   apk:
     runs-on: ubuntu-latest
     env:
       API_URL: ${{ vars.API_BASE_URL }}
+      # Where the app looks for new releases (this repository), baked into config.json.
+      UPDATES_REPO: ${{ github.repository }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # the changelog is built from git history between tags
+
+      - name: Release tag must look like android-v1.2.3
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          case "$GITHUB_REF_NAME" in
+            android-v[0-9]*.[0-9]*.[0-9]*) ;;
+            *) echo "::error::Tag '$GITHUB_REF_NAME' must look like android-v1.2.3"; exit 1;;
+          esac
+          if [ -z "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" ]; then
+            echo "::error::Releases must be signed with your own key, otherwise phones cannot update in place. Add the ANDROID_KEYSTORE_* secrets (see DEPLOY.md section 11)."
+            exit 1
+          fi
 
       - name: API address
         run: |
@@ -88,6 +108,29 @@ jobs:
           echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
           export ANDROID_KEYSTORE_FILE="$RUNNER_TEMP/release.jks"
           ./gradlew assembleRelease -PversionCode=${{ github.run_number }} -PversionName=${{ steps.ver.outputs.name }}
+
+      - name: Publish GitHub Release (tags only)
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.ver.outputs.name }}
+        run: |
+          set -e
+          apk="mobile/android/app/build/outputs/apk/release/app-release.apk"
+          test -f "$apk" || { echo "::error::Signed release APK missing"; exit 1; }
+          cp "$apk" "CubeTrainer-$VERSION.apk"
+          sha256sum "CubeTrainer-$VERSION.apk" > "CubeTrainer-$VERSION.apk.sha256"
+          prev=$(git tag --list 'android-v*' --sort=-v:refname | grep -vx "$GITHUB_REF_NAME" | head -1 || true)
+          range=${prev:+$prev..}HEAD
+          {
+            if [ -f "mobile/release-notes/$VERSION.md" ]; then cat "mobile/release-notes/$VERSION.md"; echo; fi
+            echo "### Changes"
+            git log "$range" --no-merges --pretty='- %s' -- web mobile api db | head -50
+            echo
+            echo "SHA-256: \`$(cut -d' ' -f1 "CubeTrainer-$VERSION.apk.sha256")\`"
+          } > release-notes.md
+          gh release create "$GITHUB_REF_NAME" "CubeTrainer-$VERSION.apk" "CubeTrainer-$VERSION.apk.sha256" \
+            --title "CubeTrainer $VERSION" --notes-file release-notes.md
 
       - uses: actions/upload-artifact@v4
         with:

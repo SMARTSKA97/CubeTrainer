@@ -202,6 +202,9 @@ A Capacitor wrapper around the same Angular app: offline-first, installable as a
 ("install unknown apps" must be allowed). Also add `https://localhost` to the API's `CORS_ORIGINS`. Email/password sign-in and 2FA work in the app;
 social login does not yet. Details and local build steps: `mobile/README.md`, ADR 0011, DEPLOY.md section 11.
 
+**Updates without an app store (Phase 8):** push a tag like `android-v1.1.0` and the workflow publishes a signed APK as a GitHub Release with a changelog.
+Installed apps find it (Updates in the menu, or the banner at launch), show what changed and install it on one tap. Needs the signing secrets and a public repo; see DEPLOY.md 11b and ADR 0012.
+
 ## Phase 6: leaderboards (done)
 
 Opt in on the Leaderboards page or in Settings. Best single / Ao5 / Ao12, all time or last 30 days, filter by country and method. Only opted-in people appear
