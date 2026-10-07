@@ -467,7 +467,7 @@ const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''):
     /* ---------- phones and tablets ---------- */
     @media (max-width: 999px) {
       main {
-        padding-bottom: calc(var(--tabbar-h) + var(--sab) + 32px);
+        padding-bottom: calc(var(--tabbar-h) + var(--sab) + 44px);
       }
       .legal {
         display: none;
@@ -477,19 +477,24 @@ const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''):
       .nm {
         display: none;
       }
+      /* A floating pill, inset from the screen edges, so it never looks glued to the bottom. */
       .tabs {
         display: flex;
         position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        left: calc(12px + var(--sal));
+        right: calc(12px + var(--sar));
+        bottom: calc(10px + var(--sab));
+        max-width: 560px;
+        margin: 0 auto;
         z-index: 30;
-        padding: 8px calc(10px + var(--sar)) calc(8px + var(--sab)) calc(10px + var(--sal));
-        background: rgba(16, 19, 26, 0.92);
+        padding: 6px;
+        background: rgba(22, 26, 36, 0.9);
         -webkit-backdrop-filter: blur(18px) saturate(1.4);
         backdrop-filter: blur(18px) saturate(1.4);
-        border-top: 1px solid var(--line-soft);
-        gap: 6px;
+        border: 1px solid var(--line);
+        border-radius: 26px;
+        box-shadow: 0 18px 44px -14px rgba(0, 0, 0, 0.85);
+        gap: 4px;
       }
       .tabs a,
       .tabs button {
@@ -503,7 +508,7 @@ const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''):
         min-height: 52px;
         padding: 6px 2px;
         border: 0;
-        border-radius: 16px;
+        border-radius: 20px;
         background: none;
         color: var(--muted);
         font: inherit;
@@ -570,8 +575,9 @@ const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''):
         display: none;
       }
       .tabs {
-        padding-top: 4px;
-        padding-bottom: calc(4px + var(--sab));
+        padding: 3px;
+        bottom: calc(6px + var(--sab));
+        border-radius: 20px;
       }
       .tabs a,
       .tabs button {
@@ -585,7 +591,7 @@ const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''):
       }
       main {
         padding-top: 16px;
-        padding-bottom: calc(60px + var(--sab));
+        padding-bottom: calc(64px + var(--sab));
       }
     }
 

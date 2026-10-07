@@ -71,7 +71,8 @@ import { INTERVAL_DAYS } from '@domain/plan';
               [checked]="plan.activeSets().includes(s.id)"
               (change)="toggle(s.id)"
             />
-            {{ s.label }} <small class="muted">({{ s.count }})</small>
+            <span class="nm">{{ s.label }}</span>
+            <small class="muted">{{ s.count }}</small>
           </label>
         }
       </div>
@@ -201,6 +202,10 @@ import { INTERVAL_DAYS } from '@domain/plan';
       color: #a78bfa;
       border-color: #a78bfa;
     }
+    .sets .nm {
+      flex: 1;
+      min-width: 0;
+    }
     .dots {
       display: flex;
       gap: 4px;
@@ -216,8 +221,10 @@ import { INTERVAL_DAYS } from '@domain/plan';
       border-color: #22c55e;
     }
     .sets {
-      gap: 8px 18px;
-      margin-top: 8px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+      gap: 2px 24px;
+      margin-top: 4px;
     }
   `,
 })

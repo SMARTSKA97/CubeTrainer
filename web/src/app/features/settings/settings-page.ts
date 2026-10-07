@@ -20,7 +20,7 @@ import { TwoFactorSection } from './two-factor-section';
   styles: `
     :host {
       display: grid;
-      gap: 16px;
+      gap: var(--gap);
       max-width: 720px;
       margin: 0 auto;
       width: 100%;

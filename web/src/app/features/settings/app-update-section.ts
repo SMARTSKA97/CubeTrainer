@@ -9,14 +9,19 @@ import { formatBytes, notesToLines } from '../../domain/app-update';
   styles: `
     .notes {
       margin: 0;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid var(--line);
+      padding: 14px 16px 14px 32px;
+      border-radius: 12px;
+      border: 1px solid var(--line-soft);
       background: var(--bg);
       font-size: 14px;
-      max-height: 220px;
+      display: grid;
+      gap: 6px;
+      max-height: 240px;
       overflow: auto;
-      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .actions .btn {
+      flex: 1 1 160px;
     }
     progress {
       width: 100%;
@@ -48,7 +53,11 @@ import { formatBytes, notesToLines } from '../../domain/app-update';
         @if (u.update(); as up) {
           <h3>Version {{ up.version }} is available</h3>
           @if (lines().length) {
-            <pre class="notes">{{ lines().join('\\n') }}</pre>
+            <ul class="notes">
+              @for (l of lines(); track $index) {
+                <li>{{ l }}</li>
+              }
+            </ul>
           }
           @if (u.state() === 'downloading') {
             @if (u.progress(); as p) {
@@ -59,7 +68,7 @@ import { formatBytes, notesToLines } from '../../domain/app-update';
             }
           }
         }
-        <div class="row">
+        <div class="row actions">
           @if (u.update()) {
             <button
               class="btn primary"

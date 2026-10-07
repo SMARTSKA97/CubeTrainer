@@ -207,7 +207,7 @@ import { formatBytes, notesToLines } from '../domain/app-update';
     }
     @media (max-width: 999px) {
       .toast {
-        bottom: calc(var(--tabbar-h) + var(--sab) + 16px);
+        bottom: calc(var(--tabbar-h) + var(--sab) + 28px);
       }
     }
     .msg {
