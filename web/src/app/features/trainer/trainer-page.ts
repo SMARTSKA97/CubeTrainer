@@ -76,6 +76,8 @@ interface QueueItem {
               }
             </select>
           </label>
+        </div>
+        <div class="opts">
           <label class="check"
             ><input
               type="checkbox"
@@ -109,38 +111,41 @@ interface QueueItem {
             15 s inspection</label
           >
         </div>
-        <div class="row learn-row">
-          <label class="check"
-            ><input
-              type="checkbox"
-              [checked]="learning.auto()"
-              (change)="learning.auto.set($any($event.target).checked)"
-            />
-            Auto-learning (status follows your times)</label
-          >
-          <label class="field"
-            >“Finished” when mean of last 5 ≤
-            <span class="unit">
-              <input
-                type="number"
-                min="1"
-                step="0.5"
-                style="width:80px"
-                [value]="targetSec()"
-                (change)="learning.setTarget(setId(), +$any($event.target).value)"
+        <details class="picker">
+          <summary>Learning rules</summary>
+          <div class="opts learn-row">
+            <label class="check"
+              ><input
+                type="checkbox"
+                [checked]="learning.auto()"
+                (change)="learning.auto.set($any($event.target).checked)"
               />
-              seconds
-            </span>
-          </label>
-          <label class="check"
-            ><input
-              type="checkbox"
-              [checked]="learning.minDays() > 1"
-              (change)="learning.minDays.set($any($event.target).checked ? 2 : 1)"
-            />
-            on ≥ 2 different days</label
-          >
-        </div>
+              Auto-learning (status follows your times)</label
+            >
+            <label class="field"
+              >“Finished” when mean of last 5 ≤
+              <span class="unit">
+                <input
+                  type="number"
+                  min="1"
+                  step="0.5"
+                  style="width:80px"
+                  [value]="targetSec()"
+                  (change)="learning.setTarget(setId(), +$any($event.target).value)"
+                />
+                seconds
+              </span>
+            </label>
+            <label class="check"
+              ><input
+                type="checkbox"
+                [checked]="learning.minDays() > 1"
+                (change)="learning.minDays.set($any($event.target).checked ? 2 : 1)"
+              />
+              on ≥ 2 different days</label
+            >
+          </div>
+        </details>
 
         <details
           class="picker"
@@ -355,10 +360,11 @@ interface QueueItem {
       margin-bottom: 14px;
     }
     .visuals {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
       gap: 16px;
-      align-items: flex-start;
-      flex-wrap: wrap;
+      align-items: start;
+      justify-items: center;
     }
     figure {
       margin: 0;
@@ -401,8 +407,17 @@ interface QueueItem {
       font-size: 17px;
       margin-left: 8px;
     }
+    .opts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+      gap: 0 20px;
+    }
+    .opts .field {
+      grid-column: 1 / -1;
+    }
     .picker {
-      margin-top: 12px;
+      border-top: 1px solid var(--line-soft);
+      padding-top: 6px;
     }
     .picker summary {
       cursor: pointer;

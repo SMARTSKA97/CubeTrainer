@@ -15,18 +15,26 @@ import {
   selector: 'app-hold-picker',
   standalone: true,
   template: `
-    <div class="hold">
-      <div class="text">
+    <details class="hold">
+      <summary>
         <span class="label">{{ title() }}</span>
-        <div class="sentence">
-          Top
-          <span class="dot" [style.background]="hex(names().U)"></span><b>{{ names().U }}</b>
-          · Front
-          <span class="dot" [style.background]="hex(names().F)"></span><b>{{ names().F }}</b>
-          <span class="muted">· right {{ names().R }}</span>
-        </div>
-        <div class="muted small">{{ sentence() }}</div>
-      </div>
+        <span class="chips">
+          <span class="chip"
+            ><i class="dot" [style.background]="hex(names().U)"></i><small>Top</small
+            ><b>{{ names().U }}</b></span
+          >
+          <span class="chip"
+            ><i class="dot" [style.background]="hex(names().F)"></i><small>Front</small
+            ><b>{{ names().F }}</b></span
+          >
+          <span class="chip"
+            ><i class="dot" [style.background]="hex(names().R)"></i><small>Right</small
+            ><b>{{ names().R }}</b></span
+          >
+        </span>
+        <span class="change">Change</span>
+      </summary>
+      <div class="muted small">{{ sentence() }}</div>
       <div class="controls">
         <label class="field"
           >{{ topLabel() }}
@@ -44,46 +52,94 @@ import {
             }
           </select>
         </label>
-        @for (p of presets(); track p.label) {
-          <button class="btn small" (click)="value.set(p.hold)">{{ p.label }}</button>
+        @if (presets().length) {
+          <div class="presets">
+            @for (p of presets(); track p.label) {
+              <button class="btn small" (click)="value.set(p.hold)">{{ p.label }}</button>
+            }
+          </div>
         }
       </div>
-    </div>
+    </details>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     .hold {
-      display: flex;
-      gap: 16px;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      align-items: flex-end;
-      margin: 4px 0 10px;
-      padding: 10px 12px;
-      border: 1px dashed var(--line);
-      border-radius: 12px;
+      background: var(--bg);
+      border: 1px solid var(--line-soft);
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: grid;
+      gap: 12px;
     }
-    .sentence {
-      font-size: 18px;
-      margin: 2px 0;
+    summary {
+      list-style: none;
+      cursor: pointer;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px 12px;
+      align-items: center;
+    }
+    summary::-webkit-details-marker {
+      display: none;
+    }
+    .label {
+      grid-column: 1 / -1;
+    }
+    .chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      min-width: 0;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px 5px 8px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 13.5px;
+      white-space: nowrap;
+    }
+    .chip small {
+      color: var(--muted);
+      font-size: 12px;
     }
     .dot {
-      display: inline-block;
-      width: 14px;
-      height: 14px;
+      width: 12px;
+      height: 12px;
       border-radius: 4px;
-      margin: 0 4px 0 6px;
-      vertical-align: -2px;
       border: 1px solid #0006;
     }
+    .change {
+      color: var(--accent);
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+    details[open] .change::after {
+      content: ' ▴';
+    }
+    details:not([open]) .change::after {
+      content: ' ▾';
+    }
     .controls {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .controls select {
+      width: 100%;
+    }
+    .presets {
+      grid-column: 1 / -1;
       display: flex;
-      gap: 10px;
-      align-items: flex-end;
       flex-wrap: wrap;
+      gap: 8px;
     }
     .small {
-      font-size: 12px;
+      font-size: 12.5px;
     }
   `,
 })

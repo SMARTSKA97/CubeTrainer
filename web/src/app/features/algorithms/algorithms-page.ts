@@ -67,22 +67,22 @@ type SortKey = 'order' | 'name' | 'group' | 'best' | 'avg';
           <tbody>
             @for (r of rows(); track r.c.id) {
               <tr>
-                <td class="img">
+                <td class="img" data-a="img">
                   @if (algs.imageUrl(r.c); as url) {
                     <img [src]="url" [alt]="r.c.name" width="72" height="72" />
                   }
                 </td>
-                <td>
+                <td class="nm" data-a="name">
                   <b>{{ r.c.name }}</b>
                 </td>
-                <td class="muted">{{ r.c.group }}</td>
-                <td class="alg">
+                <td class="muted grp" data-a="grp">{{ r.c.group }}</td>
+                <td class="alg" data-a="alg">
                   <code>{{ r.c.alg }}</code>
                   <button class="btn small" (click)="copy(r.c.alg)">
                     {{ copied() === r.c.id ? 'Copied' : 'Copy' }}
                   </button>
                 </td>
-                <td>
+                <td class="st" data-a="stat">
                   <select
                     class="status"
                     [attr.data-s]="r.status"
@@ -93,9 +93,13 @@ type SortKey = 'order' | 'name' | 'group' | 'best' | 'avg';
                     }
                   </select>
                 </td>
-                <td class="num">{{ r.best === null ? '-' : fmt(r.best) }}</td>
-                <td class="num">{{ fmt(r.ao5) }}</td>
-                <td><button class="btn small primary" (click)="train(r.c)">Train</button></td>
+                <td class="num" data-a="best" data-l="Best">
+                  {{ r.best === null ? '-' : fmt(r.best) }}
+                </td>
+                <td class="num" data-a="avg" data-l="Ao5">{{ fmt(r.ao5) }}</td>
+                <td data-a="act">
+                  <button class="btn small primary" (click)="train(r.c)">Train</button>
+                </td>
               </tr>
             }
           </tbody>
@@ -148,6 +152,114 @@ type SortKey = 'order' | 'name' | 'group' | 'best' | 'avg';
     }
     select.status {
       padding: 4px 6px;
+    }
+    /* Phones: every case becomes its own small card instead of a squeezed table row. */
+    @media (max-width: 760px) {
+      .table-card {
+        background: none;
+        border: 0;
+        box-shadow: none;
+        overflow: visible;
+      }
+      table,
+      tbody {
+        display: block;
+      }
+      thead {
+        display: none;
+      }
+      tr {
+        display: grid;
+        grid-template-columns: 72px minmax(0, 1fr) minmax(0, 1fr) auto;
+        grid-template-areas:
+          'img name name act'
+          'img grp grp act'
+          'alg alg alg alg'
+          'stat stat best avg';
+        align-items: center;
+        gap: 4px 12px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      td {
+        display: block;
+        border: 0;
+        padding: 0;
+        min-width: 0;
+      }
+      td[data-a='img'] {
+        grid-area: img;
+        grid-row: span 2;
+      }
+      td[data-a='name'] {
+        grid-area: name;
+        font-size: 16px;
+        align-self: end;
+      }
+      td[data-a='grp'] {
+        grid-area: grp;
+        align-self: start;
+        font-size: 13px;
+      }
+      td[data-a='act'] {
+        grid-area: act;
+      }
+      td[data-a='alg'] {
+        grid-area: alg;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+        padding: 10px 12px;
+        background: var(--bg);
+        border-radius: 12px;
+      }
+      td.alg code {
+        flex: 1;
+        min-width: 0;
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+      }
+      td[data-a='stat'] {
+        grid-area: stat;
+        margin-top: 10px;
+      }
+      td[data-a='stat'] select {
+        width: 100%;
+      }
+      td[data-a='best'],
+      td[data-a='avg'] {
+        margin-top: 10px;
+        text-align: right;
+        font-size: 15px;
+        font-weight: 600;
+      }
+      td[data-a='best'] {
+        grid-area: best;
+      }
+      td[data-a='avg'] {
+        grid-area: avg;
+      }
+      td[data-l]::before {
+        content: attr(data-l);
+        display: block;
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      td.img img {
+        width: 72px;
+        height: 72px;
+        object-fit: contain;
+      }
     }
     select.status[data-s='learning'] {
       color: #f59e0b;

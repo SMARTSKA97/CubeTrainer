@@ -145,13 +145,22 @@ interface Cell {
   styles: `
     .summary {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+    }
+    @media (max-width: 640px) {
+      .summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .summary div:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+      }
     }
     .summary div {
       background: var(--bg);
-      border-radius: 10px;
-      padding: 10px 12px;
+      border: 1px solid var(--line-soft);
+      border-radius: 14px;
+      padding: 12px 14px;
     }
     .summary span {
       display: block;

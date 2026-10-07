@@ -83,7 +83,8 @@ const START_Y = -38;
     :host {
       display: grid;
       justify-items: center;
-      gap: 10px;
+      gap: 12px;
+      width: 100%;
       min-width: 0;
     }
     .seg {
@@ -110,9 +111,9 @@ const START_Y = -38;
       color: var(--text);
     }
     .stage {
-      --cube: clamp(120px, 38vw, 168px);
+      --cube: clamp(132px, 46vw, 190px);
       width: 100%;
-      height: calc(var(--cube) * 1.7);
+      height: calc(var(--cube) * 1.65);
       display: grid;
       place-items: center;
       perspective: 700px;
@@ -165,11 +166,13 @@ const START_Y = -38;
     }
     .hint {
       font-size: 12.5px;
+      text-align: center;
     }
     .net {
       width: 100%;
-      max-width: 300px;
+      max-width: 360px;
       height: auto;
+      margin-inline: auto;
     }
     .net.top {
       max-width: 170px;

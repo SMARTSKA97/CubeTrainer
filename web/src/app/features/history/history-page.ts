@@ -35,7 +35,8 @@ type Filter = 'all' | 'random' | 'case';
             </button>
           }
         </div>
-        <span class="sep"></span>
+      </div>
+      <div class="tools">
         <button class="btn" (click)="exportJson()">Export JSON</button>
         <label class="btn" title="Restore solves from an exported JSON file"
           >Import JSON
@@ -48,7 +49,7 @@ type Filter = 'all' | 'random' | 'case';
         </label>
         <button class="btn" (click)="exportCsv()">Export CSV</button>
         <button class="btn danger" (click)="clearAll()">
-          Clear {{ filter() === 'all' ? 'everything' : filter() }}…
+          Clear {{ filter() === 'all' ? 'all' : filter() }}…
         </button>
       </div>
     </section>
@@ -181,20 +182,6 @@ type Filter = 'all' | 'random' | 'case';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
-    .sep {
-      flex: 1;
-    }
-    @media (max-width: 700px) {
-      .sep {
-        flex: 1 0 100%;
-        height: 0;
-      }
-    }
-    .seg {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
     .chart {
       width: 100%;
       height: auto;

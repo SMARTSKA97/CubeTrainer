@@ -560,7 +560,10 @@ const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''):
         padding-right: calc(16px + var(--sar));
       }
       main {
-        padding: 20px calc(16px + var(--sar)) 40px calc(16px + var(--sal));
+        /* bottom padding stays as set above, so the floating tab bar never covers the last card */
+        padding-top: 20px;
+        padding-left: calc(16px + var(--sal));
+        padding-right: calc(16px + var(--sar));
       }
     }
     /* Landscape phones: keep the bar slim so the timer has room. */

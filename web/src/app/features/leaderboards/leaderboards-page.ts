@@ -40,21 +40,23 @@ const PERIODS: { id: Period; label: string }[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px 14px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
       align-items: end;
+    }
+    .controls .seg {
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
+    .controls select {
+      width: 100%;
     }
     label.f {
       display: grid;
       gap: 4px;
       font-size: 12px;
       color: var(--muted);
-    }
-    .seg {
-      display: inline-flex;
-      gap: 6px;
-      flex-wrap: wrap;
     }
     table {
       width: 100%;
@@ -75,6 +77,9 @@ const PERIODS: { id: Period; label: string }[] = [
     tr.me td {
       background: color-mix(in srgb, var(--accent) 14%, transparent);
     }
+    .m-meta {
+      display: none;
+    }
     .mine {
       display: flex;
       flex-wrap: wrap;
@@ -83,9 +88,68 @@ const PERIODS: { id: Period; label: string }[] = [
     .chip {
       background: var(--bg);
       border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 6px 10px;
+      border-radius: 12px;
+      padding: 8px 14px;
       font-size: 14px;
+    }
+    /* Phones: each rank is a compact row — rank, who, result — with the small print underneath. */
+    @media (max-width: 640px) {
+      table,
+      tbody {
+        display: block;
+      }
+      thead {
+        display: none;
+      }
+      tr {
+        display: grid;
+        grid-template-columns: 34px minmax(0, 1fr) auto;
+        grid-template-areas:
+          'rank who res'
+          'rank meta meta';
+        align-items: center;
+        column-gap: 12px;
+        padding: 12px 10px;
+        border-bottom: 1px solid var(--line-soft);
+      }
+      tr.me {
+        background: color-mix(in srgb, var(--accent) 14%, transparent);
+        border-radius: 12px;
+      }
+      td {
+        display: block;
+        border: 0;
+        padding: 0;
+        background: none !important;
+      }
+      td[data-a='rank'] {
+        grid-area: rank;
+        text-align: center;
+        color: var(--muted);
+        font-weight: 650;
+      }
+      td[data-a='who'] {
+        grid-area: who;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      td[data-a='res'] {
+        grid-area: res;
+        font-size: 17px;
+      }
+      td.m-meta {
+        display: block;
+        grid-area: meta;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .c-country,
+      .c-method,
+      .c-date {
+        display: none;
+      }
     }
     .small {
       font-size: 13px;
@@ -201,14 +265,19 @@ const PERIODS: { id: Period; label: string }[] = [
           <tbody>
             @for (r of rows(); track r.handle) {
               <tr [class.me]="r.handle === auth.user()?.handle">
-                <td class="n">{{ r.rank }}</td>
-                <td>@{{ r.handle }}</td>
-                <td>{{ countryName(r.country) }}</td>
-                <td>{{ r.method ? methodLabel(r.method) : '-' }}</td>
-                <td class="n">
+                <td class="n" data-a="rank">{{ r.rank }}</td>
+                <td data-a="who">@{{ r.handle }}</td>
+                <td class="c-country">{{ countryName(r.country) }}</td>
+                <td class="c-method">{{ r.method ? methodLabel(r.method) : '-' }}</td>
+                <td class="n" data-a="res">
                   <b>{{ fmt(r.valueMs) }}</b>
                 </td>
-                <td>{{ r.achievedAtMs | date: 'mediumDate' }}</td>
+                <td class="c-date">{{ r.achievedAtMs | date: 'mediumDate' }}</td>
+                <td class="m-meta" data-a="meta">
+                  {{ countryName(r.country) }} ·
+                  {{ r.method ? methodLabel(r.method) : 'no method' }} ·
+                  {{ r.achievedAtMs | date: 'mediumDate' }}
+                </td>
               </tr>
             }
           </tbody>
