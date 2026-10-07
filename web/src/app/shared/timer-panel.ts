@@ -100,10 +100,14 @@ export class TimerPanel implements OnDestroy {
   readonly sound = input(false);
   readonly enabled = input(true);
   readonly finished = output<TimerResult>();
+  /** fires the moment the timer starts running (after the hold is released) */
+  readonly started = output<void>();
 
   readonly phase = signal<Phase>('idle');
   readonly inspecting = signal(false);
   readonly display = signal('0.00');
+  /** milliseconds on the clock while a solve is running, else 0 */
+  readonly elapsedMs = signal(0);
   readonly warn = signal(false);
 
   private t0 = 0;
@@ -254,12 +258,14 @@ export class TimerPanel implements OnDestroy {
     this.warn.set(false);
     this.t0 = now;
     this.phase.set('running');
+    this.started.emit();
     this.tick();
   }
 
   private stop() {
     const timeMs = performance.now() - this.t0;
     cancelAnimationFrame(this.raf);
+    this.elapsedMs.set(0);
     this.phase.set('stopped');
     this.display.set(formatTime(timeMs));
     let penalty: Penalty = 'none';
@@ -271,6 +277,7 @@ export class TimerPanel implements OnDestroy {
   /** Abort inspection / arming without recording anything. */
   cancel() {
     cancelAnimationFrame(this.raf);
+    this.elapsedMs.set(0);
     clearTimeout(this.readyTimer);
     this.inspecting.set(false);
     this.warn.set(false);
@@ -281,6 +288,7 @@ export class TimerPanel implements OnDestroy {
   private tick = () => {
     const now = performance.now();
     if (this.phase() === 'running') {
+      this.elapsedMs.set(now - this.t0);
       this.display.set(formatTime(now - this.t0));
     } else if (this.inspecting()) {
       const el = now - this.inspectStart;

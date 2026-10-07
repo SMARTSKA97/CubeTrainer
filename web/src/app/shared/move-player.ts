@@ -22,7 +22,22 @@ import {
 import { Chunk, chunkAlg, insightsFor } from '@domain/patterns';
 import { Cube3d, ActiveTurn } from './cube-3d';
 
-type Speed = 0.5 | 1 | 2;
+type Speed = 0.5 | 1 | 2 | 3 | 4;
+const SPEEDS: Speed[] = [0.5, 1, 2, 3, 4];
+
+/** How a move is read aloud. */
+function spoken(m: Move): string {
+  const names: Record<string, string> = {
+    u: 'U wide',
+    r: 'R wide',
+    f: 'F wide',
+    d: 'D wide',
+    l: 'L wide',
+    b: 'B wide',
+  };
+  const base = names[m.base] ?? m.base;
+  return m.turns === 2 ? `${base} two` : m.turns === 3 ? `${base} prime` : base;
+}
 const HIGHLIGHT_MS = 300;
 const TURN_MS = 600;
 const REST_MS = 100;
@@ -95,7 +110,13 @@ const ease = (k: number) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 
         </button>
         <span class="count">{{ pos() }} / {{ total() }}</span>
         <span class="grow"></span>
-        <button class="chip" type="button" (click)="cycleSpeed()" aria-label="Change speed">
+        <button
+          class="chip"
+          type="button"
+          (click)="cycleSpeed()"
+          aria-label="Change speed"
+          title="1× is one move per second"
+        >
           {{ speed() }}×
         </button>
         <button
@@ -139,10 +160,20 @@ const ease = (k: number) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 
 
       @if (learn()) {
         <div class="tools">
+          <button class="chip" type="button" [class.on]="tick()" (click)="tick.set(!tick())">
+            Tick
+          </button>
+          <button class="chip" type="button" [class.on]="voice()" (click)="toggleVoice()">
+            Say moves
+          </button>
           <button class="chip" type="button" [class.on]="hide()" (click)="hide.set(!hide())">
             {{ hide() ? 'Show moves' : 'Recall: hide moves' }}
           </button>
         </div>
+        <p class="muted small-note">
+          Rhythm practice: 1× is one move per second. Raise the speed, switch on the tick or the
+          voice, and turn along with the cube until it feels like one flowing motion.
+        </p>
         @if (tip(); as t) {
           <p class="tip">
             <b>{{ t.name }}.</b> {{ t.tip }}
@@ -349,6 +380,9 @@ const ease = (k: number) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 
       gap: 8px;
       flex-wrap: wrap;
     }
+    .small-note {
+      font-size: 13px;
+    }
     .tip {
       font-size: 14px;
       color: var(--muted);
@@ -411,6 +445,9 @@ export class MovePlayer implements OnDestroy {
   readonly speed = signal<Speed>(1);
   readonly focus = signal(true);
   readonly hide = signal(false);
+  readonly tick = signal(false);
+  readonly voice = signal(false);
+  private audio?: AudioContext;
   /** the move being animated right now (null between moves) */
   private readonly turn = signal<ActiveTurn | null>(null);
   private readonly phase = signal<'idle' | 'highlight' | 'turn'>('idle');
@@ -493,6 +530,7 @@ export class MovePlayer implements OnDestroy {
   }
 
   private halt() {
+    if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel();
     cancelAnimationFrame(this.raf);
     clearTimeout(this.timer);
     this.playing.set(false);
@@ -521,7 +559,40 @@ export class MovePlayer implements OnDestroy {
   }
 
   cycleSpeed() {
-    this.speed.update((s) => (s === 0.5 ? 1 : s === 1 ? 2 : 0.5));
+    this.speed.update((s) => SPEEDS[(SPEEDS.indexOf(s) + 1) % SPEEDS.length]);
+  }
+
+  toggleVoice() {
+    const on = !this.voice();
+    this.voice.set(on);
+    if (!on && typeof speechSynthesis !== 'undefined') speechSynthesis.cancel();
+  }
+
+  /** the beat: a short click and/or the move read aloud, as the turn starts */
+  private cue(m: Move) {
+    if (this.tick()) {
+      try {
+        this.audio ??= new AudioContext();
+        const a = this.audio;
+        void a.resume();
+        const o = a.createOscillator();
+        const g = a.createGain();
+        o.frequency.value = 880;
+        g.gain.setValueAtTime(0.12, a.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + 0.08);
+        o.connect(g).connect(a.destination);
+        o.start();
+        o.stop(a.currentTime + 0.09);
+      } catch {
+        /* sound is optional */
+      }
+    }
+    if (this.voice() && typeof speechSynthesis !== 'undefined') {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(spoken(m));
+      u.rate = Math.min(2, 0.9 + this.speed() * 0.3);
+      speechSynthesis.speak(u);
+    }
   }
 
   pause() {
@@ -581,6 +652,7 @@ export class MovePlayer implements OnDestroy {
 
   private run(move: Move, dir: 1 | -1, done: () => void) {
     const spec = moveSpec(move);
+    if (dir === 1) this.cue(move);
     const ms = TURN_MS / this.speed();
     const t0 = performance.now();
     this.phase.set('turn');

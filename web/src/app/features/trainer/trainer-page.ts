@@ -10,7 +10,19 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { caseScramble, invertAlg } from '@domain/cube';
+import { caseScramble, formatMoves, invertAlg, parseMoves } from '@domain/cube';
+import { chunkAlg } from '@domain/patterns';
+import {
+  Pending,
+  enqueue,
+  hintStep,
+  hintThresholdMs,
+  shouldRepeatSoon,
+  takeRepeat,
+} from '@domain/practice';
+import { AlgChoice } from '@core/data/alg-choice';
+import { RecogStore } from '@core/data/recog-store';
+import { AlgChooser } from '@shared/alg-chooser';
 import { AlgCase, AlgService } from '@core/data/alg-service';
 import { usePref } from '@core/pref';
 import { RetryService } from '@core/data/retry';
@@ -45,7 +57,7 @@ interface QueueItem {
 @Component({
   selector: 'app-trainer-page',
   standalone: true,
-  imports: [TimerPanel, ScrambleNet, HoldPicker, SolveTags, MovePlayer],
+  imports: [TimerPanel, ScrambleNet, HoldPicker, SolveTags, MovePlayer, AlgChooser],
   template: `
     @if (algs.error(); as err) {
       <div class="card">{{ err }}</div>
@@ -110,6 +122,14 @@ interface QueueItem {
               (change)="inspection.set($any($event.target).checked)"
             />
             15 s inspection</label
+          >
+          <label class="check"
+            ><input
+              type="checkbox"
+              [checked]="hints()"
+              (change)="hints.set($any($event.target).checked)"
+            />
+            Hints when I am slow</label
           >
         </div>
         <details class="picker">
@@ -261,8 +281,9 @@ interface QueueItem {
             @if (hintOpen()) {
               <div class="learn-panel">
                 <div class="label">How to solve it, step by step</div>
+                <app-alg-chooser [c]="c" />
                 <app-move-player
-                  [moves]="c.alg"
+                  [moves]="choice.chosen(c)"
                   [start]="inverse(c.alg)"
                   [scheme]="scheme()"
                   [learn]="true"
@@ -303,8 +324,27 @@ interface QueueItem {
             #timer
             [inspection]="inspection()"
             [sound]="false"
+            (started)="onStarted()"
             (finished)="onFinished($event)"
           />
+
+          @if (hintView(); as h) {
+            <section class="card hint-banner" role="status">
+              <b>Stuck? Here is the way through</b>
+              <div class="hint-chunks">
+                @for (p of h.shown; track $index) {
+                  <span class="hc" [class.cur]="$last">
+                    <small>{{ p.name ?? 'Part ' + ($index + 1) }}</small>
+                    <code>{{ p.text }}</code>
+                  </span>
+                }
+              </div>
+              <small class="muted"
+                >Part {{ h.step }} of {{ h.total
+                }}{{ h.step < h.total ? ' · the next part appears in a few seconds' : '' }}</small
+              >
+            </section>
+          }
 
           @if (last(); as l) {
             <section class="card last">
@@ -351,6 +391,14 @@ interface QueueItem {
                 <span>Ao5</span
                 ><b>{{ caseStats().ao5 === undefined ? '-' : fmt(caseStats().ao5!) }}</b>
               </div>
+              @if (split(); as sp) {
+                <div title="Time from seeing the case to starting the timer">
+                  <span>Recognise</span><b>{{ fmtOpt(sp.recog) }}</b>
+                </div>
+                <div title="The solve itself, once the timer is running">
+                  <span>Execute</span><b>{{ fmtOpt(sp.exec) }}</b>
+                </div>
+              }
             </div>
           </section>
         }
@@ -417,6 +465,35 @@ interface QueueItem {
       margin-top: 8px;
       color: var(--accent);
       font-size: 14px;
+    }
+    .hint-banner {
+      border-color: rgba(124, 156, 255, 0.5);
+      background: color-mix(in srgb, var(--accent) 10%, var(--panel));
+    }
+    .hint-chunks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .hc {
+      display: grid;
+      gap: 2px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      opacity: 0.55;
+    }
+    .hc.cur {
+      opacity: 1;
+      border-color: var(--accent);
+    }
+    .hc small {
+      color: var(--muted);
+      font-size: 11.5px;
+    }
+    .hc code {
+      font-size: 17px;
     }
     .learn-panel {
       display: grid;
@@ -593,6 +670,13 @@ export class TrainerPage {
   readonly setId = usePref('trainer.set', '2lookoll');
   readonly randomAuf = usePref('trainer.auf', false);
   readonly watchScramble = signal(false);
+  readonly choice = inject(AlgChoice);
+  private readonly recog = inject(RecogStore);
+  readonly hints = usePref('trainer.hints', true);
+  /** cases that went badly and should come back after a few others */
+  private readonly soon = signal<Pending[]>([]);
+  private shownAt = performance.now();
+  private pendingRecog = 0;
   readonly hold = usePref<Hold>('trainer.hold', CROSS_WHITE_HOLD);
   readonly scheme = computed(() => schemeHex(this.hold()));
   readonly presets = [
@@ -669,6 +753,47 @@ export class TrainerPage {
   fmt = (v: number | null | undefined) =>
     v === null || v === undefined ? (v === null ? 'DNF' : '-') : formatTime(v);
   inverse = invertAlg;
+  fmtOpt = (v: number | null) => (v === null ? '-' : formatTime(v));
+
+  readonly split = computed(() => {
+    const c = this.currentCase();
+    const r = c ? this.recog.of(c.id) : null;
+    return r && r.n > 0 ? r : null;
+  });
+
+  /** how many blocks of the solution to reveal, driven by how long the solve has been running */
+  private readonly hintLevel = computed(() => {
+    const t = this.timer();
+    const c = this.currentCase();
+    if (!this.hints() || !t || !c || t.phase() !== 'running') return 0;
+    const m = mean(this.store.caseSolves(c.id).slice(-5));
+    return hintStep(t.elapsedMs(), hintThresholdMs(m));
+  });
+
+  readonly hintView = computed(() => {
+    const level = this.hintLevel();
+    const c = this.currentCase();
+    if (level === 0 || !c) return null;
+    try {
+      const moves = parseMoves(this.choice.chosen(c));
+      const chunks = chunkAlg(moves);
+      const upto = Math.min(level, chunks.length);
+      return {
+        step: upto,
+        total: chunks.length,
+        shown: chunks.slice(0, upto).map((ch) => ({
+          name: ch.name,
+          text: formatMoves(moves.slice(ch.from, ch.to)),
+        })),
+      };
+    } catch {
+      return null;
+    }
+  });
+
+  onStarted() {
+    this.pendingRecog = Math.min(120000, Math.max(0, performance.now() - this.shownAt));
+  }
 
   constructor() {
     // Build the first scramble once the algorithm list is loaded (and honour retry / ?case= links).
@@ -802,6 +927,13 @@ export class TrainerPage {
     const pool = this.selectedCases();
     if (!pool.length) return null;
     const lastId = this.current()?.caseId;
+    // A case that went badly gets another go after a few others, before the random pick.
+    const due = takeRepeat(this.soon(), lastId);
+    this.soon.set(due.queue);
+    if (due.id) {
+      const back = pool.find((x) => x.id === due.id);
+      if (back) return back;
+    }
     const candidates = pool.length > 1 ? pool.filter((c) => c.id !== lastId) : pool;
     if (!this.weakFocus()) return candidates[Math.floor(Math.random() * candidates.length)];
     // weight by average time; never-attempted cases count as slow
@@ -818,6 +950,7 @@ export class TrainerPage {
   }
 
   private push(c: AlgCase) {
+    this.shownAt = performance.now();
     const cs = caseScramble(c.alg, Math.random, this.useAuf(c));
     this.queue.update((q) => [
       ...q.slice(0, this.index() + (q.length ? 1 : 0)),
@@ -856,6 +989,7 @@ export class TrainerPage {
   }
 
   private afterChange() {
+    this.shownAt = performance.now();
     this.message.set('');
     this.hintOpen.set(false);
     this.timer()?.cancel();
@@ -888,6 +1022,14 @@ export class TrainerPage {
     });
     this.last.set(solve);
     this.explain(solve, before, prior);
+    this.recog.add(c.id, this.pendingRecog, r.timeMs);
+    if (
+      !this.planMode() &&
+      shouldRepeatSoon(effective(solve), mean(prior.slice(-5)), prior.length)
+    ) {
+      this.soon.update((q) => enqueue(q, c.id, 3));
+      this.message.update((m) => `${m ? m + ' ' : ''}I will bring this case back in a few turns.`);
+    }
     const ch = this.store.lastAutoChange();
     if (ch && ch.caseId === c.id) {
       this.message.update((m) => `${m ? m + ' ' : ''}Status: ${ch.from} → ${ch.to}. ${ch.reason}`);
@@ -942,6 +1084,7 @@ export class TrainerPage {
   }
 
   retrySame() {
+    this.shownAt = performance.now();
     this.last.set(null);
     this.message.set('');
     this.timer()?.cancel();

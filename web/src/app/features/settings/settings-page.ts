@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { AppUpdateSection } from './app-update-section';
 import { DangerSection } from './danger-section';
 import { IdentitiesSection } from './identities-section';
+import { OfflineSection } from './offline-section';
 import { ProfileSection } from './profile-section';
 import { SecuritySection } from './security-section';
 import { TwoFactorSection } from './two-factor-section';
@@ -10,6 +11,7 @@ import { TwoFactorSection } from './two-factor-section';
   selector: 'app-settings-page',
   imports: [
     AppUpdateSection,
+    OfflineSection,
     ProfileSection,
     SecuritySection,
     TwoFactorSection,
@@ -32,6 +34,7 @@ import { TwoFactorSection } from './two-factor-section';
   template: `
     <h1>Account settings</h1>
     <app-update-section />
+    <app-offline-section />
     <app-profile-section />
     <app-security-section />
     <app-two-factor-section />

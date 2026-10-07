@@ -1,11 +1,14 @@
-import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { AlgCase, AlgService } from '@core/data/alg-service';
 import { LearningSettings } from '@core/data/learning-settings';
 import { PlanService } from '@core/data/plan-service';
 import { SolveStore } from '@core/data/solve-store';
 import { SolveFilterState } from '@core/data/solve-filter-state';
 import { SolveFilterBar } from '@shared/solve-filter-bar';
-import { MISTAKES, STAGES, Solve, formatTime, mean, sessionStats } from '@domain/stats';
+import { MISTAKES, STAGES, Solve, effective, formatTime, mean, sessionStats } from '@domain/stats';
+import { computeBadges, longestStreak, weeklyRecap } from '@domain/badges';
+import { dayIndex } from '@domain/plan';
+import { renderRecap } from '@shared/recap-image';
 import { Router } from '@angular/router';
 import { usePref } from '@core/pref';
 
@@ -37,6 +40,47 @@ interface Cell {
       </div>
       <div>
         <span>Unlearned</span><b>{{ counts().unlearned }}</b>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="row head">
+        <div class="label">This week</div>
+        <span class="sep"></span>
+        <button class="btn small" type="button" (click)="shareRecap()">Share</button>
+      </div>
+      <div class="recap">
+        <div>
+          <span>Solves</span><b>{{ recap().solves }}</b>
+          <small class="muted">{{ vsLast() }}</small>
+        </div>
+        <div>
+          <span>Days practised</span><b>{{ recap().days }} / 7</b>
+        </div>
+        <div>
+          <span>Best</span><b>{{ fmtMs(recap().bestMs) }}</b>
+        </div>
+        <div>
+          <span>Average</span><b>{{ fmtMs(recap().meanMs) }}</b>
+        </div>
+      </div>
+      @if (shareNote()) {
+        <p class="muted small" role="status">{{ shareNote() }}</p>
+      }
+    </section>
+
+    <section class="card">
+      <div class="label">Badges · {{ earnedCount() }} of {{ badges().length }}</div>
+      <div class="badges">
+        @for (b of badges(); track b.id) {
+          <div class="bdg" [class.on]="b.earned">
+            <b>{{ b.earned ? '✓ ' : '' }}{{ b.title }}</b>
+            <small>{{ b.text }}</small>
+            @if (!b.earned) {
+              <i class="bar"><u [style.width.%]="b.progress * 100"></u></i>
+            }
+          </div>
+        }
       </div>
     </section>
 
@@ -143,6 +187,71 @@ interface Cell {
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
+    .head {
+      align-items: center;
+    }
+    .recap {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+    }
+    .recap div {
+      display: grid;
+      gap: 2px;
+      background: var(--bg);
+      border: 1px solid var(--line-soft);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+    .recap span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .recap b {
+      font-size: 22px;
+      font-variant-numeric: tabular-nums;
+    }
+    .badges {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
+    .bdg {
+      display: grid;
+      gap: 4px;
+      align-content: start;
+      padding: 12px 14px;
+      border: 1px solid var(--line-soft);
+      border-radius: 14px;
+      background: var(--bg);
+      opacity: 0.8;
+    }
+    .bdg.on {
+      opacity: 1;
+      border-color: rgba(52, 210, 123, 0.5);
+      background: color-mix(in srgb, var(--good) 10%, var(--bg));
+    }
+    .bdg b {
+      font-size: 14px;
+    }
+    .bdg small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .bar {
+      display: block;
+      height: 5px;
+      border-radius: 5px;
+      background: var(--line);
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    .bar u {
+      display: block;
+      height: 100%;
+      background: var(--accent);
+      text-decoration: none;
+    }
     .summary {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -317,6 +426,86 @@ export class ProgressPage {
 
   readonly setId = usePref('progress.set', '2lookoll');
   readonly target = computed(() => this.learning.targetMs(this.setId()) / 1000);
+
+  private readonly tz = new Date().getTimezoneOffset();
+  readonly shareNote = signal('');
+  readonly recap = computed(() => weeklyRecap(this.store.solves(), Date.now(), this.tz));
+  readonly vsLast = computed(() => {
+    const r = this.recap();
+    const d = r.solves - r.previous;
+    return d === 0 ? 'same as last week' : `${d > 0 ? '+' : ''}${d} vs last week`;
+  });
+  fmtMs = (v: number | null) => (v === null ? '-' : formatTime(v));
+
+  readonly badges = computed(() => {
+    const all = this.store.solves();
+    let single: number | null = null;
+    for (const s of all) {
+      if (s.mode === 'case' || (s.stage ?? 'full') !== 'full') continue;
+      const e = effective(s);
+      if (e !== null && (single === null || e < single)) single = e;
+    }
+    const list = computeBadges({
+      totalSolves: all.length,
+      caseSolves: all.filter((s) => s.mode === 'case').length,
+      streak: this.plan.streak(),
+      longestStreak: longestStreak(all, this.tz),
+      finishedCases: this.counts().finished,
+      practiceDays: new Set(all.map((s) => dayIndex(s.at, this.tz))).size,
+      bestSingleMs: single,
+    });
+    return [...list].sort((a, b) => Number(b.earned) - Number(a.earned));
+  });
+  readonly earnedCount = computed(() => this.badges().filter((b) => b.earned).length);
+
+  async shareRecap() {
+    const r = this.recap();
+    const streak = this.plan.streak();
+    const text = `My cubing week on CubeTrainer: ${r.solves} solves on ${r.days} days, best ${this.fmtMs(r.bestMs)}, ${streak}-day streak.`;
+    const blob = await renderRecap({
+      title: 'My cubing week',
+      subtitle: `${streak}-day streak`,
+      stats: [
+        { label: 'Solves', value: String(r.solves) },
+        { label: 'Days practised', value: `${r.days} / 7` },
+        { label: 'Best', value: this.fmtMs(r.bestMs) },
+        { label: 'Average', value: this.fmtMs(r.meanMs) },
+      ],
+      footer: 'Practise with CubeTrainer',
+    });
+    try {
+      if (blob) {
+        const file = new File([blob], 'cubetrainer-week.png', { type: 'image/png' });
+        if (navigator.canShare?.({ files: [file] })) {
+          await navigator.share({ files: [file], text });
+          this.shareNote.set('Shared.');
+          return;
+        }
+      }
+      if (navigator.share) {
+        await navigator.share({ text });
+        this.shareNote.set('Shared.');
+        return;
+      }
+    } catch (e) {
+      if ((e as Error).name === 'AbortError') return;
+    }
+    if (blob) {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'cubetrainer-week.png';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      this.shareNote.set('Saved the picture to your downloads.');
+    } else {
+      try {
+        await navigator.clipboard.writeText(text);
+        this.shareNote.set('Copied the summary.');
+      } catch {
+        this.shareNote.set(text);
+      }
+    }
+  }
 
   readonly counts = computed(() => {
     const st = this.store.status();

@@ -43,10 +43,27 @@ const LL_KINDS = new Set(['oll', 'pll', 'coll', 'wv', 'll']);
             }
           </select>
         </label>
+        <label class="field"
+          >Answer with
+          <select (change)="answerWith.set($any($event.target).value); next()">
+            <option value="name" [selected]="answerWith() === 'name'">Case name</option>
+            <option value="alg" [selected]="answerWith() === 'alg'">The algorithm</option>
+          </select>
+        </label>
+        <label class="field"
+          >Picture
+          <select (change)="full.set($any($event.target).value === 'full'); next()">
+            <option value="top" [selected]="!full()">Top view</option>
+            <option value="full" [selected]="full()">Whole cube (flat or 3D)</option>
+          </select>
+        </label>
         <span class="sep"></span>
         <div class="score">
           <b>{{ session().ok }}</b> / {{ session().n }} correct · streak
           <b>{{ session().streak }}</b>
+          @if (avgSeconds(); as a) {
+            · avg <b>{{ a }} s</b>
+          }
         </div>
       </div>
       <div class="muted small">
@@ -63,7 +80,7 @@ const LL_KINDS = new Set(['oll', 'pll', 'coll', 'wv', 'll']);
             <app-scramble-net
               [scramble]="scramble()"
               [scheme]="scheme()"
-              [view]="topView() ? 'top' : 'net'"
+              [view]="topView() && !full() ? 'top' : 'net'"
               [mask]="kind() === 'oll'"
             />
           } @else {
@@ -174,6 +191,9 @@ export class DrillPage {
   readonly algs = inject(AlgService);
   readonly setId = usePref('drill.set', 'oll');
   readonly seconds = usePref('drill.seconds', 3);
+  readonly answerWith = usePref<'name' | 'alg'>('drill.answer', 'name');
+  readonly full = usePref('drill.full', false);
+  private shownAt = performance.now();
 
   readonly current = signal<AlgCase | null>(null);
   readonly options = signal<Option[]>([]);
@@ -182,6 +202,11 @@ export class DrillPage {
   readonly picked = signal('');
   readonly hidden = signal(false);
   readonly session = signal({ n: 0, ok: 0, streak: 0 });
+  readonly avgSeconds = computed(() => {
+    const s = this.session();
+    return s.n ? (this.sumMs() / s.n / 1000).toFixed(1) : '';
+  });
+  private readonly sumMs = signal(0);
   private readonly stats = signal<Record<string, Stat>>(this.readStats());
   private timer: ReturnType<typeof setTimeout> | undefined;
 
@@ -189,7 +214,9 @@ export class DrillPage {
   readonly kind = computed(() => this.algs.sets().find((s) => s.id === this.setId())?.kind ?? '');
   readonly topView = computed(() => LL_KINDS.has(this.kind()));
   readonly named = computed(
-    () => NAMED.has(this.setId()) || LL_KINDS.has(this.kind()) || this.setId().startsWith('2look'),
+    () =>
+      this.answerWith() === 'name' &&
+      (NAMED.has(this.setId()) || LL_KINDS.has(this.kind()) || this.setId().startsWith('2look')),
   );
   readonly weakest = computed(() => {
     const byId = this.algs.byId();
@@ -245,6 +272,7 @@ export class DrillPage {
     this.answered.set(false);
     this.picked.set('');
     this.hidden.set(false);
+    this.shownAt = performance.now();
     if (this.seconds() > 0)
       this.timer = setTimeout(() => this.hidden.set(true), this.seconds() * 1000);
   }
@@ -282,6 +310,7 @@ export class DrillPage {
     this.picked.set(o.id);
     this.answered.set(true);
     const ok = o.id === c.id;
+    this.sumMs.update((v) => v + (performance.now() - this.shownAt));
     this.session.update((s) => ({
       n: s.n + 1,
       ok: s.ok + (ok ? 1 : 0),

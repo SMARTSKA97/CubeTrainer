@@ -1,6 +1,9 @@
 import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { MovePlayer } from '@shared/move-player';
+import { AlgChooser } from '@shared/alg-chooser';
+import { OfflineSection } from '@features/settings/offline-section';
+import { AlgChoice } from '@core/data/alg-choice';
 import { invertAlg } from '@domain/cube';
 import { CROSS_WHITE_HOLD, schemeHex } from '@domain/orientation';
 import { AlgCase, AlgService } from '@core/data/alg-service';
@@ -11,7 +14,7 @@ import { CaseStatus, averageOf, best, formatTime } from '@domain/stats';
 type SortKey = 'order' | 'name' | 'group' | 'best' | 'avg';
 
 @Component({
-  imports: [MovePlayer],
+  imports: [MovePlayer, AlgChooser, OfflineSection],
   selector: 'app-algs-page',
   standalone: true,
   template: `
@@ -112,6 +115,7 @@ type SortKey = 'order' | 'name' | 'group' | 'best' | 'avg';
           </tbody>
         </table>
       </section>
+      <app-offline-section />
     }
 
     @if (watching(); as w) {
@@ -125,8 +129,9 @@ type SortKey = 'order' | 'name' | 'group' | 'best' | 'avg';
           </div>
           <button class="btn small" type="button" (click)="watching.set(null)">Close</button>
         </header>
+        <app-alg-chooser [c]="w" />
         <app-move-player
-          [moves]="w.alg"
+          [moves]="choice.chosen(w)"
           [start]="inverse(w.alg)"
           [scheme]="scheme"
           [learn]="true"
@@ -360,6 +365,7 @@ export class AlgsPage {
   readonly copied = signal('');
   readonly watching = signal<AlgCase | null>(null);
   inverse = invertAlg;
+  readonly choice = inject(AlgChoice);
   /** the same way the case pictures are drawn: yellow on top, white cross underneath */
   readonly scheme = schemeHex(CROSS_WHITE_HOLD);
 
