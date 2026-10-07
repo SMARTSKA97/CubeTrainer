@@ -57,7 +57,15 @@ t('hints appear late and then step', () => {
 });
 
 t('badges: counters and speed', () => {
-  const base = { totalSolves: 0, caseSolves: 0, streak: 0, longestStreak: 0, finishedCases: 0, practiceDays: 0, bestSingleMs: null };
+  const base = {
+    totalSolves: 0,
+    caseSolves: 0,
+    streak: 0,
+    longestStreak: 0,
+    finishedCases: 0,
+    practiceDays: 0,
+    bestSingleMs: null,
+  };
   assert.equal(computeBadges(base).filter((b) => b.earned).length, 0);
   const b = computeBadges({ ...base, totalSolves: 120, longestStreak: 7, bestSingleMs: 25000 });
   const by = Object.fromEntries(b.map((x) => [x.id, x]));
@@ -72,7 +80,13 @@ t('longest streak and weekly recap', () => {
   const at = (d) => ({ at: d * day + 3600000, timeMs: 10000, penalty: 'none' });
   assert.equal(longestStreak([at(1), at(2), at(3), at(10), at(11)]), 3);
   assert.equal(longestStreak([]), 0);
-  const solves = [at(100), at(101), { ...at(101), timeMs: 8000 }, { ...at(101), penalty: 'dnf' }, at(94)];
+  const solves = [
+    at(100),
+    at(101),
+    { ...at(101), timeMs: 8000 },
+    { ...at(101), penalty: 'dnf' },
+    at(94),
+  ];
   const r = weeklyRecap(solves, 101 * day + 7200000);
   assert.equal(r.solves, 4);
   assert.equal(r.previous, 1);

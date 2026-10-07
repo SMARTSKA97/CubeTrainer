@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
+import { CasePic } from '@shared/case-pic';
 import { MovePlayer } from '@shared/move-player';
 import { AlgChooser } from '@shared/alg-chooser';
 import { OfflineSection } from '@features/settings/offline-section';
@@ -14,7 +15,7 @@ import { CaseStatus, averageOf, best, formatTime } from '@domain/stats';
 type SortKey = 'order' | 'name' | 'group' | 'best' | 'avg';
 
 @Component({
-  imports: [MovePlayer, AlgChooser, OfflineSection],
+  imports: [MovePlayer, AlgChooser, OfflineSection, CasePic],
   selector: 'app-algs-page',
   standalone: true,
   template: `
@@ -75,9 +76,7 @@ type SortKey = 'order' | 'name' | 'group' | 'best' | 'avg';
             @for (r of rows(); track r.c.id) {
               <tr>
                 <td class="img" data-a="img">
-                  @if (algs.imageUrl(r.c); as url) {
-                    <img [src]="url" [alt]="r.c.name" width="72" height="72" />
-                  }
+                  <app-case-pic [c]="r.c" />
                 </td>
                 <td class="nm" data-a="name">
                   <b>{{ r.c.name }}</b>

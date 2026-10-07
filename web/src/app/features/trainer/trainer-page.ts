@@ -42,6 +42,7 @@ import {
   retryComparison,
 } from '@domain/stats';
 import { ScrambleNet } from '@shared/scramble-net';
+import { CasePic } from '@shared/case-pic';
 import { MovePlayer } from '@shared/move-player';
 import { HoldPicker } from '@shared/hold-picker';
 import { CROSS_WHITE_HOLD, Hold, schemeHex } from '@domain/orientation';
@@ -57,7 +58,7 @@ interface QueueItem {
 @Component({
   selector: 'app-trainer-page',
   standalone: true,
-  imports: [TimerPanel, ScrambleNet, HoldPicker, SolveTags, MovePlayer, AlgChooser],
+  imports: [TimerPanel, ScrambleNet, HoldPicker, SolveTags, MovePlayer, AlgChooser, CasePic],
   template: `
     @if (algs.error(); as err) {
       <div class="card">{{ err }}</div>
@@ -191,9 +192,7 @@ interface QueueItem {
             @for (c of setCases(); track c.id) {
               <label class="case" [class.off]="!isSelected(c.id)">
                 <input type="checkbox" [checked]="isSelected(c.id)" (change)="toggle(c.id)" />
-                @if (algs.imageUrl(c); as url) {
-                  <img [src]="url" [alt]="c.name" width="64" height="64" />
-                }
+                <app-case-pic [c]="c" style="--pic: 64px" />
                 <span>{{ c.name }}</span>
                 <small class="status" [attr.data-s]="store.statusOf(c.id)">{{
                   store.statusOf(c.id)
@@ -234,9 +233,9 @@ interface QueueItem {
               </div>
               <div class="visuals">
                 <app-scramble-net [scramble]="item.scramble" [scheme]="scheme()" />
-                @if (showImage() && algs.imageUrl(c); as url) {
+                @if (showImage()) {
                   <figure>
-                    <img [src]="url" [alt]="c.name" width="120" height="120" />
+                    <app-case-pic [c]="c" style="--pic: 120px" />
                     <figcaption>Case as the algorithm expects it</figcaption>
                   </figure>
                 }

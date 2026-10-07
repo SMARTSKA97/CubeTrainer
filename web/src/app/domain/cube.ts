@@ -144,7 +144,8 @@ export interface MoveSpec {
 }
 
 export function moveSpec(m: Move): MoveSpec {
-  const t = m.turns;
+  // a prime is one quarter the other way, never three the long way round
+  const t = m.turns === 3 ? -1 : m.turns;
   const b = m.base;
   const face = (
     f: Face,

@@ -22,7 +22,10 @@ function rot(v, axis, q) {
   return [x, y, z];
 }
 const key = (c) =>
-  c.stickers.map((s) => `${s.p}|${s.n}|${s.c}`).sort().join(';');
+  c.stickers
+    .map((s) => `${s.p}|${s.n}|${s.c}`)
+    .sort()
+    .join(';');
 
 t('moveSpec turns the same cubies as applyMove, for every move', () => {
   for (const b of 'URFDLBurfdlbMESxyz') {
@@ -81,6 +84,13 @@ t('insights: commutator and setup/undo', () => {
 t('describeMove reads naturally', () => {
   assert.match(describeMove(parseMoves("R'")[0]), /Right face counter-clockwise/);
   assert.match(describeMove(parseMoves('U2')[0]), /half turn/);
+});
+
+t('moveSpec: a prime is one quarter the other way, never three the long way round', () => {
+  const q = (s) => moveSpec(parseMoves(s)[0]).quarter;
+  assert.equal(q("U'"), -q('U'));
+  assert.equal(Math.abs(q('F2')), 2);
+  for (const m of ["U'", "R'", "L'", "D'", "F'", "B'", "M'", "x'"]) assert.equal(Math.abs(q(m)), 1);
 });
 
 console.log(`${passed} passed`);
