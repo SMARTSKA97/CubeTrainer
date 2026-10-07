@@ -72,10 +72,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       # 1. Schema first. Use Neon's DIRECT (non-pooled) host: Flyway takes advisory locks.
+      # Secrets go in through the environment, never pasted into the script, so a password with $ ` " or \ survives intact.
       - name: Flyway migrate (Neon)
+        env:
+          FLYWAY_URL: ${{ secrets.NEON_FLYWAY_URL }}
+          FLYWAY_USER: ${{ secrets.NEON_FLYWAY_USER }}
+          FLYWAY_PASSWORD: ${{ secrets.NEON_FLYWAY_PASSWORD }}
         run: |
-          docker run --rm -v "$PWD/db/migrations:/flyway/sql:ro" flyway/flyway:13-alpine \
-            -url="${{ secrets.NEON_FLYWAY_URL }}" -user="${{ secrets.NEON_FLYWAY_USER }}" -password="${{ secrets.NEON_FLYWAY_PASSWORD }}" \
+          docker run --rm -e FLYWAY_URL -e FLYWAY_USER -e FLYWAY_PASSWORD -v "$PWD/db/migrations:/flyway/sql:ro" flyway/flyway:13-alpine \
             -locations=filesystem:/flyway/sql -connectRetries=10 -cleanDisabled=true migrate
       # 2. Then the API. Migrations are backward compatible (expand, then contract) so the old API keeps working until this lands.
       - name: Deploy API (Render deploy hook)
