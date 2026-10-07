@@ -11,6 +11,45 @@ Everything below can be done from the browser; you only need a GitHub repository
 
 ---------------------------------------------------------------------------------------------------
 
+## Your production setup: cubetrainer.ska97homelab.uk
+
+The decided layout (all names below are the ones to type; the rest of this file explains each service in more detail):
+
+| What | Address | Where it runs |
+|---|---|---|
+| Web app | `https://cubetrainer.ska97homelab.uk` | Cloudflare Pages |
+| API | `https://cubetrainer-api.ska97homelab.uk` | Render (Docker, free) |
+| Database | (private) | Neon Postgres, same region as Render |
+| Email sender | `no-reply@ska97homelab.uk` | Brevo (domain authenticated) |
+| Contact / privacy address | `privacy@ska97homelab.uk` | Cloudflare Email Routing, forwarded to your own inbox |
+| Android app | `https://localhost` inside the phone | GitHub Releases (APK) |
+
+Both hostnames sit under the one registrable domain `ska97homelab.uk`, so the sign-in cookie is first-party (`Auth__Cookie__SameSite=Lax`).
+The API host is deliberately one level deep (`cubetrainer-api.`, not `api.cubetrainer.`) so Cloudflare's free certificate would cover it too.
+Assumption: `ska97homelab.uk` already uses Cloudflare DNS (the nameservers point to Cloudflare). If it does not, move the DNS to Cloudflare first (Add a site, free plan); Pages custom domains need it.
+
+Do these in order:
+
+1. **GitHub**: push the repository (section 0). Create the environment `production` (Settings -> Environments).
+2. **Neon** (section 1): project `cubetrainer`, region next to Render (Singapore). Copy the **direct** and **pooled** connection strings, run `CREATE ROLE cubetrainer_app ...` in the SQL editor.
+3. **GitHub secrets/variables** (section 6): `NEON_FLYWAY_URL/USER/PASSWORD`, then the Render deploy hook later. Do not enable `DEPLOY_ENABLED` yet.
+4. **Render** (section 2, Blueprint): service `cubetrainer-api`. `render.yaml` already contains the non-secret values for your domain. Enter the secrets it asks for:
+   `DATABASE_URL`, `Jwt__SigningKey`, `Totp__EncryptionKey`, `Email__BrevoApiKey` (leave the key empty until step 8). Then **Settings -> Custom Domains -> Add** `cubetrainer-api.ska97homelab.uk`.
+   Render shows a CNAME target (`cubetrainer-api.onrender.com`).
+5. **Cloudflare DNS**: add `CNAME cubetrainer-api -> cubetrainer-api.onrender.com`, proxy status **DNS only** (grey cloud) so Render can issue its certificate. Click Verify in Render.
+6. **Cloudflare Pages** (section 3): connect the repo, root `web`, build command as in section 3, env vars `NODE_VERSION=24`, `API_URL=https://cubetrainer-api.ska97homelab.uk`,
+   `CONTACT_EMAIL=privacy@ska97homelab.uk`, `OPERATOR_NAME=<your name>`. Then **Custom domains -> Set up a domain** `cubetrainer.ska97homelab.uk` (Cloudflare adds the DNS record for you).
+7. **Cloudflare Email Routing** (zone -> Email -> Email Routing): create `privacy@ska97homelab.uk` forwarding to your inbox, so the address in the Terms/Privacy Policy really works.
+8. **Brevo** (section 8c): authenticate the domain `ska97homelab.uk` (add the DKIM/verification/DMARC records and one merged SPF record in Cloudflare DNS, all **DNS only**), add the sender
+   `no-reply@ska97homelab.uk`, create the API key and paste it into Render's `Email__BrevoApiKey`.
+9. **Enable deploys**: add `RENDER_DEPLOY_HOOK_URL` (Render -> Settings -> Deploy Hook) and variables `API_BASE_URL=https://cubetrainer-api.ska97homelab.uk`, `DEPLOY_ENABLED=true`.
+   Push any commit (or re-run the CI workflow): CI runs Flyway on Neon, then deploys the API.
+10. **Check**: `https://cubetrainer-api.ska97homelab.uk/health/ready` says Healthy; open `https://cubetrainer.ska97homelab.uk`, create an account, confirm the email, sign in, record a solve, see "Synced".
+11. **Android**: GitHub variables `API_BASE_URL`, `CONTACT_EMAIL`, `OPERATOR_NAME`; keystore secrets (section 11); tag `android-v1.0.0`; install the APK from the release.
+12. **Social login** (optional, section 8b): the redirect URL for every provider is `https://cubetrainer-api.ska97homelab.uk/api/v1/auth/external/<provider>/callback`.
+
+---------------------------------------------------------------------------------------------------
+
 ## Checklist: accounts and what each one gives you
 
 | # | Account | You need from it | Section |
@@ -240,7 +279,7 @@ Set these on the Render service (Environment):
 | `Email__BrevoApiKey` | Brevo API key (Brevo -> SMTP & API -> API keys) |
 | `Email__FromAddress` / `Email__FromName` | a sender on **your** domain, authenticated in Brevo (SPF + DKIM + DMARC), or mail lands in spam |
 | `Web__BaseUrl` | your Cloudflare Pages URL, used in email links |
-| `Auth__Cookie__SameSite` | `Lax` if web and API share a registrable domain (recommended: `app.example.com` + `api.example.com`); `None` only if they do not (needs HTTPS, and browsers may block third-party cookies) |
+| `Auth__Cookie__SameSite` | `Lax` if web and API share a registrable domain (recommended: `cubetrainer.ska97homelab.uk` + `cubetrainer-api.ska97homelab.uk`); `None` only if they do not (needs HTTPS, and browsers may block third-party cookies) |
 | `Auth__MinimumAge` | `13` (the current decision, also the default). India's DPDP Act asks for parental consent under 18: get legal advice before a public launch (see the age note in the README). |
 
 The sign-in cookie is `HttpOnly`, so put web and API under one domain you own for the most reliable behaviour.
@@ -280,10 +319,10 @@ person to try again. No action needed.
 
 ## 8c. Brevo: transactional email
 
-1. Sign up at **brevo.com**. **Senders, domains & dedicated IPs -> Domains -> Add a domain** (your own, e.g. `example.com`).
+1. Sign up at **brevo.com**. **Senders, domains & dedicated IPs -> Domains -> Add a domain** (your own: `ska97homelab.uk`).
 2. Brevo shows DNS records (a Brevo verification code, **DKIM**, and a recommended **DMARC**). Add them at your DNS provider, then **Authenticate**.
    Also publish one **SPF** record covering Brevo: `v=spf1 include:spf.brevo.com ~all` (merge into an existing SPF record, only one is allowed).
-3. **Senders -> Add a sender**: e.g. `no-reply@example.com`, name `CubeTrainer`. This is `Email__FromAddress` / `Email__FromName`.
+3. **Senders -> Add a sender**: `no-reply@ska97homelab.uk`, name `CubeTrainer`. This is `Email__FromAddress` / `Email__FromName`.
 4. **SMTP & API -> API keys -> Generate**: this is `Email__BrevoApiKey` (the API uses Brevo's HTTPS API, not SMTP).
 5. Set `Email__Provider=Brevo` on Render. Register a test account: the confirmation email should arrive within seconds and not in spam.
 
@@ -295,13 +334,13 @@ Recommended: **one registrable domain** so the sign-in cookie is first-party.
 
 | Name | Type | Points to |
 |---|---|---|
-| `app.example.com` | CNAME | your Pages project (`<project>.pages.dev`), added in Pages -> Custom domains |
-| `api.example.com` | CNAME | `<service>.onrender.com`, added in Render -> Settings -> Custom Domains (Render issues the certificate) |
+| `cubetrainer.ska97homelab.uk` | CNAME | your Pages project (`<project>.pages.dev`), added in Pages -> Custom domains (Cloudflare creates it) |
+| `cubetrainer-api.ska97homelab.uk` | CNAME, DNS only | `cubetrainer-api.onrender.com`, added in Render -> Settings -> Custom Domains (Render issues the certificate) |
 | Brevo records | TXT / CNAME | from section 8c |
 
-Then update: Cloudflare `API_URL=https://api.example.com` (rebuild), Render `Web__BaseUrl=https://app.example.com`, `CORS_ORIGINS=https://app.example.com`,
-`Auth__Cookie__SameSite=Lax`, GitHub variable `API_BASE_URL=https://api.example.com`, and the redirect URL in each OAuth app
-(`https://api.example.com/api/v1/auth/external/<provider>/callback`).
+Then update: Cloudflare `API_URL=https://cubetrainer-api.ska97homelab.uk` (rebuild), Render `Web__BaseUrl=https://cubetrainer.ska97homelab.uk`, `CORS_ORIGINS=https://cubetrainer.ska97homelab.uk,https://localhost`,
+`Auth__Cookie__SameSite=Lax`, GitHub variable `API_BASE_URL=https://cubetrainer-api.ska97homelab.uk`, and the redirect URL in each OAuth app
+(`https://cubetrainer-api.ska97homelab.uk/api/v1/auth/external/<provider>/callback`).
 
 Using the default `*.pages.dev` + `*.onrender.com` hosts instead works only with `Auth__Cookie__SameSite=None`, and browsers that block third-party
 cookies (Safari, some Chrome settings) will keep asking people to sign in again. Use a custom domain for anything beyond testing.

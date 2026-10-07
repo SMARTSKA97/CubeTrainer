@@ -111,10 +111,10 @@ dotnet test api/CubeTrainer.sln                     # unit + integration; set DA
 | Sign-in providers (optional) | Google, Microsoft, GitHub, Facebook developer consoles | OAuth client id + secret per provider |
 
 ```
-browser --> Cloudflare Pages (app.example.com)
+browser --> Cloudflare Pages (cubetrainer.ska97homelab.uk)
    |             |
    |             +--> /config.json tells the app where the API is
-   +--> Render API (api.example.com) --> Neon Postgres
+   +--> Render API (cubetrainer-api.ska97homelab.uk) --> Neon Postgres
                          +--> Brevo (email)       +--> OAuth providers
 GitHub Actions: build/test -> Flyway on Neon -> Render deploy hook
 ```

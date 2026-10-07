@@ -4,7 +4,7 @@ name: Android APK
 #   - manually (Actions -> Android APK -> Run workflow)
 #   - on a tag like android-v1.2.0
 #   - on pushes to main that touch mobile/ (to catch a broken native build early)
-# Needs the repository variable API_BASE_URL (your public API, e.g. https://api.example.com).
+# Needs the repository variable API_BASE_URL (your public API, e.g. https://cubetrainer-api.ska97homelab.uk).
 # Pushing a tag android-vX.Y.Z also publishes a GitHub Release (signed APK + changelog); the app's in-app updater reads those releases.
 # Optional signing secrets for a release APK: ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD.
 on:

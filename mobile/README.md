@@ -11,7 +11,7 @@ In CI: GitHub -> Actions -> **Android APK** -> Run workflow (needs the repositor
 
 Locally (needs JDK 21 and the Android SDK, e.g. through Android Studio):
 ```
-cd web && npm ci && API_URL=https://api.example.com node scripts/write-config.mjs && npx ng build
+cd web && npm ci && API_URL=https://cubetrainer-api.ska97homelab.uk node scripts/write-config.mjs && npx ng build
 cd ../mobile && npm ci && npx cap sync android
 cd android && ./gradlew assembleDebug        # app/build/outputs/apk/debug/app-debug.apk
 ```

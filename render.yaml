@@ -11,8 +11,8 @@ services:
     envVars:
       - key: DATABASE_URL        # Neon connection string (set it in the Render dashboard)
         sync: false
-      - key: CORS_ORIGINS        # your Cloudflare Pages URL, e.g. https://cubetrainer.pages.dev
-        sync: false
+      - key: CORS_ORIGINS        # the web app, plus https://localhost (the origin of the Android app)
+        value: https://cubetrainer.ska97homelab.uk,https://localhost
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: Proxy__TrustForwardedHeaders
@@ -26,9 +26,13 @@ services:
       - key: Email__BrevoApiKey
         sync: false
       - key: Email__FromAddress    # a sender on YOUR domain, authenticated in Brevo
-        sync: false
+        value: no-reply@ska97homelab.uk
       - key: Email__FromName
         value: CubeTrainer
       - key: Web__BaseUrl          # your web app's public URL; used in email links
-        sync: false
+        value: https://cubetrainer.ska97homelab.uk
+      - key: Auth__Cookie__SameSite  # web and API share the registrable domain ska97homelab.uk
+        value: Lax
+      - key: ExternalAuth__CallbackBaseUrl  # public API address, used to build the social-login redirect URLs
+        value: https://cubetrainer-api.ska97homelab.uk
       # Social login is optional: add ExternalAuth__Providers__<google|microsoft|github|facebook>__ClientId / __ClientSecret in the dashboard.
