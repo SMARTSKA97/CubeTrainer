@@ -104,7 +104,7 @@ dotnet test api/CubeTrainer.sln                     # unit + integration; set DA
 |---|---|---|
 | Source + CI/CD | **GitHub** + Actions | build, test, run Flyway on the production DB, then trigger the API deploy |
 | Database | **Neon** (Postgres) | serverless Postgres; Flyway migrates it from CI |
-| API | **Render** (Docker web service) | runs `api/Dockerfile`; health check `/health/ready` |
+| API | **Render** (Docker web service) | runs `api/Dockerfile` |
 | Web app | **Cloudflare** (Workers static assets) | static Angular build, global CDN, installable PWA; configured by `web/wrangler.jsonc` |
 | Email | **Brevo** | confirmation, password reset and security notices, sent from your own domain |
 | DNS / domain | your registrar or **Cloudflare DNS** | web host -> Cloudflare, API host -> Render, Brevo SPF/DKIM/DMARC records |

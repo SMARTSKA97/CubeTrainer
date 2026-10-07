@@ -104,9 +104,8 @@ export class SolveStore {
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') this.requestSync();
     });
-    setInterval(() => {
-      if (document.visibilityState === 'visible') this.requestSync();
-    }, 60_000);
+    // No polling: syncing happens when the app opens or comes back to the screen, when the network
+    // returns, and after a change. A timer would keep waking a sleeping API (and its database).
   }
 
   // -------------------------------------------------------------------- queries
@@ -334,7 +333,7 @@ export class SolveStore {
     } catch (err) {
       const status = err instanceof HttpErrorResponse ? err.status : 0;
       if (this.owner === owner) this.sync.set(status === 0 ? 'offline' : 'error');
-      if (this.owner === owner) this.requestSync(30_000);
+      if (this.owner === owner) this.requestSync(5 * 60_000); // gentle retry; opening the app or coming back online retries sooner
     } finally {
       this.syncing = false;
       if (this.again) {
