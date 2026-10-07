@@ -30,6 +30,7 @@ import {
   retryComparison,
 } from '@domain/stats';
 import { ScrambleNet } from '@shared/scramble-net';
+import { MovePlayer } from '@shared/move-player';
 import { HoldPicker } from '@shared/hold-picker';
 import { CROSS_WHITE_HOLD, Hold, schemeHex } from '@domain/orientation';
 import { TimerPanel, TimerResult } from '@shared/timer-panel';
@@ -44,7 +45,7 @@ interface QueueItem {
 @Component({
   selector: 'app-trainer-page',
   standalone: true,
-  imports: [TimerPanel, ScrambleNet, HoldPicker, SolveTags],
+  imports: [TimerPanel, ScrambleNet, HoldPicker, SolveTags, MovePlayer],
   template: `
     @if (algs.error(); as err) {
       <div class="card">{{ err }}</div>
@@ -222,6 +223,15 @@ interface QueueItem {
               </div>
             </div>
 
+            <div class="watch">
+              <button class="btn small" type="button" (click)="watchScramble.set(!watchScramble())">
+                {{ watchScramble() ? 'Hide animation' : '▶ Watch this scramble' }}
+              </button>
+            </div>
+            @if (watchScramble()) {
+              <app-move-player [moves]="item.scramble" [scheme]="scheme()" />
+            }
+
             <div class="row">
               <button class="btn" (click)="prev()" [disabled]="index() === 0" title="Alt + ←">
                 ← Previous
@@ -249,6 +259,15 @@ interface QueueItem {
             </div>
 
             @if (hintOpen()) {
+              <div class="learn-panel">
+                <div class="label">How to solve it, step by step</div>
+                <app-move-player
+                  [moves]="c.alg"
+                  [start]="inverse(c.alg)"
+                  [scheme]="scheme()"
+                  [learn]="true"
+                />
+              </div>
               <div class="alg">
                 <div>
                   <span class="label">Algorithm</span> <code>{{ c.alg }}</code>
@@ -365,6 +384,10 @@ interface QueueItem {
       gap: 16px;
       align-items: start;
       justify-items: center;
+      flex: 1 1 260px;
+      max-width: 460px;
+      min-width: 0;
+      margin-inline: auto;
     }
     figure {
       margin: 0;
@@ -394,6 +417,15 @@ interface QueueItem {
       margin-top: 8px;
       color: var(--accent);
       font-size: 14px;
+    }
+    .learn-panel {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid var(--line-soft);
+      border-radius: 16px;
+      background: var(--bg);
     }
     .alg {
       margin-top: 14px;
@@ -560,6 +592,7 @@ export class TrainerPage {
 
   readonly setId = usePref('trainer.set', '2lookoll');
   readonly randomAuf = usePref('trainer.auf', false);
+  readonly watchScramble = signal(false);
   readonly hold = usePref<Hold>('trainer.hold', CROSS_WHITE_HOLD);
   readonly scheme = computed(() => schemeHex(this.hold()));
   readonly presets = [

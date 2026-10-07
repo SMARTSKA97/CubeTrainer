@@ -381,7 +381,7 @@ main > :not(router-outlet) {
     }
   }
   main > :not(router-outlet) {
-    animation: ct-fade 0.28s ease-out both;
+    animation: ct-fade 0.28s ease-out; /* no fill-mode: a finished animation must not trap fixed-position sheets */
   }
 }
 @media (prefers-reduced-motion: reduce) {

@@ -1,5 +1,8 @@
 import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
+import { MovePlayer } from '@shared/move-player';
+import { invertAlg } from '@domain/cube';
+import { CROSS_WHITE_HOLD, schemeHex } from '@domain/orientation';
 import { AlgCase, AlgService } from '@core/data/alg-service';
 import { usePref } from '@core/pref';
 import { SolveStore } from '@core/data/solve-store';
@@ -8,6 +11,7 @@ import { CaseStatus, averageOf, best, formatTime } from '@domain/stats';
 type SortKey = 'order' | 'name' | 'group' | 'best' | 'avg';
 
 @Component({
+  imports: [MovePlayer],
   selector: 'app-algs-page',
   standalone: true,
   template: `
@@ -78,9 +82,12 @@ type SortKey = 'order' | 'name' | 'group' | 'best' | 'avg';
                 <td class="muted grp" data-a="grp">{{ r.c.group }}</td>
                 <td class="alg" data-a="alg">
                   <code>{{ r.c.alg }}</code>
-                  <button class="btn small" (click)="copy(r.c.alg)">
-                    {{ copied() === r.c.id ? 'Copied' : 'Copy' }}
-                  </button>
+                  <span class="acts">
+                    <button class="btn small" (click)="watching.set(r.c)">▶ Watch</button>
+                    <button class="btn small" (click)="copy(r.c.alg)">
+                      {{ copied() === r.c.id ? 'Copied' : 'Copy' }}
+                    </button>
+                  </span>
                 </td>
                 <td class="st" data-a="stat">
                   <select
@@ -105,6 +112,27 @@ type SortKey = 'order' | 'name' | 'group' | 'best' | 'avg';
           </tbody>
         </table>
       </section>
+    }
+
+    @if (watching(); as w) {
+      <button class="scrim" type="button" aria-label="Close" (click)="watching.set(null)"></button>
+      <div class="sheet" role="dialog" aria-modal="true" [attr.aria-label]="'Watch ' + w.name">
+        <div class="grab" aria-hidden="true"></div>
+        <header>
+          <div>
+            <div class="label">{{ w.group }}</div>
+            <h2>{{ w.name }}</h2>
+          </div>
+          <button class="btn small" type="button" (click)="watching.set(null)">Close</button>
+        </header>
+        <app-move-player
+          [moves]="w.alg"
+          [start]="inverse(w.alg)"
+          [scheme]="scheme"
+          [learn]="true"
+        />
+        <button class="btn primary" type="button" (click)="train(w)">Train this case</button>
+      </div>
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -142,6 +170,53 @@ type SortKey = 'order' | 'name' | 'group' | 'best' | 'avg';
     }
     td.alg {
       min-width: 260px;
+    }
+    .acts {
+      display: inline-flex;
+      gap: 8px;
+      flex-wrap: nowrap;
+    }
+    .scrim {
+      border: 0;
+      padding: 0;
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background: rgba(4, 6, 10, 0.66);
+      -webkit-backdrop-filter: blur(3px);
+      backdrop-filter: blur(3px);
+    }
+    .sheet {
+      position: fixed;
+      z-index: 61;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      max-width: 560px;
+      margin: 0 auto;
+      max-height: 94dvh;
+      overflow-y: auto;
+      display: grid;
+      gap: 16px;
+      padding: 10px 20px calc(24px + var(--sab));
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-bottom: 0;
+      border-radius: 26px 26px 0 0;
+      box-shadow: 0 -24px 60px -20px rgba(0, 0, 0, 0.8);
+    }
+    .grab {
+      width: 44px;
+      height: 4px;
+      border-radius: 4px;
+      background: var(--line);
+      margin: 0 auto;
+    }
+    .sheet header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
     }
     td.alg code {
       font-size: 14px;
@@ -218,6 +293,9 @@ type SortKey = 'order' | 'name' | 'group' | 'best' | 'avg';
         background: var(--bg);
         border-radius: 12px;
       }
+      .acts {
+        flex-direction: column;
+      }
       td.alg code {
         flex: 1;
         min-width: 0;
@@ -280,6 +358,10 @@ export class AlgsPage {
   readonly statusFilter = signal('');
   readonly sort = signal<{ key: SortKey; dir: 1 | -1 }>({ key: 'order', dir: 1 });
   readonly copied = signal('');
+  readonly watching = signal<AlgCase | null>(null);
+  inverse = invertAlg;
+  /** the same way the case pictures are drawn: yellow on top, white cross underneath */
+  readonly scheme = schemeHex(CROSS_WHITE_HOLD);
 
   fmt = (v: number | null | undefined) =>
     v === undefined ? '-' : v === null ? 'DNF' : formatTime(v);
@@ -343,6 +425,7 @@ export class AlgsPage {
   }
 
   train(c: AlgCase) {
+    this.watching.set(null);
     void this.router.navigate(['/trainer'], { queryParams: { case: c.id } });
   }
 }

@@ -22,6 +22,7 @@ import {
   sessionStats,
 } from '@domain/stats';
 import { ScrambleNet } from '@shared/scramble-net';
+import { MovePlayer } from '@shared/move-player';
 import { HoldPicker } from '@shared/hold-picker';
 import { SolveTags } from '@shared/solve-tags';
 import { Hold, STANDARD_HOLD, schemeHex } from '@domain/orientation';
@@ -31,7 +32,7 @@ import { usePref } from '@core/pref';
 @Component({
   selector: 'app-timer-page',
   standalone: true,
-  imports: [TimerPanel, ScrambleNet, HoldPicker, SolveTags],
+  imports: [TimerPanel, ScrambleNet, HoldPicker, SolveTags, MovePlayer],
   template: `
     <section class="card scramble-card">
       <app-hold-picker [value]="hold()" (valueChange)="hold.set($event)" [presets]="presets" />
@@ -48,6 +49,14 @@ import { usePref } from '@core/pref';
         </div>
         <app-scramble-net [scramble]="scramble()" [scheme]="scheme()" />
       </div>
+      <div class="watch">
+        <button class="btn small" type="button" (click)="watching.set(!watching())">
+          {{ watching() ? 'Hide animation' : '▶ Watch this scramble' }}
+        </button>
+      </div>
+      @if (watching()) {
+        <app-move-player [moves]="scramble()" [scheme]="scheme()" />
+      }
       <div class="row">
         <button class="btn" (click)="prev()" [disabled]="index() === 0" title="Alt + ←">
           ← Previous
@@ -174,6 +183,15 @@ import { usePref } from '@core/pref';
       align-items: flex-start;
       flex-wrap: wrap;
     }
+    .scramble-head > app-scramble-net {
+      flex: 1 1 260px;
+      max-width: 420px;
+      margin-inline: auto;
+    }
+    .scramble-head > div:first-child {
+      flex: 2 1 260px;
+      min-width: 0;
+    }
     .scramble {
       font-family: ui-monospace, Menlo, Consolas, monospace;
       font-size: clamp(18px, 3vw, 26px);
@@ -256,6 +274,7 @@ export class TimerPage {
   private readonly stageSolves = computed(() =>
     this.store.randomSolves().filter((s) => (s.stage ?? 'full') === this.stage()),
   );
+  readonly watching = signal(false);
   readonly hold = usePref<Hold>('timer.hold', STANDARD_HOLD);
   readonly scheme = computed(() => schemeHex(this.hold()));
   readonly presets = [

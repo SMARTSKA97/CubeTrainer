@@ -768,7 +768,6 @@ export class App {
     this.tabs[3],
     this.rest[3],
     this.rest[4],
-    ...(this.updates.enabled ? [item('/update', 'Updates', 'update')] : []),
   ]);
 
   private readonly url = toSignal(

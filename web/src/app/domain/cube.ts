@@ -129,6 +129,82 @@ function rotate(v: Vec, axis: 0 | 1 | 2, quarter: number): Vec {
   return [x, y, z];
 }
 
+/**
+ * What a move does geometrically, for drawing it: which cubies turn, about which axis and by how
+ * many +90 degree (right-handed) quarter turns. Mirrors `Cube.applyMove` exactly (tested).
+ */
+export interface MoveSpec {
+  axis: 0 | 1 | 2;
+  /** signed number of +90deg right-handed turns about `axis` (x right, y up, z towards the viewer) */
+  quarter: number;
+  /** does the cubie at position p take part in the turn? */
+  inLayer: (p: Vec) => boolean;
+  /** true for whole-cube rotations (x y z) */
+  whole: boolean;
+}
+
+export function moveSpec(m: Move): MoveSpec {
+  const t = m.turns;
+  const b = m.base;
+  const face = (
+    f: Face,
+    pred: (p: Vec, axis: 0 | 1 | 2, sign: number) => boolean,
+    whole = false,
+  ) => {
+    const { axis, sign } = FACE_AXIS[f];
+    return {
+      axis,
+      quarter: -sign * t,
+      inLayer: (p: Vec) => pred(p, axis, sign),
+      whole,
+    } satisfies MoveSpec;
+  };
+  if ('URFDLB'.includes(b)) return face(b as Face, (p, a, sg) => p[a] * sg === 1);
+  if ('urfdlb'.includes(b)) return face(b.toUpperCase() as Face, (p, a, sg) => p[a] * sg >= 0);
+  if (b === 'M') return face('L', (p) => p[0] === 0);
+  if (b === 'E') return face('D', (p) => p[1] === 0);
+  if (b === 'S') return face('F', (p) => p[2] === 0);
+  if (b === 'x') return face('R', () => true, true);
+  if (b === 'y') return face('U', () => true, true);
+  if (b === 'z') return face('F', () => true, true);
+  throw new Error(`Unknown move ${b}`);
+}
+
+/** Plain-English description of a move, for learners. */
+export function describeMove(m: Move): string {
+  const dir =
+    m.turns === 1 ? 'clockwise' : m.turns === 3 ? 'counter-clockwise' : 'a half turn (180°)';
+  const names: Record<string, string> = {
+    U: 'Top face',
+    D: 'Bottom face',
+    R: 'Right face',
+    L: 'Left face',
+    F: 'Front face',
+    B: 'Back face',
+    u: 'Top two layers',
+    d: 'Bottom two layers',
+    r: 'Right two layers',
+    l: 'Left two layers',
+    f: 'Front two layers',
+    b: 'Back two layers',
+    M: 'Middle slice (between left and right)',
+    E: 'Equator slice (between top and bottom)',
+    S: 'Standing slice (between front and back)',
+  };
+  if ('xyz'.includes(m.base)) {
+    const axis = m.base === 'x' ? 'right' : m.base === 'y' ? 'top' : 'front';
+    return `Rotate the whole cube like the ${axis} face, ${dir}`;
+  }
+  const where = 'MES'.includes(m.base)
+    ? m.base === 'M'
+      ? ' (follows L)'
+      : m.base === 'E'
+        ? ' (follows D)'
+        : ' (follows F)'
+    : '';
+  return `${names[m.base]}${where} ${dir}${m.turns === 2 ? '' : ', seen from that side'}`;
+}
+
 export class Cube {
   stickers: Sticker[] = [];
 
