@@ -135,7 +135,7 @@ jobs:
           gh release create "$GITHUB_REF_NAME" "CubeTrainer-$VERSION.apk" "CubeTrainer-$VERSION.apk.sha256" \
             --title "CubeTrainer $VERSION" --notes-file release-notes.md
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: cubetrainer-apk-${{ steps.ver.outputs.name }}
           path: |
