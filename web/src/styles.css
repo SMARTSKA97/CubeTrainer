@@ -1,17 +1,25 @@
+/*
+ * Design tokens. One accent, one neutral ramp, generous space.
+ * Space scale (px): 4 8 12 16 20 24 32 40.
+ */
 :root {
-  --bg: #0b0d12;
-  --panel: #151922;
-  --panel-2: #1a1f2b;
-  --line: #262c3a;
-  --text: #e6e9f0;
-  --muted: #8b93a7;
+  --bg: #0c0e13;
+  --panel: #14171f;
+  --panel-2: #191d27;
+  --line: #232836;
+  --line-soft: #1c202b;
+  --text: #eceef4;
+  --muted: #8d95a8;
   --accent: #7c9cff;
-  --accent-2: #b18cff;
-  --good: #22c55e;
-  --warn: #f59e0b;
+  --accent-2: #9d8cff;
+  --accent-soft: rgba(124, 156, 255, 0.12);
+  --good: #34d27b;
+  --warn: #f5a524;
   --bad: #f87171;
-  --radius: 16px;
-  --tabbar-h: 62px;
+  --radius: 18px;
+  --radius-sm: 12px;
+  --gap: 20px;
+  --tabbar-h: 64px;
   /* Android edge-to-edge: Capacitor publishes --safe-area-inset-*, browsers/iOS publish env(). */
   --sat: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
   --sab: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
@@ -40,29 +48,44 @@ body {
     Roboto,
     sans-serif;
   font-size: clamp(15px, 0.92rem + 0.15vw, 16px);
-  line-height: 1.4;
+  line-height: 1.5;
+  letter-spacing: -0.003em;
 }
 body {
   min-height: 100vh;
   min-height: 100dvh;
   overflow-x: hidden;
 }
-/* A soft colour wash behind everything; fixed so it never scrolls or repaints. */
+/* One quiet glow at the top, fixed so it never scrolls or repaints. */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background:
-    radial-gradient(900px 520px at 88% -8%, rgba(124, 156, 255, 0.14), transparent 60%),
-    radial-gradient(720px 440px at -8% 8%, rgba(177, 140, 255, 0.1), transparent 60%),
-    radial-gradient(800px 500px at 50% 112%, rgba(34, 197, 94, 0.06), transparent 60%);
+  background: radial-gradient(1000px 480px at 80% -12%, rgba(124, 156, 255, 0.09), transparent 65%);
 }
 h1,
 h2,
 h3 {
-  line-height: 1.2;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+h1 {
+  font-size: clamp(22px, 1.3rem + 0.8vw, 28px);
+  font-weight: 700;
+}
+h2 {
+  font-size: 17px;
+  font-weight: 650;
+}
+h3 {
+  font-size: 15px;
+  font-weight: 650;
+}
+p {
+  margin: 0;
 }
 img,
 svg,
@@ -81,16 +104,21 @@ label,
 summary {
   touch-action: manipulation;
 }
+a {
+  color: var(--accent);
+}
 
+/* ---------- surfaces ---------- */
 .card {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0) 60%), var(--panel);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 16px;
+  background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  padding: clamp(14px, 3.6vw, 20px);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.04) inset,
-    0 10px 28px -16px rgba(0, 0, 0, 0.7);
+  padding: clamp(18px, 4.6vw, 26px);
+  box-shadow: 0 12px 32px -22px rgba(0, 0, 0, 0.8);
   min-width: 0;
   overflow-wrap: break-word;
 }
@@ -100,86 +128,101 @@ summary {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
+.card > * {
+  margin-block: 0;
+}
 .label {
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--muted);
+  letter-spacing: 0;
 }
 .muted {
   color: var(--muted);
 }
+.small {
+  font-size: 13px;
+}
 .row {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
 }
+
+/* ---------- controls ---------- */
 .btn {
-  background: var(--bg);
+  background: var(--panel-2);
   color: var(--text);
   border: 1px solid var(--line);
-  border-radius: 11px;
-  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  padding: 9px 16px;
+  min-height: 40px;
   font: inherit;
+  font-weight: 550;
   cursor: pointer;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   transition:
     border-color 0.15s,
+    background 0.15s,
     transform 0.08s,
-    filter 0.15s,
-    background 0.15s;
+    filter 0.15s;
 }
 .btn:hover:not(:disabled) {
-  border-color: var(--accent);
+  border-color: #3a4256;
+  background: #1e2330;
 }
 .btn:active:not(:disabled) {
-  transform: scale(0.97);
+  transform: scale(0.98);
 }
 .btn:disabled {
   opacity: 0.4;
   cursor: default;
 }
 .btn.primary {
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  background: linear-gradient(180deg, #8aa8ff, var(--accent));
   border-color: transparent;
-  color: #0b0d12;
+  color: #0a0d16;
   font-weight: 650;
-  box-shadow: 0 6px 18px -8px rgba(124, 156, 255, 0.7);
+  box-shadow: 0 8px 22px -12px rgba(124, 156, 255, 0.8);
 }
 .btn.primary:hover:not(:disabled) {
-  filter: brightness(1.08);
+  background: linear-gradient(180deg, #98b3ff, #86a3ff);
 }
 .btn.danger:hover:not(:disabled) {
   border-color: #ef4444;
   color: #ef4444;
 }
 .btn.on {
-  border-color: var(--accent);
-  background: #1c2540;
+  border-color: rgba(124, 156, 255, 0.55);
+  background: var(--accent-soft);
+  color: var(--text);
 }
 .btn.small {
-  padding: 4px 10px;
+  padding: 5px 12px;
+  min-height: 32px;
   font-size: 13px;
-  border-radius: 9px;
+  border-radius: 10px;
 }
 .field {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  font-size: 12px;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--muted);
   min-width: 0;
 }
 .check {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: 10px;
+  font-size: 14.5px;
+  min-height: 34px;
   cursor: pointer;
 }
 select,
@@ -188,11 +231,18 @@ input:not([type='checkbox']):not([type='radio']) {
   background: var(--bg);
   color: var(--text);
   border: 1px solid var(--line);
-  border-radius: 9px;
-  padding: 7px 9px;
+  border-radius: 11px;
+  padding: 8px 12px;
+  min-height: 40px;
   font: inherit;
   max-width: 100%;
   min-width: 0;
+  transition: border-color 0.15s;
+}
+select:hover,
+textarea:hover,
+input:not([type='checkbox']):not([type='radio']):hover {
+  border-color: #343c50;
 }
 input[type='checkbox'],
 input[type='radio'] {
@@ -213,18 +263,23 @@ summary:focus-visible {
 }
 .err {
   color: var(--bad);
-  font-size: 13px;
+  font-size: 13.5px;
 }
 .ok {
   color: var(--good);
-  font-size: 13px;
+  font-size: 13.5px;
+}
+hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 4px 0;
 }
 
 /* Fingers: bigger hit areas, and 16px fields so mobile browsers never zoom in on focus. */
 @media (pointer: coarse) {
   .btn {
-    min-height: 44px;
-    padding-inline: 16px;
+    min-height: 46px;
+    padding-inline: 18px;
   }
   .btn.small {
     min-height: 38px;
@@ -232,11 +287,11 @@ summary:focus-visible {
   select,
   textarea,
   input:not([type='checkbox']):not([type='radio']) {
-    min-height: 44px;
+    min-height: 46px;
     font-size: 16px;
   }
   .check {
-    min-height: 40px;
+    min-height: 42px;
   }
   input[type='checkbox'],
   input[type='radio'] {
@@ -246,32 +301,29 @@ summary:focus-visible {
 }
 @media (max-width: 640px) {
   :root {
-    --radius: 14px;
+    --radius: 16px;
+    --gap: 16px;
   }
 }
 
-/* Pages ease in. Skipped for people who ask their device for less motion. */
+/* Every page lays its blocks out on one rhythm, so cards never touch. A page can still set its own gap. */
+main > :not(router-outlet) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: var(--gap);
+}
+
+/* One gentle fade when the page changes. Skipped for people who ask their device for less motion. */
 @media (prefers-reduced-motion: no-preference) {
-  @keyframes ct-rise {
+  @keyframes ct-fade {
     from {
       opacity: 0;
-      transform: translateY(8px);
+      transform: translateY(6px);
     }
   }
-  main > :not(router-outlet) > * {
-    animation: ct-rise 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  }
-  main > :not(router-outlet) > *:nth-child(2) {
-    animation-delay: 0.04s;
-  }
-  main > :not(router-outlet) > *:nth-child(3) {
-    animation-delay: 0.08s;
-  }
-  main > :not(router-outlet) > *:nth-child(4) {
-    animation-delay: 0.12s;
-  }
-  main > :not(router-outlet) > *:nth-child(n + 5) {
-    animation-delay: 0.16s;
+  main > :not(router-outlet) {
+    animation: ct-fade 0.28s ease-out both;
   }
 }
 @media (prefers-reduced-motion: reduce) {

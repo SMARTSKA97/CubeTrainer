@@ -120,15 +120,17 @@ interface QueueItem {
           >
           <label class="field"
             >“Finished” when mean of last 5 ≤
-            <input
-              type="number"
-              min="1"
-              step="0.5"
-              style="width:70px"
-              [value]="targetSec()"
-              (change)="learning.setTarget(setId(), +$any($event.target).value)"
-            />
-            s
+            <span class="unit">
+              <input
+                type="number"
+                min="1"
+                step="0.5"
+                style="width:80px"
+                [value]="targetSec()"
+                (change)="learning.setTarget(setId(), +$any($event.target).value)"
+              />
+              seconds
+            </span>
           </label>
           <label class="check"
             ><input
@@ -335,6 +337,12 @@ interface QueueItem {
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
+    .unit {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+    }
     h2 {
       margin: 2px 0 0;
       font-size: 28px;

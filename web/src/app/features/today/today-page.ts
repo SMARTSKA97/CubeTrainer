@@ -9,7 +9,7 @@ import { INTERVAL_DAYS } from '@domain/plan';
   selector: 'app-today-page',
   standalone: true,
   template: `
-    <section class="card hero">
+    <section class="card hero" data-tour="plan">
       <div>
         <div class="label">Today</div>
         <h2>

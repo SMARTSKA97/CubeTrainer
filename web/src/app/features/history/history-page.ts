@@ -184,9 +184,16 @@ type Filter = 'all' | 'random' | 'case';
     .sep {
       flex: 1;
     }
+    @media (max-width: 700px) {
+      .sep {
+        flex: 1 0 100%;
+        height: 0;
+      }
+    }
     .seg {
       display: flex;
-      gap: 6px;
+      flex-wrap: wrap;
+      gap: 8px;
     }
     .chart {
       width: 100%;

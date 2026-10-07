@@ -4,13 +4,19 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } fro
 import { filter, map } from 'rxjs';
 import { AuthStore } from '@core/auth/auth-store';
 import { SolveStore } from '@core/data/solve-store';
+import { TourService } from '@core/tour/tour-service';
 import { AppUpdateStore } from '@core/update/app-update-store';
+import { WebUpdateStore } from '@core/update/web-update-store';
+import { AppTour } from '@shared/app-tour';
+import { UpdatePrompt } from '@shared/update-prompt';
 
 interface NavItem {
   path: string;
   label: string;
   /** SVG path data on a 24x24 grid, drawn as a 1.8px stroke. */
   icon: string;
+  /** Matches the data-tour attribute the walkthrough looks for. */
+  tour: string;
 }
 
 const ICONS = {
@@ -28,45 +34,52 @@ const ICONS = {
   update: 'M12 3v12M7 10l5 5 5-5M4 21h16',
   settings: 'M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6',
   more: 'M5 12h.01M12 12h.01M19 12h.01',
+  tour: 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01',
 };
 
-const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem => ({
+const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''): NavItem => ({
   path,
   label,
   icon: ICONS[icon],
+  tour,
 });
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, AppTour, UpdatePrompt],
   template: `
     <header class="top">
       <a class="brand" routerLink="/today" aria-label="CubeTrainer home">
         <svg class="mark" viewBox="0 0 18 18" aria-hidden="true">
           <rect x="0" y="0" width="5" height="5" rx="1.2" fill="#f87171" />
           <rect x="6.5" y="0" width="5" height="5" rx="1.2" fill="#fbbf24" />
-          <rect x="13" y="0" width="5" height="5" rx="1.2" fill="#22c55e" />
+          <rect x="13" y="0" width="5" height="5" rx="1.2" fill="#34d27b" />
           <rect x="0" y="6.5" width="5" height="5" rx="1.2" fill="#60a5fa" />
           <rect x="6.5" y="6.5" width="5" height="5" rx="1.2" fill="#f1f5f9" />
           <rect x="13" y="6.5" width="5" height="5" rx="1.2" fill="#fb923c" />
-          <rect x="0" y="13" width="5" height="5" rx="1.2" fill="#22c55e" />
+          <rect x="0" y="13" width="5" height="5" rx="1.2" fill="#34d27b" />
           <rect x="6.5" y="13" width="5" height="5" rx="1.2" fill="#f87171" />
           <rect x="13" y="13" width="5" height="5" rx="1.2" fill="#fbbf24" />
         </svg>
         <span class="word">Cube<span>Trainer</span></span>
       </a>
-      <nav class="wide" aria-label="Main">
+      <nav class="wide" aria-label="Main" data-tour="more">
         @for (n of allNav(); track n.path) {
-          <a [routerLink]="n.path" routerLinkActive="active">{{ n.label }}</a>
+          <a [routerLink]="n.path" routerLinkActive="active" [attr.data-tour]="n.tour || null"
+            >{{ n.label }}
+            @if (n.path === '/update' && updates.available()) {
+              <i class="pip" aria-label="new version"></i>
+            }
+          </a>
         }
       </nav>
       <span class="spacer"></span>
-      <span class="badge" [attr.data-b]="store.sync()" [title]="badgeTitle()">
+      <span class="badge" data-tour="sync" [attr.data-b]="store.sync()" [title]="badgeTitle()">
         <i class="dot"></i><span class="txt">{{ badge() }}</span>
       </span>
       @if (auth.ready()) {
-        <span class="acct">
+        <span class="acct" data-tour="account">
           @if (auth.user(); as u) {
             <a routerLink="/settings" class="who" [title]="u.email">
               <span class="av" aria-hidden="true">{{ initial() }}</span>
@@ -81,61 +94,60 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
       }
     </header>
 
-    @if (auth.ready() && !auth.signedIn() && !bannerHidden()) {
-      <aside class="notice" role="note">
-        <span
-          >Your solves are saved on this device only. Create a free account to follow your history
-          across devices.</span
-        >
-        <span class="acts">
-          <a routerLink="/auth/register" class="btn small primary">Create account</a>
-          <button class="btn small" type="button" (click)="hideBanner()">Not now</button>
-        </span>
-      </aside>
-    }
-    @if (updates.banner(); as _) {
-      <aside class="notice" role="note">
-        <span>CubeTrainer {{ updates.update()?.version }} is available.</span>
-        <span class="acts">
-          <a routerLink="/update" class="btn small primary">See what's new</a>
-          <button class="btn small" type="button" (click)="updates.dismissed.set(true)">
-            Later
-          </button>
-        </span>
-      </aside>
-    }
-    @if (store.guestImport(); as g) {
-      <aside class="notice" role="note">
-        <span
-          >This device has {{ g.count }} solve{{ g.count === 1 ? '' : 's' }} recorded as a guest.
-          Add {{ g.count === 1 ? 'it' : 'them' }} to your account?</span
-        >
-        <span class="acts">
-          <button class="btn small primary" type="button" (click)="store.acceptGuestImport()">
-            Add to my account
-          </button>
-          <button class="btn small" type="button" (click)="store.dismissGuestImport()">
-            Keep separate
-          </button>
-        </span>
-      </aside>
-    }
+    <div class="notices">
+      @if (auth.ready() && !auth.signedIn() && !bannerHidden()) {
+        <aside class="notice" role="note">
+          <span
+            >Your solves are saved on this device only. Create a free account to keep your history
+            on every device.</span
+          >
+          <span class="acts">
+            <a routerLink="/auth/register" class="btn small primary">Create account</a>
+            <button class="btn small" type="button" (click)="hideBanner()">Not now</button>
+          </span>
+        </aside>
+      }
+      @if (store.guestImport(); as g) {
+        <aside class="notice" role="note">
+          <span
+            >This device has {{ g.count }} solve{{ g.count === 1 ? '' : 's' }} recorded as a guest.
+            Add {{ g.count === 1 ? 'it' : 'them' }} to your account?</span
+          >
+          <span class="acts">
+            <button class="btn small primary" type="button" (click)="store.acceptGuestImport()">
+              Add to my account
+            </button>
+            <button class="btn small" type="button" (click)="store.dismissGuestImport()">
+              Keep separate
+            </button>
+          </span>
+        </aside>
+      }
+    </div>
 
     <main><router-outlet /></main>
     <footer class="legal">
-      <a routerLink="/legal/terms">Terms</a> · <a routerLink="/legal/privacy">Privacy</a>
+      <a routerLink="/legal/terms">Terms</a>
+      <a routerLink="/legal/privacy">Privacy</a>
+      <button type="button" class="tourlink" (click)="tour.start()">Take the tour</button>
     </footer>
 
-    <!-- Phones and tablets: five big thumb-reachable tabs; everything else lives under More. -->
+    <!-- Phones and tablets: four big thumb-reachable tabs; everything else lives under More. -->
     <nav class="tabs" aria-label="Main">
       @for (n of tabs; track n.path) {
-        <a [routerLink]="n.path" routerLinkActive="active" (click)="moreOpen.set(false)">
+        <a
+          [routerLink]="n.path"
+          routerLinkActive="active"
+          [attr.data-tour]="n.tour"
+          (click)="moreOpen.set(false)"
+        >
           <svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="n.icon" /></svg>
           <span>{{ n.label }}</span>
         </a>
       }
       <button
         type="button"
+        data-tour="more"
         [class.active]="moreOpen() || moreActive()"
         [attr.aria-expanded]="moreOpen()"
         aria-controls="more-sheet"
@@ -143,6 +155,9 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
       >
         <svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="icons.more" /></svg>
         <span>More</span>
+        @if (updates.available()) {
+          <i class="pip" aria-label="new version"></i>
+        }
       </button>
     </nav>
 
@@ -155,8 +170,15 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
             <a [routerLink]="n.path" routerLinkActive="active" (click)="moreOpen.set(false)">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="n.icon" /></svg>
               <span>{{ n.label }}</span>
+              @if (n.path === '/update' && updates.available()) {
+                <i class="pip" aria-label="new version"></i>
+              }
             </a>
           }
+          <button type="button" class="tile" (click)="moreOpen.set(false); tour.start()">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="icons.tour" /></svg>
+            <span>Take the tour</span>
+          </button>
         </div>
         @if (auth.ready()) {
           <div class="who-row">
@@ -177,11 +199,14 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
           </div>
         }
         <div class="sheet-legal">
-          <a routerLink="/legal/terms" (click)="moreOpen.set(false)">Terms</a> ·
+          <a routerLink="/legal/terms" (click)="moreOpen.set(false)">Terms</a>
           <a routerLink="/legal/privacy" (click)="moreOpen.set(false)">Privacy</a>
         </div>
       </section>
     }
+
+    <app-update-prompt />
+    <app-tour />
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(document:keydown.escape)': 'moreOpen.set(false)' },
@@ -193,12 +218,13 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
     .top {
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: calc(10px + var(--sat)) calc(16px + var(--sar)) 10px calc(16px + var(--sal));
-      border-bottom: 1px solid var(--line);
-      background: rgba(21, 25, 34, 0.82);
-      -webkit-backdrop-filter: blur(14px) saturate(1.3);
-      backdrop-filter: blur(14px) saturate(1.3);
+      gap: 16px;
+      min-height: 64px;
+      padding: calc(12px + var(--sat)) calc(20px + var(--sar)) 12px calc(20px + var(--sal));
+      border-bottom: 1px solid var(--line-soft);
+      background: rgba(12, 14, 19, 0.82);
+      -webkit-backdrop-filter: blur(16px) saturate(1.3);
+      backdrop-filter: blur(16px) saturate(1.3);
       position: sticky;
       top: 0;
       z-index: 20;
@@ -206,7 +232,7 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
     .brand {
       display: inline-flex;
       align-items: center;
-      gap: 9px;
+      gap: 10px;
       color: var(--text);
       text-decoration: none;
       flex: none;
@@ -214,30 +240,26 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
     .mark {
       width: 22px;
       height: 22px;
-      transform: rotate(-6deg);
       transition: transform 0.25s;
     }
     .brand:hover .mark {
-      transform: rotate(6deg) scale(1.08);
+      transform: rotate(8deg) scale(1.06);
     }
     .word {
-      font-weight: 750;
-      font-size: 19px;
-      letter-spacing: -0.01em;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: -0.02em;
     }
     .word span {
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+      color: var(--accent);
     }
     .spacer {
       flex: 1;
     }
     nav.wide {
       display: none;
-      gap: 2px;
-      margin-left: 8px;
+      gap: 4px;
+      margin-left: 12px;
       flex-wrap: nowrap;
       overflow-x: auto;
       scrollbar-width: none;
@@ -246,11 +268,13 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
       display: none;
     }
     nav.wide a {
+      position: relative;
       color: var(--muted);
       text-decoration: none;
-      padding: 7px 12px;
+      padding: 8px 14px;
       border-radius: 10px;
       font-size: 14.5px;
+      font-weight: 500;
       white-space: nowrap;
       transition:
         color 0.15s,
@@ -258,18 +282,28 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
     }
     nav.wide a:hover {
       color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
     }
     nav.wide a.active {
-      background: linear-gradient(180deg, rgba(124, 156, 255, 0.18), rgba(124, 156, 255, 0.08));
-      box-shadow: inset 0 0 0 1px rgba(124, 156, 255, 0.35);
+      background: var(--accent-soft);
       color: var(--text);
+    }
+    .pip {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 2px var(--bg);
     }
     .badge {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      font-size: 12px;
-      padding: 4px 10px;
+      gap: 8px;
+      font-size: 12.5px;
+      padding: 5px 12px;
       border-radius: 999px;
       border: 1px solid var(--line);
       color: var(--muted);
@@ -280,16 +314,15 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
       height: 7px;
       border-radius: 50%;
       background: currentColor;
-      box-shadow: 0 0 8px currentColor;
     }
     .badge[data-b='offline'],
     .badge[data-b='error'] {
       color: var(--warn);
-      border-color: #7c4a03;
+      border-color: rgba(245, 165, 36, 0.35);
     }
     .badge[data-b='synced'] {
       color: var(--good);
-      border-color: #1f5f3a;
+      border-color: rgba(52, 210, 123, 0.3);
     }
     .badge[data-b='syncing'] .dot {
       animation: pulse 1s ease-in-out infinite;
@@ -299,18 +332,22 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
         opacity: 0.25;
       }
     }
+    .acct .btn {
+      white-space: nowrap;
+    }
     .acct {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       align-items: center;
     }
     .who {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       color: var(--text);
       text-decoration: none;
       font-size: 14px;
+      font-weight: 500;
     }
     .av {
       width: 32px;
@@ -319,8 +356,9 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
       display: grid;
       place-items: center;
       font-weight: 700;
-      color: #0b0d12;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      font-size: 14px;
+      color: #0a0d16;
+      background: linear-gradient(135deg, #8aa8ff, var(--accent-2));
     }
     .nm {
       max-width: 14ch;
@@ -330,15 +368,27 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
     }
 
     /* ---------- notices ---------- */
+    .notices {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 calc(20px + var(--sar)) 0 calc(20px + var(--sal));
+      display: grid;
+      gap: 12px;
+    }
+    .notices:not(:empty) {
+      padding-top: 20px;
+    }
     .notice {
       display: flex;
-      gap: 8px 14px;
+      gap: 12px 20px;
       align-items: center;
       flex-wrap: wrap;
-      padding: 9px calc(16px + var(--sar)) 9px calc(16px + var(--sal));
-      font-size: 13.5px;
-      background: linear-gradient(90deg, rgba(124, 156, 255, 0.1), rgba(177, 140, 255, 0.06));
-      border-bottom: 1px solid var(--line);
+      padding: 14px 16px 14px 20px;
+      font-size: 14px;
+      color: #c3c9d8;
+      background: var(--accent-soft);
+      border: 1px solid rgba(124, 156, 255, 0.22);
+      border-radius: var(--radius);
     }
     .notice > span:first-child {
       flex: 1 1 260px;
@@ -346,7 +396,7 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
     }
     .notice .acts {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
@@ -354,22 +404,37 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
     main {
       max-width: 1040px;
       margin: 0 auto;
-      padding: 18px calc(16px + var(--sar)) 40px calc(16px + var(--sal));
+      padding: 28px calc(20px + var(--sar)) 48px calc(20px + var(--sal));
       display: grid;
       grid-template-columns: minmax(0, 1fr);
-      gap: 16px;
+      gap: var(--gap);
     }
     main > * {
       min-width: 0;
     }
     .legal {
-      text-align: center;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
       font-size: 13px;
       color: var(--muted);
-      padding: 0 16px 28px;
+      padding: 0 16px 40px;
     }
-    .legal a {
+    .legal a,
+    .tourlink {
       color: var(--muted);
+      text-decoration: none;
+    }
+    .legal a:hover,
+    .tourlink:hover {
+      color: var(--text);
+    }
+    .tourlink {
+      background: none;
+      border: 0;
+      font: inherit;
+      padding: 0;
+      cursor: pointer;
     }
 
     /* ---------- bottom tabs (hidden on desktop) ---------- */
@@ -383,10 +448,26 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
         display: flex;
       }
     }
+    /* Mid-size laptops: trim the bar so nothing wraps or gets cut off. */
+    @media (min-width: 1000px) and (max-width: 1399px) {
+      .badge .txt {
+        display: none;
+      }
+      .badge {
+        padding: 6px 9px;
+      }
+      nav.wide {
+        gap: 0;
+        margin-left: 4px;
+      }
+      nav.wide a {
+        padding: 8px 10px;
+      }
+    }
     /* ---------- phones and tablets ---------- */
     @media (max-width: 999px) {
       main {
-        padding-bottom: calc(var(--tabbar-h) + var(--sab) + 28px);
+        padding-bottom: calc(var(--tabbar-h) + var(--sab) + 32px);
       }
       .legal {
         display: none;
@@ -403,12 +484,12 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
         right: 0;
         bottom: 0;
         z-index: 30;
-        padding: 6px calc(8px + var(--sar)) calc(6px + var(--sab)) calc(8px + var(--sal));
-        background: rgba(21, 25, 34, 0.9);
-        -webkit-backdrop-filter: blur(16px) saturate(1.4);
-        backdrop-filter: blur(16px) saturate(1.4);
-        border-top: 1px solid var(--line);
-        gap: 4px;
+        padding: 8px calc(10px + var(--sar)) calc(8px + var(--sab)) calc(10px + var(--sal));
+        background: rgba(16, 19, 26, 0.92);
+        -webkit-backdrop-filter: blur(18px) saturate(1.4);
+        backdrop-filter: blur(18px) saturate(1.4);
+        border-top: 1px solid var(--line-soft);
+        gap: 6px;
       }
       .tabs a,
       .tabs button {
@@ -418,15 +499,15 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 3px;
-        min-height: 50px;
-        padding: 4px 2px;
+        gap: 4px;
+        min-height: 52px;
+        padding: 6px 2px;
         border: 0;
-        border-radius: 14px;
+        border-radius: 16px;
         background: none;
         color: var(--muted);
         font: inherit;
-        font-size: 11px;
+        font-size: 11.5px;
         font-weight: 550;
         text-decoration: none;
         cursor: pointer;
@@ -434,6 +515,10 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
         transition:
           color 0.15s,
           background 0.15s;
+      }
+      .tabs .pip {
+        top: 8px;
+        right: calc(50% - 20px);
       }
       .tabs svg {
         width: 23px;
@@ -443,65 +528,63 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
         stroke-width: 1.8;
         stroke-linecap: round;
         stroke-linejoin: round;
-        transition: transform 0.2s;
       }
       .tabs .active {
         color: var(--text);
-        background: linear-gradient(180deg, rgba(124, 156, 255, 0.2), rgba(124, 156, 255, 0.06));
+        background: var(--accent-soft);
       }
       .tabs .active svg {
         color: var(--accent);
-        transform: translateY(-1px) scale(1.08);
-      }
-      .tabs .active::after {
-        content: '';
-        position: absolute;
-        top: -7px;
-        width: 22px;
-        height: 3px;
-        border-radius: 3px;
-        background: linear-gradient(90deg, var(--accent), var(--accent-2));
-        box-shadow: 0 0 10px var(--accent);
       }
     }
     @media (max-width: 480px) {
       .top {
-        gap: 10px;
-        padding-left: calc(12px + var(--sal));
-        padding-right: calc(12px + var(--sar));
+        gap: 12px;
+        min-height: 58px;
+        padding-left: calc(16px + var(--sal));
+        padding-right: calc(16px + var(--sar));
       }
       .badge {
-        padding: 5px 8px;
+        padding: 6px 9px;
       }
       .badge .txt {
         display: none;
       }
+      .notices {
+        padding-left: calc(16px + var(--sal));
+        padding-right: calc(16px + var(--sar));
+      }
       main {
-        padding-top: 14px;
-        gap: 14px;
+        padding: 20px calc(16px + var(--sar)) 40px calc(16px + var(--sal));
       }
     }
     /* Landscape phones: keep the bar slim so the timer has room. */
     @media (max-height: 460px) and (max-width: 999px) {
       .top {
         position: static;
+        min-height: 0;
         padding-top: calc(6px + var(--sat));
         padding-bottom: 6px;
       }
-      .notice {
+      .notices {
         display: none;
+      }
+      .tabs {
+        padding-top: 4px;
+        padding-bottom: calc(4px + var(--sab));
       }
       .tabs a,
       .tabs button {
         flex-direction: row;
         min-height: 40px;
-        font-size: 12px;
+        font-size: 12.5px;
       }
       .tabs svg {
         width: 20px;
         height: 20px;
       }
       main {
+        padding-top: 16px;
         padding-bottom: calc(60px + var(--sab));
       }
     }
@@ -511,7 +594,7 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
       position: fixed;
       inset: 0;
       z-index: 40;
-      background: rgba(5, 7, 12, 0.6);
+      background: rgba(5, 7, 12, 0.62);
       animation: fade 0.18s both;
     }
     .sheet {
@@ -522,16 +605,18 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
       z-index: 50;
       max-width: 560px;
       margin: 0 auto;
-      max-height: 82vh;
-      max-height: 82dvh;
+      max-height: 84dvh;
       overflow-y: auto;
-      padding: 10px calc(16px + var(--sar)) calc(18px + var(--sab)) calc(16px + var(--sal));
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 12px calc(20px + var(--sar)) calc(24px + var(--sab)) calc(20px + var(--sal));
       background: var(--panel);
       border: 1px solid var(--line);
       border-bottom: 0;
-      border-radius: 22px 22px 0 0;
-      box-shadow: 0 -20px 50px -10px rgba(0, 0, 0, 0.7);
-      animation: slide 0.24s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      border-radius: 26px 26px 0 0;
+      box-shadow: 0 -24px 60px -12px rgba(0, 0, 0, 0.8);
+      animation: slide 0.26s cubic-bezier(0.2, 0.8, 0.2, 1) both;
     }
     .grab {
       display: block;
@@ -539,30 +624,37 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
       height: 4px;
       border-radius: 4px;
       background: var(--line);
-      margin: 0 auto 12px;
+      margin: 0 auto;
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
     }
-    .grid a {
+    .grid a,
+    .grid .tile {
+      position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 7px;
-      padding: 14px 6px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
+      justify-content: center;
+      gap: 10px;
+      min-height: 88px;
+      padding: 14px 8px;
+      border-radius: 16px;
+      border: 1px solid var(--line-soft);
       background: var(--bg);
       color: var(--text);
+      font: inherit;
       text-decoration: none;
       font-size: 13px;
+      font-weight: 500;
       text-align: center;
+      cursor: pointer;
     }
     .grid a.active {
-      border-color: rgba(124, 156, 255, 0.6);
-      background: rgba(124, 156, 255, 0.12);
+      border-color: rgba(124, 156, 255, 0.5);
+      background: var(--accent-soft);
     }
     .grid svg {
       width: 24px;
@@ -573,15 +665,18 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
       stroke-linecap: round;
       stroke-linejoin: round;
     }
+    .grid .pip {
+      top: 10px;
+      right: 14px;
+    }
     .who-row {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px solid var(--line);
+      padding-top: 20px;
+      border-top: 1px solid var(--line-soft);
     }
     .who-t {
       display: flex;
@@ -594,13 +689,14 @@ const item = (path: string, label: string, icon: keyof typeof ICONS): NavItem =>
       text-overflow: ellipsis;
     }
     .sheet-legal {
-      text-align: center;
-      margin-top: 14px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
       font-size: 13px;
-      color: var(--muted);
     }
     .sheet-legal a {
       color: var(--muted);
+      text-decoration: none;
     }
     @media (min-width: 1000px) {
       .scrim,
@@ -625,17 +721,19 @@ export class App {
   readonly store = inject(SolveStore);
   readonly auth = inject(AuthStore);
   readonly updates = inject(AppUpdateStore);
+  readonly tour = inject(TourService);
+  private readonly webUpdate = inject(WebUpdateStore);
   private readonly router = inject(Router);
   readonly bannerHidden = signal(sessionStorage.getItem('ct.guestBanner') === '0');
   readonly moreOpen = signal(false);
   readonly icons = ICONS;
 
-  /** The five tabs that stay one thumb-tap away. */
+  /** The four tabs that stay one thumb-tap away. */
   readonly tabs: NavItem[] = [
-    item('/today', 'Today', 'today'),
-    item('/timer', 'Timer', 'timer'),
-    item('/trainer', 'Trainer', 'trainer'),
-    item('/progress', 'Progress', 'progress'),
+    item('/today', 'Today', 'today', 'today'),
+    item('/timer', 'Timer', 'timer', 'timer'),
+    item('/trainer', 'Trainer', 'trainer', 'trainer'),
+    item('/progress', 'Progress', 'progress', 'progress'),
   ];
   private readonly rest: NavItem[] = [
     item('/drill', 'Drill', 'drill'),
@@ -690,7 +788,18 @@ export class App {
   }
 
   constructor() {
+    // A new version is looked for every time the app opens, and again whenever it comes back to the foreground.
     void this.updates.autoCheck();
+    this.webUpdate.start();
+    if (this.updates.enabled) {
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') void this.updates.autoCheck();
+      });
+    }
+    // First launch: offer the tour once, after the page has settled and any update sheet is out of the way.
+    setTimeout(() => {
+      if (!this.updates.prompt()) this.tour.maybeAutoStart();
+    }, 1500);
     // Drop focus after changing a dropdown / checkbox so Space goes to the timer, not to the control.
     document.addEventListener('change', (e) => (e.target as HTMLElement | null)?.blur?.());
   }

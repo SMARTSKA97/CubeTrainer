@@ -16,7 +16,8 @@ export type UpdateState =
 
 const LAST_CHECK = 'ct.updateCheckedAt';
 const LAST_FOUND = 'ct.updateFound';
-const DAY = 24 * 3600 * 1000;
+/** Opening the app checks GitHub, but reopening within this window reuses the last answer. */
+const RECHECK_AFTER = 10 * 60 * 1000;
 
 /**
  * In-app updates for the sideloaded Android app. Looks at the GitHub releases of the configured repository,
@@ -31,24 +32,28 @@ export class AppUpdateStore {
   readonly update = signal<AppUpdate | null>(null);
   readonly received = signal(0);
   readonly error = signal<string | null>(null);
-  readonly dismissed = signal(false);
+  /** Version the person tapped "Later" on in this session; it is not offered again until they reopen the app. */
+  readonly dismissedVersion = signal<string | null>(null);
 
   /** 0..1, or null while the size is unknown. */
   readonly progress = computed(() => {
     const total = this.update()?.size ?? 0;
     return total > 0 ? Math.min(1, this.received() / total) : null;
   });
-  /** A newer version is waiting and the user has not hidden the banner. */
-  readonly banner = computed(
-    () => this.update() !== null && !this.dismissed() && this.state() !== 'uptodate',
-  );
+  /** A newer version is waiting (drives the dot on More and Updates). */
+  readonly available = computed(() => this.update() !== null && this.state() !== 'uptodate');
+  /** Show the "update ready" sheet: there is a newer version and the person has not said "Later" to it. */
+  readonly prompt = computed(() => {
+    const u = this.update();
+    return u !== null && this.state() !== 'uptodate' && this.dismissedVersion() !== u.version;
+  });
 
-  /** Called once at start: checks at most once a day so the launch stays quiet and GitHub's anonymous rate limit is never an issue. */
+  /** Called when the app opens and again when it comes back to the foreground. Reopening within a few minutes reuses the last answer so GitHub's anonymous rate limit is never an issue. */
   async autoCheck(): Promise<void> {
     if (!this.enabled) return;
     try {
       const last = Number((await Preferences.get({ key: LAST_CHECK })).value ?? 0);
-      if (Date.now() - last < DAY) {
+      if (Date.now() - last < RECHECK_AFTER) {
         await this.loadInstalled();
         await this.restoreFound();
         return;
@@ -79,7 +84,6 @@ export class AppUpdateStore {
         );
       const found = pickUpdate((await res.json()) as GithubRelease[], this.installed());
       this.update.set(found);
-      this.dismissed.set(false);
       this.state.set(found ? 'available' : 'uptodate');
       await Preferences.set({ key: LAST_CHECK, value: String(Date.now()) });
       if (found) await Preferences.set({ key: LAST_FOUND, value: JSON.stringify(found) });
@@ -89,6 +93,10 @@ export class AppUpdateStore {
       if (!quiet) this.error.set(e instanceof Error ? e.message : 'Could not check for updates.');
       else this.state.set('idle');
     }
+  }
+
+  later(): void {
+    this.dismissedVersion.set(this.update()?.version ?? null);
   }
 
   async install(): Promise<void> {
@@ -124,7 +132,7 @@ export class AppUpdateStore {
       const u = raw ? (JSON.parse(raw) as AppUpdate) : null;
       if (u && compareVersions(u.version, this.installed()) > 0) {
         this.update.set(u);
-        this.state.set('available');
+        if (this.state() === 'idle' || this.state() === 'error') this.state.set('available');
       }
     } catch {
       /* ignore a corrupt cache */
