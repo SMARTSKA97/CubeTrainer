@@ -40,7 +40,7 @@ jobs:
             *) echo "::error::Tag '$GITHUB_REF_NAME' must look like android-v1.2.3"; exit 1;;
           esac
           if [ -z "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" ]; then
-            echo "::error::Releases must be signed with your own key, otherwise phones cannot update in place. Add the ANDROID_KEYSTORE_* secrets (see DEPLOY.md section 11)."
+            echo "::error::Releases must be signed with your own key, otherwise phones cannot update in place. Add the ANDROID_KEYSTORE_* secrets (a keystore made once with keytool; keep it and its passwords private)."
             exit 1
           fi
 

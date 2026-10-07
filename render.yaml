@@ -1,4 +1,4 @@
-# Render Blueprint for the API (optional: you can also create the service by hand, see DEPLOY.md).
+# Render Blueprint for the API (optional: you can also create the service by hand in the Render dashboard).
 services:
   - type: web
     name: cubetrainer-api

@@ -87,4 +87,4 @@ jobs:
             sleep 15
           done
           echo "API did not become ready in 10 minutes" && exit 1
-      # The web app is built and deployed by Cloudflare Pages' Git integration (see DEPLOY.md).
+      # The web app is built and deployed by Cloudflare's Git integration (see web/wrangler.jsonc).

@@ -105,21 +105,22 @@ dotnet test api/CubeTrainer.sln                     # unit + integration; set DA
 | Source + CI/CD | **GitHub** + Actions | build, test, run Flyway on the production DB, then trigger the API deploy |
 | Database | **Neon** (Postgres) | serverless Postgres; Flyway migrates it from CI |
 | API | **Render** (Docker web service) | runs `api/Dockerfile`; health check `/health/ready` |
-| Web app | **Cloudflare Pages** | static Angular build, global CDN, installable PWA |
+| Web app | **Cloudflare** (Workers static assets) | static Angular build, global CDN, installable PWA; configured by `web/wrangler.jsonc` |
 | Email | **Brevo** | confirmation, password reset and security notices, sent from your own domain |
-| DNS / domain | your registrar or **Cloudflare DNS** | `app.<domain>` -> Pages, `api.<domain>` -> Render, Brevo SPF/DKIM/DMARC records |
+| DNS / domain | your registrar or **Cloudflare DNS** | web host -> Cloudflare, API host -> Render, Brevo SPF/DKIM/DMARC records |
 | Sign-in providers (optional) | Google, Microsoft, GitHub, Facebook developer consoles | OAuth client id + secret per provider |
 
 ```
-browser --> Cloudflare Pages (cubetrainer.ska97homelab.uk)
+browser --> Cloudflare (cubetrainer.ska97homelab.uk)
    |             |
    |             +--> /config.json tells the app where the API is
    +--> Render API (cubetrainer-api.ska97homelab.uk) --> Neon Postgres
                          +--> Brevo (email)       +--> OAuth providers
 GitHub Actions: build/test -> Flyway on Neon -> Render deploy hook
 ```
-The full click-by-click guide, every environment variable, DNS records and troubleshooting are in **[DEPLOY.md](DEPLOY.md)**.
-`.env.example` and `render.yaml` list the same variables for local Docker and the Render Blueprint.
+The step-by-step production runbook (with account details and secrets handling) is deliberately **not** kept in this public repository.
+`.env.example` and `render.yaml` list the variables for local Docker and the Render Blueprint; secret values are only ever entered in the Render, Cloudflare and GitHub dashboards.
+`render.yaml` uses `sync: false` for every secret, so none is stored here.
 
 ## Regenerating the algorithm data
 `web/public/algs/algs.json` and the case pictures come from the J-Perm pages you saved:
@@ -179,7 +180,7 @@ F2L cases do not use the random-AUF option (it would move the pair out of its sl
 * **Stages and mistake tags**: Timer "Practising" selector (full / cross / F2L / OLL / PLL / last layer) and tags on each solve.
 * **Offline / install**: `web/public/sw.js` + `manifest.webmanifest`.
 * **Life OS**: `GET /api/v1/summary?tz=330` returns solves today, streak, last 7 days, best today and case status counts.
-* **Deployment** (Neon + Render + Cloudflare Pages): see `DEPLOY.md`.
+* **Deployment** (Neon + Render + Cloudflare): `render.yaml`, `web/wrangler.jsonc`, `.github/workflows/`.
 
 Tests: `cd web && npm test` (Node >= 22.18).
 
@@ -188,7 +189,7 @@ Tests: `cd web && npm test` (Node >= 22.18).
 Solves and case status are per account. Signed in, the app keeps a local copy that works offline and syncs through an outbox
 (push, then pull changes after a cursor), so edits and deletes show up on your other devices. Guests keep everything on the
 device and are offered to add it to their account at sign-in. Sign in with Google, Microsoft, GitHub or Facebook (each button
-appears once its keys are configured, see DEPLOY.md). See ADR 0005.
+appears once its keys are configured on the API). See ADR 0005.
 
 ## Phase 1: accounts (done)
 
@@ -211,10 +212,10 @@ No new provider settings. Needs the new app build (the deep-link entry is in the
 A Capacitor wrapper around the same Angular app: offline-first, installable as an APK. Build it in GitHub: **Actions -> Android APK -> Run workflow**
 (needs the repository variable `API_BASE_URL`), then download the `cubetrainer-apk-*` artifact, copy it to the phone and install it
 ("install unknown apps" must be allowed). Also add `https://localhost` to the API's `CORS_ORIGINS`. Email/password sign-in, 2FA and social login (through the phone's browser, ADR 0013) work in the app;
-connecting providers in Settings does not yet. Details and local build steps: `mobile/README.md`, ADR 0011, DEPLOY.md section 11.
+connecting providers in Settings does not yet. Details and local build steps: `mobile/README.md`, ADR 0011.
 
 **Updates without an app store (Phase 8):** push a tag like `android-v1.1.0` and the workflow publishes a signed APK as a GitHub Release with a changelog.
-Installed apps find it (Updates in the menu, or the banner at launch), show what changed and install it on one tap. Needs the signing secrets and a public repo; see DEPLOY.md 11b and ADR 0012.
+Installed apps find it (Updates in the menu, or the banner at launch), show what changed and install it on one tap. Needs the signing secrets (`ANDROID_KEYSTORE_*`) and a public repo; see ADR 0012.
 
 ## Phase 6: leaderboards (done)
 

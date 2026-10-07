@@ -1,0 +1,17 @@
+{
+  // Cloudflare serves the Angular build as static assets (no Worker code). Cloudflare's Git integration runs
+  //   build:  npm ci && node scripts/write-config.mjs && npx ng build
+  //   deploy: npx wrangler deploy
+  // from the "web" folder, and reads this file.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cubetrainer",
+  "compatibility_date": "2026-10-06",
+  "assets": {
+    "directory": "dist/web/browser",
+    // Deep links such as /trainer or /auth/login are answered with index.html (single-page app).
+    "not_found_handling": "single-page-application"
+  },
+  "routes": [{ "pattern": "cubetrainer.ska97homelab.uk", "custom_domain": true }],
+  "workers_dev": false,
+  "preview_urls": false
+}
