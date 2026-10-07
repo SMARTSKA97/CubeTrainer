@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults: { run: { working-directory: web } }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with: { node-version: 24, cache: npm, cache-dependency-path: web/package-lock.json }
       - run: npm ci
@@ -37,7 +37,7 @@ jobs:
         options: >-
           --health-cmd "pg_isready -U cube -d cubetrainer" --health-interval 5s --health-timeout 3s --health-retries 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-dotnet@v4
         with: { dotnet-version: 10.0.x }
       - name: Build (warnings are errors)
@@ -70,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # 1. Schema first. Use Neon's DIRECT (non-pooled) host: Flyway takes advisory locks.
       # Secrets go in through the environment, never pasted into the script, so a password with $ ` " or \ survives intact.
       - name: Flyway migrate (Neon)

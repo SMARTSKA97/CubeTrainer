@@ -28,7 +28,7 @@ jobs:
       # Where the app looks for new releases (this repository), baked into config.json.
       UPDATES_REPO: ${{ github.repository }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # the changelog is built from git history between tags
 
