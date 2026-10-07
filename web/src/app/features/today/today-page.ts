@@ -157,6 +157,29 @@ import { INTERVAL_DAYS } from '@domain/plan';
     .items li.done {
       opacity: 0.5;
     }
+    @media (max-width: 560px) {
+      .items li {
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+          'name reason'
+          'set dots';
+        row-gap: 4px;
+      }
+      .items li .name {
+        grid-area: name;
+      }
+      .items li small {
+        grid-area: set;
+      }
+      .items li .reason {
+        grid-area: reason;
+        justify-self: end;
+      }
+      .items li .dots {
+        grid-area: dots;
+        justify-self: end;
+      }
+    }
     .name {
       font-weight: 600;
     }

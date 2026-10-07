@@ -1,14 +1,32 @@
 :root {
   --bg: #0b0d12;
   --panel: #151922;
+  --panel-2: #1a1f2b;
   --line: #262c3a;
   --text: #e6e9f0;
   --muted: #8b93a7;
   --accent: #7c9cff;
+  --accent-2: #b18cff;
+  --good: #22c55e;
+  --warn: #f59e0b;
+  --bad: #f87171;
+  --radius: 16px;
+  --tabbar-h: 62px;
+  /* Android edge-to-edge: Capacitor publishes --safe-area-inset-*, browsers/iOS publish env(). */
+  --sat: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --sab: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  --sal: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
+  --sar: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
   color-scheme: dark;
 }
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overscroll-behavior-y: contain;
 }
 html,
 body {
@@ -21,16 +39,66 @@ body {
     'Segoe UI',
     Roboto,
     sans-serif;
-  font-size: 15px;
+  font-size: clamp(15px, 0.92rem + 0.15vw, 16px);
+  line-height: 1.4;
+}
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+/* A soft colour wash behind everything; fixed so it never scrolls or repaints. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(900px 520px at 88% -8%, rgba(124, 156, 255, 0.14), transparent 60%),
+    radial-gradient(720px 440px at -8% 8%, rgba(177, 140, 255, 0.1), transparent 60%),
+    radial-gradient(800px 500px at 50% 112%, rgba(34, 197, 94, 0.06), transparent 60%);
+}
+h1,
+h2,
+h3 {
+  line-height: 1.2;
+}
+img,
+svg,
+canvas,
+video {
+  max-width: 100%;
 }
 code {
   font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  overflow-wrap: anywhere;
 }
+a,
+button,
+select,
+label,
+summary {
+  touch-action: manipulation;
+}
+
 .card {
-  background: var(--panel);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0) 60%), var(--panel);
   border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 16px 18px;
+  border-radius: var(--radius);
+  padding: clamp(14px, 3.6vw, 20px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 10px 28px -16px rgba(0, 0, 0, 0.7);
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+/* Wide content (tables) scrolls inside its card instead of stretching the whole page. */
+.card:has(> table),
+.card:has(> .scroll-x) {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .label {
   font-size: 12px;
@@ -51,23 +119,40 @@ code {
   background: var(--bg);
   color: var(--text);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 11px;
   padding: 8px 14px;
   font: inherit;
   cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition:
+    border-color 0.15s,
+    transform 0.08s,
+    filter 0.15s,
+    background 0.15s;
 }
 .btn:hover:not(:disabled) {
   border-color: var(--accent);
+}
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
 }
 .btn:disabled {
   opacity: 0.4;
   cursor: default;
 }
 .btn.primary {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border-color: transparent;
   color: #0b0d12;
-  font-weight: 600;
+  font-weight: 650;
+  box-shadow: 0 6px 18px -8px rgba(124, 156, 255, 0.7);
+}
+.btn.primary:hover:not(:disabled) {
+  filter: brightness(1.08);
 }
 .btn.danger:hover:not(:disabled) {
   border-color: #ef4444;
@@ -80,7 +165,7 @@ code {
 .btn.small {
   padding: 4px 10px;
   font-size: 13px;
-  border-radius: 8px;
+  border-radius: 9px;
 }
 .field {
   display: flex;
@@ -88,11 +173,12 @@ code {
   gap: 3px;
   font-size: 12px;
   color: var(--muted);
+  min-width: 0;
 }
 .check {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 14px;
   cursor: pointer;
 }
@@ -102,23 +188,97 @@ input:not([type='checkbox']):not([type='radio']) {
   background: var(--bg);
   color: var(--text);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 9px;
   padding: 7px 9px;
   font: inherit;
+  max-width: 100%;
+  min-width: 0;
+}
+input[type='checkbox'],
+input[type='radio'] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  flex: none;
 }
 
 input:focus-visible,
 select:focus-visible,
+textarea:focus-visible,
 .btn:focus-visible,
-a:focus-visible {
+a:focus-visible,
+summary:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 .err {
-  color: #f87171;
+  color: var(--bad);
   font-size: 13px;
 }
 .ok {
-  color: #22c55e;
+  color: var(--good);
   font-size: 13px;
+}
+
+/* Fingers: bigger hit areas, and 16px fields so mobile browsers never zoom in on focus. */
+@media (pointer: coarse) {
+  .btn {
+    min-height: 44px;
+    padding-inline: 16px;
+  }
+  .btn.small {
+    min-height: 38px;
+  }
+  select,
+  textarea,
+  input:not([type='checkbox']):not([type='radio']) {
+    min-height: 44px;
+    font-size: 16px;
+  }
+  .check {
+    min-height: 40px;
+  }
+  input[type='checkbox'],
+  input[type='radio'] {
+    width: 22px;
+    height: 22px;
+  }
+}
+@media (max-width: 640px) {
+  :root {
+    --radius: 14px;
+  }
+}
+
+/* Pages ease in. Skipped for people who ask their device for less motion. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes ct-rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+  main > :not(router-outlet) > * {
+    animation: ct-rise 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  main > :not(router-outlet) > *:nth-child(2) {
+    animation-delay: 0.04s;
+  }
+  main > :not(router-outlet) > *:nth-child(3) {
+    animation-delay: 0.08s;
+  }
+  main > :not(router-outlet) > *:nth-child(4) {
+    animation-delay: 0.12s;
+  }
+  main > :not(router-outlet) > *:nth-child(n + 5) {
+    animation-delay: 0.16s;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
 }
