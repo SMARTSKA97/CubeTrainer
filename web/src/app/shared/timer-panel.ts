@@ -8,6 +8,7 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { Penalty, formatTime } from '@domain/stats';
+import { KeepAwake } from '@core/keep-awake';
 
 export interface TimerResult {
   timeMs: number;
@@ -113,6 +114,12 @@ export class TimerPanel implements OnDestroy {
   private lock = false; // swallow the key-up that follows the stopping key-down
   private beeped = new Set<number>();
   private audio?: AudioContext;
+  // The screen stays on for as long as a timer is on screen, so a pause between solves never blanks it.
+  private readonly awake = new KeepAwake();
+
+  constructor() {
+    this.awake.start();
+  }
 
   readonly hint = () => {
     if (!this.enabled()) return 'Generate a scramble first';
@@ -134,6 +141,7 @@ export class TimerPanel implements OnDestroy {
   };
 
   ngOnDestroy() {
+    this.awake.stop();
     this.cancel();
   }
 
