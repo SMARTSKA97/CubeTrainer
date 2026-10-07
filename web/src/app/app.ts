@@ -68,9 +68,6 @@ const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''):
         @for (n of allNav(); track n.path) {
           <a [routerLink]="n.path" routerLinkActive="active" [attr.data-tour]="n.tour || null"
             >{{ n.label }}
-            @if (n.path === '/update' && updates.available()) {
-              <i class="pip" aria-label="new version"></i>
-            }
           </a>
         }
       </nav>
@@ -170,7 +167,7 @@ const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''):
             <a [routerLink]="n.path" routerLinkActive="active" (click)="moreOpen.set(false)">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="n.icon" /></svg>
               <span>{{ n.label }}</span>
-              @if (n.path === '/update' && updates.available()) {
+              @if (n.path === '/settings' && updates.available()) {
                 <i class="pip" aria-label="new version"></i>
               }
             </a>
@@ -369,7 +366,7 @@ const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''):
 
     /* ---------- notices ---------- */
     .notices {
-      max-width: 1040px;
+      max-width: var(--page-w);
       margin: 0 auto;
       padding: 0 calc(20px + var(--sar)) 0 calc(20px + var(--sal));
       display: grid;
@@ -402,7 +399,7 @@ const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''):
 
     /* ---------- page ---------- */
     main {
-      max-width: 1040px;
+      max-width: var(--page-w);
       margin: 0 auto;
       padding: 28px calc(20px + var(--sar)) 48px calc(20px + var(--sal));
       display: grid;
@@ -754,7 +751,6 @@ export class App {
 
   readonly moreNav = computed<NavItem[]>(() => [
     ...this.rest,
-    ...(this.updates.enabled ? [item('/update', 'Updates', 'update')] : []),
     item('/settings', 'Settings', 'settings'),
   ]);
   /** Desktop top bar: the same pages, in the long form. */

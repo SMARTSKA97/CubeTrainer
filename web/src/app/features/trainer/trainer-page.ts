@@ -44,6 +44,7 @@ import {
 import { ScrambleNet } from '@shared/scramble-net';
 import { CasePic } from '@shared/case-pic';
 import { MovePlayer } from '@shared/move-player';
+import { Sheet } from '@shared/sheet';
 import { HoldPicker } from '@shared/hold-picker';
 import { CROSS_WHITE_HOLD, Hold, schemeHex } from '@domain/orientation';
 import { TimerPanel, TimerResult } from '@shared/timer-panel';
@@ -58,7 +59,7 @@ interface QueueItem {
 @Component({
   selector: 'app-trainer-page',
   standalone: true,
-  imports: [TimerPanel, ScrambleNet, HoldPicker, SolveTags, MovePlayer, AlgChooser, CasePic],
+  imports: [TimerPanel, ScrambleNet, HoldPicker, SolveTags, MovePlayer, AlgChooser, CasePic, Sheet],
   template: `
     @if (algs.error(); as err) {
       <div class="card">{{ err }}</div>
@@ -247,9 +248,13 @@ interface QueueItem {
                 {{ watchScramble() ? 'Hide animation' : '▶ Watch this scramble' }}
               </button>
             </div>
-            @if (watchScramble()) {
+            <app-sheet
+              heading="Watch this scramble"
+              [open]="watchScramble()"
+              (closed)="watchScramble.set(false)"
+            >
               <app-move-player [moves]="item.scramble" [scheme]="scheme()" />
-            }
+            </app-sheet>
 
             <div class="row">
               <button class="btn" (click)="prev()" [disabled]="index() === 0" title="Alt + ←">
@@ -277,18 +282,25 @@ interface QueueItem {
               </label>
             </div>
 
+            <app-sheet
+              heading="How to solve it, step by step"
+              [open]="learnOpen()"
+              (closed)="learnOpen.set(false)"
+            >
+              <app-alg-chooser [c]="c" />
+              <app-move-player
+                [moves]="choice.chosen(c)"
+                [start]="inverse(c.alg)"
+                [scheme]="scheme()"
+                [learn]="true"
+              />
+            </app-sheet>
+
             @if (hintOpen()) {
-              <div class="learn-panel">
-                <div class="label">How to solve it, step by step</div>
-                <app-alg-chooser [c]="c" />
-                <app-move-player
-                  [moves]="choice.chosen(c)"
-                  [start]="inverse(c.alg)"
-                  [scheme]="scheme()"
-                  [learn]="true"
-                />
-              </div>
               <div class="alg">
+                <button class="btn small" type="button" (click)="learnOpen.set(true)">
+                  ▶ Step through it
+                </button>
                 <div>
                   <span class="label">Algorithm</span> <code>{{ c.alg }}</code>
                 </div>
@@ -319,54 +331,56 @@ interface QueueItem {
             }
           </section>
 
-          <app-timer-panel
-            #timer
-            [inspection]="inspection()"
-            [sound]="false"
-            (started)="onStarted()"
-            (finished)="onFinished($event)"
-          />
+          <div class="side">
+            <app-timer-panel
+              #timer
+              [inspection]="inspection()"
+              [sound]="false"
+              (started)="onStarted()"
+              (finished)="onFinished($event)"
+            />
 
-          @if (hintView(); as h) {
-            <section class="card hint-banner" role="status">
-              <b>Stuck? Here is the way through</b>
-              <div class="hint-chunks">
-                @for (p of h.shown; track $index) {
-                  <span class="hc" [class.cur]="$last">
-                    <small>{{ p.name ?? 'Part ' + ($index + 1) }}</small>
-                    <code>{{ p.text }}</code>
-                  </span>
-                }
-              </div>
-              <small class="muted"
-                >Part {{ h.step }} of {{ h.total
-                }}{{ h.step < h.total ? ' · the next part appears in a few seconds' : '' }}</small
-              >
-            </section>
-          }
+            @if (hintView(); as h) {
+              <section class="card hint-banner" role="status">
+                <b>Stuck? Here is the way through</b>
+                <div class="hint-chunks">
+                  @for (p of h.shown; track $index) {
+                    <span class="hc" [class.cur]="$last">
+                      <small>{{ p.name ?? 'Part ' + ($index + 1) }}</small>
+                      <code>{{ p.text }}</code>
+                    </span>
+                  }
+                </div>
+                <small class="muted"
+                  >Part {{ h.step }} of {{ h.total
+                  }}{{ h.step < h.total ? ' · the next part appears in a few seconds' : '' }}</small
+                >
+              </section>
+            }
 
-          @if (last(); as l) {
-            <section class="card last">
-              <div>
-                <div class="label">Last solve · {{ lastCaseName() }}</div>
-                <div class="last-time">{{ formatSolve(l) }}</div>
-                @if (message()) {
-                  <div class="msg" [class.good]="messageGood()">{{ message() }}</div>
-                }
-              </div>
-              <div class="row">
-                <button class="btn" (click)="penalty('plus2')" [class.on]="l.penalty === 'plus2'">
-                  +2
-                </button>
-                <button class="btn" (click)="penalty('dnf')" [class.on]="l.penalty === 'dnf'">
-                  DNF
-                </button>
-                <button class="btn danger" (click)="remove()">Delete</button>
-                <button class="btn primary" (click)="retrySame()">Retry this scramble</button>
-              </div>
-              <app-solve-tags [solve]="l" style="flex-basis:100%" />
-            </section>
-          }
+            @if (last(); as l) {
+              <section class="card last">
+                <div>
+                  <div class="label">Last solve · {{ lastCaseName() }}</div>
+                  <div class="last-time">{{ formatSolve(l) }}</div>
+                  @if (message()) {
+                    <div class="msg" [class.good]="messageGood()">{{ message() }}</div>
+                  }
+                </div>
+                <div class="row">
+                  <button class="btn" (click)="penalty('plus2')" [class.on]="l.penalty === 'plus2'">
+                    +2
+                  </button>
+                  <button class="btn" (click)="penalty('dnf')" [class.on]="l.penalty === 'dnf'">
+                    DNF
+                  </button>
+                  <button class="btn danger" (click)="remove()">Delete</button>
+                  <button class="btn primary" (click)="retrySame()">Retry this scramble</button>
+                </div>
+                <app-solve-tags [solve]="l" style="flex-basis:100%" />
+              </section>
+            }
+          </div>
 
           <section class="card">
             <div class="label">{{ c.name }} — your times</div>
@@ -408,6 +422,29 @@ interface QueueItem {
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
+    /* The timer and what belongs to it stay together, and on a wide screen stay in view. */
+    .side {
+      display: grid;
+      gap: var(--gap);
+      align-content: start;
+      min-width: 0;
+    }
+    @media (min-width: 1100px) {
+      :host {
+        grid-template-columns: minmax(0, 1.15fr) minmax(360px, 1fr);
+        align-items: start;
+      }
+      :host > * {
+        grid-column: 1;
+      }
+      :host > .side {
+        grid-column: 2;
+        grid-row: 1 / span 8;
+        position: sticky;
+        top: 84px;
+      }
+    }
+
     .unit {
       display: inline-flex;
       align-items: center;
@@ -669,6 +706,7 @@ export class TrainerPage {
   readonly setId = usePref('trainer.set', '2lookoll');
   readonly randomAuf = usePref('trainer.auf', false);
   readonly watchScramble = signal(false);
+  readonly learnOpen = signal(false);
   readonly choice = inject(AlgChoice);
   private readonly recog = inject(RecogStore);
   readonly hints = usePref('trainer.hints', true);

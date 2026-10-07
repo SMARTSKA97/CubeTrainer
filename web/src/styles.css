@@ -3,6 +3,7 @@
  * Space scale (px): 4 8 12 16 20 24 32 40.
  */
 :root {
+  --page-w: 1040px; /* widest the page content gets; larger screens below */
   --bg: #0c0e13;
   --panel: #14171f;
   --panel-2: #191d27;
@@ -390,5 +391,17 @@ main > :not(router-outlet) {
   *::after {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
+  }
+}
+
+/* Laptops and desktops: use the width instead of leaving wide empty margins. */
+@media (min-width: 1200px) {
+  :root {
+    --page-w: 1240px;
+  }
+}
+@media (min-width: 1600px) {
+  :root {
+    --page-w: 1400px;
   }
 }

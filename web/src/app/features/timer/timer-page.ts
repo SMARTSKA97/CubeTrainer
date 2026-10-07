@@ -23,6 +23,7 @@ import {
 } from '@domain/stats';
 import { ScrambleNet } from '@shared/scramble-net';
 import { MovePlayer } from '@shared/move-player';
+import { Sheet } from '@shared/sheet';
 import { HoldPicker } from '@shared/hold-picker';
 import { SolveTags } from '@shared/solve-tags';
 import { Hold, STANDARD_HOLD, schemeHex } from '@domain/orientation';
@@ -32,7 +33,7 @@ import { usePref } from '@core/pref';
 @Component({
   selector: 'app-timer-page',
   standalone: true,
-  imports: [TimerPanel, ScrambleNet, HoldPicker, SolveTags, MovePlayer],
+  imports: [TimerPanel, ScrambleNet, HoldPicker, SolveTags, MovePlayer, Sheet],
   template: `
     <section class="card scramble-card">
       <app-hold-picker [value]="hold()" (valueChange)="hold.set($event)" [presets]="presets" />
@@ -54,9 +55,6 @@ import { usePref } from '@core/pref';
           {{ watching() ? 'Hide animation' : '▶ Watch this scramble' }}
         </button>
       </div>
-      @if (watching()) {
-        <app-move-player [moves]="scramble()" [scheme]="scheme()" />
-      }
       <div class="row">
         <button class="btn" (click)="prev()" [disabled]="index() === 0" title="Alt + ←">
           ← Previous
@@ -100,36 +98,44 @@ import { usePref } from '@core/pref';
       </div>
     </section>
 
-    <app-timer-panel
-      #timer
-      [inspection]="inspection()"
-      [sound]="sound()"
-      (finished)="onFinished($event)"
-    />
+    <app-sheet heading="Watch this scramble" [open]="watching()" (closed)="watching.set(false)">
+      <app-move-player [moves]="scramble()" [scheme]="scheme()" />
+    </app-sheet>
 
-    @if (last(); as l) {
-      <section class="card last">
-        <div>
-          <div class="label">Last solve</div>
-          <div class="last-time">{{ formatSolve(l) }}</div>
-          @if (message()) {
-            <div class="msg" [class.good]="messageGood()">{{ message() }}</div>
-          }
-        </div>
-        <div class="row">
-          <button class="btn" (click)="penalty('plus2')" [class.on]="l.penalty === 'plus2'">
-            +2
-          </button>
-          <button class="btn" (click)="penalty('dnf')" [class.on]="l.penalty === 'dnf'">DNF</button>
-          <button class="btn" (click)="penalty('none')" [disabled]="l.penalty === 'none'">
-            OK
-          </button>
-          <button class="btn danger" (click)="remove()">Delete</button>
-          <button class="btn primary" (click)="retry()">Retry this scramble</button>
-        </div>
-        <app-solve-tags [solve]="l" />
-      </section>
-    }
+    <div class="side">
+      <app-timer-panel
+        #timer
+        [inspection]="inspection()"
+        [sound]="sound()"
+        (finished)="onFinished($event)"
+      />
+
+      @if (last(); as l) {
+        <section class="card last">
+          <div>
+            <div class="label">Last solve</div>
+            <div class="last-time">{{ formatSolve(l) }}</div>
+            @if (message()) {
+              <div class="msg" [class.good]="messageGood()">{{ message() }}</div>
+            }
+          </div>
+          <div class="row">
+            <button class="btn" (click)="penalty('plus2')" [class.on]="l.penalty === 'plus2'">
+              +2
+            </button>
+            <button class="btn" (click)="penalty('dnf')" [class.on]="l.penalty === 'dnf'">
+              DNF
+            </button>
+            <button class="btn" (click)="penalty('none')" [disabled]="l.penalty === 'none'">
+              OK
+            </button>
+            <button class="btn danger" (click)="remove()">Delete</button>
+            <button class="btn primary" (click)="retry()">Retry this scramble</button>
+          </div>
+          <app-solve-tags [solve]="l" />
+        </section>
+      }
+    </div>
 
     <section class="card">
       <div class="label">Statistics · {{ stageLabel() }}</div>
@@ -176,6 +182,29 @@ import { usePref } from '@core/pref';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
+    /* The timer and what belongs to it stay together, and on a wide screen stay in view. */
+    .side {
+      display: grid;
+      gap: var(--gap);
+      align-content: start;
+      min-width: 0;
+    }
+    @media (min-width: 1100px) {
+      :host {
+        grid-template-columns: minmax(0, 1.15fr) minmax(360px, 1fr);
+        align-items: start;
+      }
+      :host > * {
+        grid-column: 1;
+      }
+      :host > .side {
+        grid-column: 2;
+        grid-row: 1 / span 8;
+        position: sticky;
+        top: 84px;
+      }
+    }
+
     .scramble-head {
       display: flex;
       gap: 20px;
