@@ -23,6 +23,7 @@ import { AuthStore } from '@core/auth/auth-store';
 import { AuthResponse, CUBE_METHODS, ExternalTicket } from '@core/auth/auth.models';
 import { regionFromLocale, toProblem } from '@core/auth/auth-utils';
 import { countryOptions } from '@core/auth/countries';
+import { LegalDialog } from '../legal/legal-dialog';
 import { AuthCard } from './auth-card';
 import { safeReturnUrl } from './safe-redirect';
 
@@ -31,7 +32,7 @@ const HANDLE = /^[A-Za-z][A-Za-z0-9_]{2,19}$/;
 /** First sign-in with a provider: it told us who you are, we still need a username, country and birth year. */
 @Component({
   selector: 'app-external-complete-page',
-  imports: [ReactiveFormsModule, RouterLink, AuthCard],
+  imports: [ReactiveFormsModule, RouterLink, AuthCard, LegalDialog],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './auth-form.css',
   template: `
@@ -136,10 +137,17 @@ const HANDLE = /^[A-Za-z][A-Za-z0-9_]{2,19}$/;
           <label class="check">
             <input type="checkbox" formControlName="acceptTerms" />
             <span
-              >I agree to the <a routerLink="/legal/terms" target="_blank">Terms</a> and
-              <a routerLink="/legal/privacy" target="_blank">Privacy Policy</a>.</span
+              >I agree to the
+              <a href="/legal/terms" (click)="$event.preventDefault(); legal.open('terms')"
+                >Terms</a
+              >
+              and
+              <a href="/legal/privacy" (click)="$event.preventDefault(); legal.open('privacy')"
+                >Privacy Policy</a
+              >.</span
             >
           </label>
+          <app-legal-dialog #legal (agreed)="form.controls.acceptTerms.setValue(true)" />
           <button class="btn primary" type="submit" [disabled]="busy()">
             {{ busy() ? 'Creating account…' : 'Create account' }}
           </button>

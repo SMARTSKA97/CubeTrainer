@@ -11,7 +11,15 @@ const apiBase = raw
   : '/api/v1';
 // UPDATES_REPO ("owner/name") is where the Android app looks for new APK releases; leave it out to disable in-app updates.
 const updatesRepo = (process.env.UPDATES_REPO ?? '').trim();
-const cfg = updatesRepo ? { apiBase, updatesRepo } : { apiBase };
+// CONTACT_EMAIL and OPERATOR_NAME appear in the Terms and Privacy Policy (who to write to, who is responsible).
+const contactEmail = (process.env.CONTACT_EMAIL ?? '').trim();
+const operatorName = (process.env.OPERATOR_NAME ?? '').trim();
+const cfg = {
+  apiBase,
+  ...(updatesRepo && { updatesRepo }),
+  ...(contactEmail && { contactEmail }),
+  ...(operatorName && { operatorName }),
+};
 writeFileSync(
   new URL('../public/config.json', import.meta.url),
   JSON.stringify(cfg, null, 2) + '\n',

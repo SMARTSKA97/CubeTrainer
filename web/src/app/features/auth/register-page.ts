@@ -15,6 +15,7 @@ import { CUBE_METHODS, RegisterPayload } from '@core/auth/auth.models';
 import { regionFromLocale, toProblem } from '@core/auth/auth-utils';
 import { countryOptions } from '@core/auth/countries';
 import { PasswordField } from '@shared/password-field';
+import { LegalDialog } from '../legal/legal-dialog';
 import { AuthCard } from './auth-card';
 import { SocialButtons } from './social-buttons';
 
@@ -22,7 +23,7 @@ const HANDLE = /^[A-Za-z][A-Za-z0-9_]{2,19}$/;
 
 @Component({
   selector: 'app-register-page',
-  imports: [ReactiveFormsModule, RouterLink, AuthCard, PasswordField, SocialButtons],
+  imports: [ReactiveFormsModule, RouterLink, AuthCard, PasswordField, SocialButtons, LegalDialog],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './auth-form.css',
   template: `
@@ -199,14 +200,21 @@ const HANDLE = /^[A-Za-z][A-Za-z0-9_]{2,19}$/;
           <label class="check">
             <input type="checkbox" formControlName="acceptTerms" />
             <span>
-              I agree to the <a routerLink="/legal/terms" target="_blank">Terms</a> and
-              <a routerLink="/legal/privacy" target="_blank">Privacy Policy</a>.
+              I agree to the
+              <a href="/legal/terms" (click)="$event.preventDefault(); legal.open('terms')"
+                >Terms</a
+              >
+              and
+              <a href="/legal/privacy" (click)="$event.preventDefault(); legal.open('privacy')"
+                >Privacy Policy</a
+              >.
             </span>
           </label>
           @if (touched('acceptTerms') && form.controls.acceptTerms.invalid) {
             <span class="err">You need to accept to create an account.</span>
           }
 
+          <app-legal-dialog #legal (agreed)="form.controls.acceptTerms.setValue(true)" />
           <button class="btn primary" type="submit" [disabled]="busy()">
             {{ busy() ? 'Creating account…' : 'Create account' }}
           </button>

@@ -70,6 +70,9 @@ import { AppUpdateStore } from '@core/update/app-update-store';
       </aside>
     }
     <main><router-outlet /></main>
+    <footer class="legal">
+      <a routerLink="/legal/terms">Terms</a> · <a routerLink="/legal/privacy">Privacy</a>
+    </footer>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
@@ -153,6 +156,15 @@ import { AppUpdateStore } from '@core/update/app-update-store';
     .guest span {
       flex: 1;
       min-width: 220px;
+    }
+    .legal {
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+      padding: 0 16px 28px;
+    }
+    .legal a {
+      color: var(--muted);
     }
     main {
       max-width: 1040px;

@@ -48,7 +48,7 @@ openssl rand -base64 32   # Totp__EncryptionKey  (losing it locks 2FA users out;
 | `ExternalAuth__CallbackBaseUrl` | no | public API URL if the API cannot tell (section 8b) |
 | `ExternalAuth__Providers__<id>__ClientId` / `__ClientSecret` | no | per provider, switches its button on |
 
-**Cloudflare Pages (web)**: `NODE_VERSION=24`, `API_URL=https://<api host>` (rebuild after changing it).
+**Cloudflare Pages (web)**: `NODE_VERSION=24`, `API_URL=https://<api host>` (rebuild after changing it), `CONTACT_EMAIL`, `OPERATOR_NAME` (shown in the Terms and Privacy Policy). For the Android app set the same two as GitHub repository variables.
 
 **GitHub Actions** (environment `production`): secrets `NEON_FLYWAY_URL`, `NEON_FLYWAY_USER`, `NEON_FLYWAY_PASSWORD`, `RENDER_DEPLOY_HOOK_URL`;
 variables `API_BASE_URL`, `DEPLOY_ENABLED=true` (the deploy job stays off until you set it).
@@ -160,6 +160,8 @@ Also try `https://<your-service>.onrender.com/api/v1/summary?tz=330` (daily summ
    |---|---|
    | `NODE_VERSION` | `24` |
    | `API_URL` | `https://<your-service>.onrender.com` (no trailing slash, no `/api`; the app adds `/api/v1`) |
+   | `CONTACT_EMAIL` | The address people write to about the Terms and Privacy Policy (also your privacy/grievance contact). Required before launch: without it the pages show "[contact email not configured]". |
+   | `OPERATOR_NAME` | Your name or business name as it should appear in the Terms and Privacy Policy |
 
    `scripts/write-config.mjs` turns `API_URL` into `config.json` at build time, so the same code runs
    locally (`/api/v1`) and in the cloud.

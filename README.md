@@ -195,6 +195,12 @@ appears once its keys are configured, see DEPLOY.md). See ADR 0005.
 Register with email confirmation, sign in (JWT + rotating refresh cookie), forgot/reset password, change password,
 active sessions, sign out everywhere, profile and account deletion. Guest mode still works.
 
+## Terms and Privacy Policy
+
+Real text (not placeholders) in `web/src/app/features/legal/legal-text.ts`, written to match what the app actually stores. Sign-up (and the social "finish your profile" step) shows an **I agree**
+box whose Terms / Privacy links open the text in a dialog with an **I agree** button; the accepted version and time are stored with the account (`Auth:TermsVersion`, bump it together with `LEGAL_VERSION`
+in that file when the text changes). Footer links on every page. Set `CONTACT_EMAIL` and `OPERATOR_NAME` at build time. It is still wise to have a lawyer read it before a public launch (age 13 vs India's DPDP Act parental-consent rule for under-18s).
+
 ## Phase 9: social login in the Android app (done)
 
 "Continue with Google/..." opens the phone's browser and returns to the app through `cubetrainer://auth/...`; the app collects the session with a one-time code and a secret it kept (ADR 0013).
