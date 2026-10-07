@@ -7,7 +7,6 @@ services:
     autoDeploy: false          # CI migrates the database first, then calls the deploy hook
     dockerfilePath: ./api/Dockerfile
     dockerContext: ./api
-    healthCheckPath: /health/live   # no database call, so Neon can go to sleep when idle
     envVars:
       - key: DATABASE_URL        # Neon connection string (set it in the Render dashboard)
         sync: false
