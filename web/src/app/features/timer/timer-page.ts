@@ -22,6 +22,8 @@ import {
   sessionStats,
 } from '@domain/stats';
 import { ScrambleNet } from '@shared/scramble-net';
+import { ActivatedRoute } from '@angular/router';
+import { PlanService } from '@core/data/plan-service';
 import { MovePlayer } from '@shared/move-player';
 import { Sheet } from '@shared/sheet';
 import { HoldPicker } from '@shared/hold-picker';
@@ -39,7 +41,12 @@ import { usePref } from '@core/pref';
       <app-hold-picker [value]="hold()" (valueChange)="hold.set($event)" [presets]="presets" />
       <div class="scramble-head">
         <div>
-          <div class="label">Scramble</div>
+          <div class="label">
+            Scramble
+            @if (isDaily()) {
+              <span class="daily-tag">Daily challenge</span>
+            }
+          </div>
           <div class="scramble">{{ scramble() }}</div>
           @if (cmp().attempts > 0) {
             <div class="retry-note">
@@ -182,6 +189,17 @@ import { usePref } from '@core/pref';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
+    .daily-tag {
+      margin-left: 8px;
+      padding: 2px 9px;
+      border-radius: 99px;
+      font-size: 11.5px;
+      letter-spacing: 0.02em;
+      text-transform: none;
+      color: #fbbf24;
+      background: rgba(251, 191, 36, 0.12);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+    }
     /* The timer and what belongs to it stay together, and on a wide screen stay in view. */
     .side {
       display: grid;
@@ -292,6 +310,10 @@ import { usePref } from '@core/pref';
 export class TimerPage {
   private readonly store = inject(SolveStore);
   private readonly retryService = inject(RetryService);
+  private readonly plan = inject(PlanService);
+  private readonly route = inject(ActivatedRoute);
+  /** this scramble is today's daily challenge */
+  readonly isDaily = computed(() => this.scramble() === this.plan.dailyScramble());
   private readonly timer = viewChild.required<TimerPanel>('timer');
 
   readonly length = usePref('timer.length', 20);
@@ -337,7 +359,10 @@ export class TimerPage {
       }
     });
     const pending = this.retryService.take('random');
-    this.seen.set([pending?.scramble ?? randomScramble(this.length())]);
+    const daily = this.route.snapshot.queryParamMap.get('daily');
+    this.seen.set([
+      pending?.scramble ?? (daily ? this.plan.dailyScramble() : randomScramble(this.length())),
+    ]);
   }
 
   // Alt+Left / Alt+Right: previous / next scramble (same shortcuts as J-Perm's timer)
@@ -387,6 +412,10 @@ export class TimerPage {
     });
     this.last.set(solve);
     this.compareMessage(solve, before);
+    if (solve.scramble === this.plan.dailyScramble() && solve.penalty !== 'dnf') {
+      this.messageGood.set(true);
+      this.message.set('Daily challenge complete! Come back tomorrow for a new scramble.');
+    }
   }
 
   private compareMessage(

@@ -290,6 +290,7 @@ interface QueueItem {
               <app-alg-chooser [c]="c" />
               <app-move-player
                 [moves]="choice.chosen(c)"
+                [stages]="c.stages ?? null"
                 [start]="inverse(c.alg)"
                 [scheme]="scheme()"
                 [learn]="true"
@@ -840,7 +841,14 @@ export class TrainerPage {
         if (this.queue().length) return;
         const pending = this.retryService.take('case');
         const wanted = this.route.snapshot.queryParamMap.get('case');
-        if (pending?.caseId && this.algs.byId().has(pending.caseId)) {
+        // ?focus= comes from the Today page: open that one case, but keep every other case in play
+        const focus = this.route.snapshot.queryParamMap.get('focus');
+        if (focus && !pending && this.algs.byId().has(focus)) {
+          const c = this.algs.byId().get(focus)!;
+          this.setId.set(c.set);
+          if (this.route.snapshot.queryParamMap.get('plan')) this.planMode.set(true);
+          this.push(c);
+        } else if (pending?.caseId && this.algs.byId().has(pending.caseId)) {
           const c = this.algs.byId().get(pending.caseId)!;
           this.setId.set(c.set);
           this.queue.set([{ caseId: c.id, scramble: pending.scramble, auf: pending.auf ?? 0 }]);

@@ -16,6 +16,9 @@ export interface Chunk {
   tip?: string;
   /** how many times the block repeats back to back (1 = once) */
   repeat: number;
+  /** set on the first chunk of a stage (for example "Step 1 · Orient") so a heading can be drawn */
+  stage?: string;
+  stageTip?: string;
 }
 
 interface Known {

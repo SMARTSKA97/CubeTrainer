@@ -109,6 +109,11 @@ const ease = (k: number) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 
           <svg viewBox="0 0 24 24"><path d="M9 5l8 7-8 7z" /></svg>
         </button>
         <span class="count">{{ pos() }} / {{ total() }}</span>
+        @if (learn()) {
+          <span class="clock" [class.live]="playing()" title="Time since you pressed play">{{
+            clockText()
+          }}</span>
+        }
         <span class="grow"></span>
         <button
           class="chip"
@@ -132,6 +137,14 @@ const ease = (k: number) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 
 
       <div class="moves" [class.live]="playing() || busy()">
         @for (c of chunks(); track c.from) {
+          @if (c.stage) {
+            <div class="stage" [title]="c.stageTip ?? ''">
+              <b>{{ c.stage }}</b>
+              @if (c.stageTip) {
+                <small>{{ c.stageTip }}</small>
+              }
+            </div>
+          }
           <div class="chunk" [class.on]="inChunk(c)" [class.named]="!!c.name">
             @if (learn() && c.name) {
               <button class="cname" type="button" (click)="playChunk(c)" [title]="c.tip ?? ''">
@@ -301,6 +314,20 @@ const ease = (k: number) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 
       gap: 10px 8px;
       align-items: flex-end;
     }
+    .stage {
+      flex: 1 1 100%;
+      display: grid;
+      gap: 2px;
+      margin-top: 4px;
+    }
+    .stage b {
+      font-size: 13px;
+      color: var(--accent);
+    }
+    .stage small {
+      color: var(--muted);
+      font-size: 12.5px;
+    }
     .chunk {
       display: grid;
       gap: 4px;
@@ -393,6 +420,15 @@ const ease = (k: number) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 
     .tip b {
       color: var(--text);
     }
+    .clock {
+      font-variant-numeric: tabular-nums;
+      font-size: 13px;
+      color: var(--muted);
+      padding-left: 4px;
+    }
+    .clock.live {
+      color: var(--accent);
+    }
     .insights {
       list-style: none;
       margin: 0;
@@ -423,6 +459,8 @@ export class MovePlayer implements OnDestroy {
   readonly scheme = input<Record<Face, string> | null>(null);
   /** show named chunks, structure notes and the recall mode */
   readonly learn = input(false);
+  /** the algorithm as separate steps (OLL then PLL); used only when they add up to `moves` */
+  readonly stages = input<{ name: string; tip: string; alg: string }[] | null>(null);
 
   readonly list = computed<Move[]>(() => {
     try {
@@ -432,11 +470,36 @@ export class MovePlayer implements OnDestroy {
     }
   });
   readonly total = computed(() => this.list().length);
-  readonly chunks = computed<Chunk[]>(() =>
-    this.learn()
-      ? chunkAlg(this.list())
-      : this.list().map((_, i) => ({ from: i, to: i + 1, repeat: 1 })),
-  );
+  readonly chunks = computed<Chunk[]>(() => {
+    if (!this.learn()) return this.list().map((_, i) => ({ from: i, to: i + 1, repeat: 1 }));
+    const st = this.stages();
+    if (st?.length) {
+      try {
+        const parts = st.map((x) => parseMoves(x.alg));
+        const flat = parts.flat();
+        const now = this.list();
+        if (
+          flat.length === now.length &&
+          flat.every((m, i) => m.base === now[i].base && m.turns === now[i].turns)
+        ) {
+          const out: Chunk[] = [];
+          let at = 0;
+          parts.forEach((mv, k) => {
+            const sub = chunkAlg(mv).map((c) => ({ ...c, from: c.from + at, to: c.to + at }));
+            if (sub.length) {
+              sub[0] = { ...sub[0], stage: st[k].name, stageTip: st[k].tip };
+              out.push(...sub);
+            }
+            at += mv.length;
+          });
+          return out;
+        }
+      } catch {
+        /* fall through to the plain split */
+      }
+    }
+    return chunkAlg(this.list());
+  });
   readonly insights = computed(() => insightsFor(this.list()));
 
   readonly stickers = signal<Sticker[]>([]);
@@ -523,13 +586,38 @@ export class MovePlayer implements OnDestroy {
       base = new Cube();
     }
     this.cube = base;
+    this.elapsed.set(0);
     const ms = this.list();
     for (let k = 0; k < Math.min(i, ms.length); k++) this.cube.applyMove(ms[k]);
     this.pos.set(Math.min(i, ms.length));
     this.snapshot();
   }
 
+  /** a running clock for follow-along practice: play it while you do the moves on your own cube */
+  readonly elapsed = signal(0);
+  readonly clockText = computed(() => {
+    const s = this.elapsed() / 1000;
+    return s >= 60
+      ? `${Math.floor(s / 60)}:${(s % 60).toFixed(1).padStart(4, '0')}`
+      : `${s.toFixed(1)} s`;
+  });
+  private clockTimer: ReturnType<typeof setInterval> | undefined;
+  private clockFrom = 0;
+  private startClock() {
+    this.stopClock();
+    this.clockFrom = performance.now() - this.elapsed();
+    this.clockTimer = setInterval(() => this.elapsed.set(performance.now() - this.clockFrom), 80);
+  }
+  private stopClock() {
+    if (this.clockTimer) {
+      clearInterval(this.clockTimer);
+      this.clockTimer = undefined;
+      this.elapsed.set(performance.now() - this.clockFrom);
+    }
+  }
+
   private halt() {
+    this.stopClock();
     if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel();
     cancelAnimationFrame(this.raf);
     clearTimeout(this.timer);
@@ -596,6 +684,7 @@ export class MovePlayer implements OnDestroy {
   }
 
   pause() {
+    this.stopClock();
     this.playing.set(false);
     clearTimeout(this.timer);
     if (this.phase() === 'highlight') this.phase.set('idle');
@@ -629,6 +718,7 @@ export class MovePlayer implements OnDestroy {
   private play(stopAt: number) {
     this.stopAt = stopAt;
     this.playing.set(true);
+    this.startClock();
     this.next();
   }
 
@@ -636,6 +726,7 @@ export class MovePlayer implements OnDestroy {
   private next() {
     if (!this.playing()) return;
     if (this.pos() >= Math.min(this.total(), this.stopAt)) {
+      this.stopClock();
       this.playing.set(false);
       this.stopAt = Infinity;
       return;

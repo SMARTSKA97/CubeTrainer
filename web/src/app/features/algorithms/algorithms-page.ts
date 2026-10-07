@@ -131,6 +131,7 @@ type SortKey = 'order' | 'name' | 'group' | 'best' | 'avg';
         <app-alg-chooser [c]="w" />
         <app-move-player
           [moves]="choice.chosen(w)"
+          [stages]="w.stages ?? null"
           [start]="inverse(w.alg)"
           [scheme]="scheme"
           [learn]="true"

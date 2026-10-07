@@ -1,7 +1,10 @@
 import { Injectable, computed, inject } from '@angular/core';
 import { AlgService } from './alg-service';
 import { LearningSettings } from './learning-settings';
-import { buildPlan, planProgress, streakDays } from '@domain/plan';
+import { buildPlan, dayIndex, planProgress, streakDays } from '@domain/plan';
+import { dailyScramble, dailyStatus } from '@domain/daily';
+import { longestStreak } from '@domain/badges';
+import { xpSummary } from '@domain/xp';
 import { usePref } from '@core/pref';
 import { SolveStore } from './solve-store';
 import { Solve } from '@domain/stats';
@@ -50,5 +53,35 @@ export class PlanService {
     const start = new Date();
     start.setHours(0, 0, 0, 0);
     return this.store.solves().filter((s) => s.at >= start.getTime()).length;
+  });
+
+  /** the daily full-solve scramble (the same for the whole day) and how today's attempt is going */
+  readonly dailyScramble = computed(() =>
+    dailyScramble(dayIndex(Date.now(), new Date().getTimezoneOffset())),
+  );
+  readonly daily = computed(() =>
+    dailyStatus(this.store.solves(), Date.now(), new Date().getTimezoneOffset()),
+  );
+  readonly xp = computed(() =>
+    xpSummary(this.store.solves(), Date.now(), new Date().getTimezoneOffset()),
+  );
+  readonly bestStreak = computed(() =>
+    longestStreak(this.store.solves(), new Date().getTimezoneOffset()),
+  );
+  /** the last seven days, oldest first: did you practise that day? */
+  readonly week = computed(() => {
+    const tz = new Date().getTimezoneOffset();
+    const days = new Set(this.store.solves().map((s) => dayIndex(s.at, tz)));
+    const today = dayIndex(Date.now(), tz);
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = today - 6 + i;
+      return {
+        on: days.has(d),
+        today: d === today,
+        label: new Date(Date.now() - (6 - i) * 86400000).toLocaleDateString(undefined, {
+          weekday: 'narrow',
+        }),
+      };
+    });
   });
 }
