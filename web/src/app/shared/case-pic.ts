@@ -1,6 +1,7 @@
 import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { AlgCase } from '@core/data/alg-service';
-import { FACES, FACE_COLORS, Face, caseScramble, stateAfter } from '@domain/cube';
+import { FACES, Face, caseScramble, stateAfter } from '@domain/cube';
+import { CROSS_WHITE_HOLD, schemeHex } from '@domain/orientation';
 import { ScrambleNet } from './scramble-net';
 
 const C = 8.66; // cos 30 * 10
@@ -21,9 +22,12 @@ type P = [number, number];
     @if (url(); as u) {
       <img [src]="u" [alt]="c().name" />
     } @else if (topView()) {
-      <div class="top"><app-scramble-net [scramble]="scramble()" view="top" /></div>
+      <div class="top">
+        <app-scramble-net [scramble]="scramble()" [scheme]="scheme" view="top" />
+      </div>
     } @else {
       <svg viewBox="-27 -31 54 62" role="img" [attr.aria-label]="c().name">
+        <polygon class="body" points="0,-31 27.5,-15.5 27.5,15.5 0,31 -27.5,15.5 -27.5,-15.5" />
         @for (p of polys(); track $index) {
           <polygon [attr.points]="p.pts" [attr.fill]="p.color" />
         }
@@ -57,6 +61,11 @@ type P = [number, number];
       box-sizing: border-box;
       background: #1b1f2a;
     }
+    polygon.body {
+      fill: #0b0d12;
+      stroke: #0b0d12;
+      stroke-width: 2;
+    }
     polygon {
       stroke: #0b0d12;
       stroke-width: 0.9;
@@ -66,6 +75,8 @@ type P = [number, number];
 })
 export class CasePic {
   readonly c = input.required<AlgCase>();
+  /** yellow on top, so white (the cross) is on the bottom, as every F2L guide draws it */
+  readonly scheme = schemeHex(CROSS_WHITE_HOLD);
 
   readonly url = computed(() => (this.c().img ? `algs/${this.c().img}` : null));
   readonly topView = computed(() => this.c().set === 'ollpll');
@@ -97,7 +108,7 @@ export class CasePic {
           ]
             .map((p) => `${p[0].toFixed(2)},${p[1].toFixed(2)}`)
             .join(' ');
-          out.push({ pts, color: FACE_COLORS[FACES[grid[r * 3 + c]]] });
+          out.push({ pts, color: this.scheme[FACES[grid[r * 3 + c]]] });
         }
     }
     return out;
