@@ -603,6 +603,25 @@ const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''):
         padding-right: calc(16px + var(--sar));
       }
     }
+    /* Very narrow screens (folded foldables, small watches of a phone): only what fits. */
+    @media (max-width: 340px) {
+      .top {
+        gap: 8px;
+        padding-left: calc(12px + var(--sal));
+        padding-right: calc(12px + var(--sar));
+      }
+      .badge {
+        display: none;
+      }
+      .acct .btn {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+      main {
+        padding-left: calc(12px + var(--sal));
+        padding-right: calc(12px + var(--sar));
+      }
+    }
     /* Landscape phones: keep the bar slim so the timer has room. */
     @media (max-height: 460px) and (max-width: 999px) {
       .top {

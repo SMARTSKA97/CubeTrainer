@@ -540,6 +540,22 @@ import { formatTime } from '@domain/stats';
       gap: 2px 24px;
       margin-top: 4px;
     }
+    /* Wide screens: the daily challenge and the algorithm plan sit side by side. */
+    :host {
+      display: grid;
+      gap: var(--gap);
+      align-items: start;
+    }
+    @media (min-width: 1100px) {
+      :host {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      :host > .hero,
+      :host > .stats3,
+      :host > .setup {
+        grid-column: 1 / -1;
+      }
+    }
     @media (min-width: 1100px) {
       .stats3 {
         grid-template-columns: repeat(2, minmax(0, 1fr));
