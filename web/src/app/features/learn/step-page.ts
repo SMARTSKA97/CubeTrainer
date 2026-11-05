@@ -1,23 +1,25 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { AlgService } from '@core/data/alg-service';
 import { LearnService } from '@core/data/learn-service';
 import { SolveStore } from '@core/data/solve-store';
 import { invertAlg } from '@domain/cube';
-import { LEVELS, LEVEL_IDS, LessonSection, Step, activeBatch } from '@domain/levels';
+import { BATCH, LEVELS, LEVEL_IDS, Step, activeBatch } from '@domain/levels';
 import { chunkAlg, recallState } from '@domain/memory';
 import { CROSS_WHITE_HOLD, schemeHex } from '@domain/orientation';
 import { CasePic } from '@shared/case-pic';
 import { MovePlayer } from '@shared/move-player';
 import { RecallCard, RecallResult } from '@shared/recall-card';
+import { LessonRunner } from './lesson-runner';
+import { PracticeCube } from '@shared/practice-cube';
 
 type Phase = 'intro' | 'learn' | 'recall' | 'done';
 
 @Component({
   selector: 'app-step-page',
-  imports: [RouterLink, CasePic, MovePlayer, RecallCard],
+  imports: [RouterLink, CasePic, MovePlayer, RecallCard, LessonRunner, PracticeCube],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host {
@@ -169,35 +171,7 @@ type Phase = 'intro' | 'learn' | 'recall' | 'done';
 
       @switch (s.kind) {
         @case ('lesson') {
-          <section class="card">
-            @for (sec of sections(); track sec.title) {
-              <div class="sec">
-                <h3>{{ sec.title }}</h3>
-                @if (sec.list.length) {
-                  <ul>
-                    @for (l of sec.list; track $index) {
-                      <li>{{ l }}</li>
-                    }
-                  </ul>
-                } @else {
-                  <p>{{ sec.text }}</p>
-                }
-              </div>
-            }
-            <div class="row">
-              @if ($any(s).link; as l) {
-                <a class="btn" [routerLink]="l.to">{{ l.label }}</a>
-              }
-              @if (!done()) {
-                <button class="btn primary" type="button" (click)="markDone(true)">
-                  I can do this: mark as done
-                </button>
-              } @else {
-                <span class="tag good">Done</span>
-                <button class="btn" type="button" (click)="markDone(false)">Undo</button>
-              }
-            </div>
-          </section>
+          <app-lesson-runner [step]="$any(s)" />
         }
         @case ('solves') {
           <section class="card">
@@ -325,6 +299,25 @@ type Phase = 'intro' | 'learn' | 'recall' | 'done';
                     [learn]="true"
                   />
                   <div class="row">
+                    <button class="btn" type="button" (click)="tryIt.set(!tryIt())">
+                      {{ tryIt() ? 'Hide the practice cube' : 'Try it on the screen' }}
+                    </button>
+                  </div>
+                  @if (tryIt()) {
+                    @for (k of [c.id]; track k) {
+                      <p class="muted">
+                        Do the algorithm yourself. The cube starts in the case; you are done when it
+                        is solved.
+                      </p>
+                      <app-practice-cube
+                        [setup]="c.setup ?? inverse(c.alg)"
+                        [alg]="c.alg"
+                        goal="solved"
+                        [solution]="c.alg"
+                      />
+                    }
+                  }
+                  <div class="row">
                     <button class="btn primary" type="button" (click)="nextLook()">
                       {{
                         idx() + 1 < session().length ? 'Next algorithm' : 'Start the memory check'
@@ -415,7 +408,6 @@ export class StepPage {
   readonly algs = inject(AlgService);
   private readonly store = inject(SolveStore);
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
 
   readonly scheme = schemeHex(CROSS_WHITE_HOLD);
   inverse = invertAlg;
@@ -440,16 +432,6 @@ export class StepPage {
   readonly done = computed(() => !!this.row()?.done);
   readonly count = computed(() => this.row()?.count ?? 0);
 
-  readonly sections = computed(() => {
-    const s = this.step();
-    if (!s || s.kind !== 'lesson') return [];
-    return s.sections.map((x: LessonSection) => {
-      const lines = x.body.split('\n');
-      const list = lines.every((l) => l.startsWith('- ')) ? lines.map((l) => l.slice(2)) : [];
-      return { title: x.title, text: x.body, list };
-    });
-  });
-
   // ---- cases ------------------------------------------------------------------------------------
   readonly ids = computed(() => {
     const s = this.step();
@@ -461,7 +443,9 @@ export class StepPage {
       .filter(Boolean),
   );
   /** the group of three to work on now */
-  readonly batch = computed(() => activeBatch(this.ids(), this.learn.memory()));
+  readonly batch = computed(() =>
+    activeBatch(this.ids(), this.learn.memory(), BATCH, (id) => this.learn.isKnown(id)),
+  );
   /** the part of it that fits today's limit on new algorithms (ones already seen always do) */
   readonly today = computed(() => {
     const mem = this.learn.memory();
@@ -478,6 +462,7 @@ export class StepPage {
   });
 
   readonly phase = signal<Phase>('intro');
+  readonly tryIt = signal(false);
   readonly session = signal<string[]>([]);
   readonly idx = signal(0);
   readonly queue = signal<string[]>([]);
@@ -507,6 +492,7 @@ export class StepPage {
     this.startRecall();
   }
   nextLook() {
+    this.tryIt.set(false);
     if (this.idx() + 1 < this.session().length) {
       this.idx.update((i) => i + 1);
       this.learn.see(this.session()[this.idx()]);
@@ -527,11 +513,5 @@ export class StepPage {
   }
   again() {
     this.phase.set('intro');
-  }
-
-  markDone(v: boolean) {
-    const s = this.step();
-    if (s) this.learn.markStep(s.id, v);
-    if (v) void this.router.navigateByUrl('/learn');
   }
 }

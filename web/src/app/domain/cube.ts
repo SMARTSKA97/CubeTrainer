@@ -648,3 +648,51 @@ export function f2lKey(cube: Cube): string {
   void top;
   return parts.sort().join(';');
 }
+
+// ---------------------------------------------------------------------------
+// Checks used by the guided lessons
+
+/** The four white (bottom-colour) edges sit in the top layer with white facing up: the "daisy". */
+export function daisyDone(cube: Cube): boolean {
+  const white = FACES.indexOf('D');
+  const top: Vec[] = [
+    [0, 1, 1],
+    [0, 1, -1],
+    [1, 1, 0],
+    [-1, 1, 0],
+  ];
+  return top.every((p) => cube.colorAt(p, [0, 1, 0]) === white);
+}
+
+/** The cross plus all four first-layer corners are solved (white layer done, cube held white-down). */
+export function firstLayerSolved(cube: Cube): boolean {
+  return f2lReport(cube).crossSolved && SLOTS.every((s) => pieceSolved(cube, s.corner));
+}
+
+/** The whole cube except the top layer is solved. */
+export function f2lSolved(cube: Cube): boolean {
+  const r = f2lReport(cube);
+  return r.crossSolved && r.unsolvedSlots.length === 0;
+}
+
+/** Top face: just the cross (the four edges show the top colour). */
+export function topCrossDone(cube: Cube): boolean {
+  const g = cube.faceGrid('U');
+  return [1, 3, 5, 7].every((i) => g[i] === g[4]);
+}
+
+/** Top face is one colour. */
+export function topFaceDone(cube: Cube): boolean {
+  const g = cube.faceGrid('U');
+  return g.every((c) => c === g[4]);
+}
+
+/** Same cube exactly, colour for colour and place for place. */
+export function sameState(a: Cube, b: Cube): boolean {
+  const key = (c: Cube) =>
+    c.stickers
+      .map((s) => `${s.p.join(',')}|${s.n.join(',')}|${s.c}`)
+      .sort()
+      .join(';');
+  return key(a) === key(b);
+}

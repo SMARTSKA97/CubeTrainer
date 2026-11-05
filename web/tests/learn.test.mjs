@@ -22,6 +22,8 @@ import {
   LEVELS,
 } from '../src/app/domain/levels.ts';
 import { algSolvesCase } from '../src/app/domain/alg-check.ts';
+import { PAGES, goalMet, crossSetup } from '../src/app/domain/lessons.ts';
+import { Cube, invertAlg } from '../src/app/domain/cube.ts';
 
 let passed = 0;
 const t = (name, fn) => {
@@ -140,5 +142,44 @@ t('chunks keep brackets and name triggers', () => {
     { moves: 'F R' },
   ]);
   assert.deepEqual(chunkAlg("U2 (R U R') U (R U' R')").map((c) => c.moves), ['U2', "R U R'", 'U', "R U' R'"]);
+});
+t('every practice page starts unsolved and its hint solves it', () => {
+  const data = JSON.parse(readFileSync(new URL('../../data/algs.json', import.meta.url), 'utf8'));
+  const byId = new Map(data.cases.map((c) => [c.id, c]));
+  const bad = [];
+  for (const [step, pages] of Object.entries(PAGES))
+    pages.forEach((pg, i) => {
+      const where = step + '#' + i + ' ' + pg.title;
+      if (pg.kind === 'read') {
+        if (pg.demo?.caseId && !byId.has(pg.demo.caseId)) bad.push(where + ' demo case missing');
+        return;
+      }
+      let setup = pg.setup ?? '';
+      let solution = pg.solution;
+      if (pg.caseId) {
+        const c = byId.get(pg.caseId);
+        if (!c) return bad.push(where + ' case missing');
+        setup = c.setup ?? invertAlg(c.alg);
+        solution = c.alg;
+      }
+      if (pg.randomCross !== undefined) return;
+      const target = pg.target ? new Cube().apply(pg.target) : undefined;
+      const start = new Cube().apply(setup);
+      if (goalMet(pg.goal, start, target)) bad.push(where + ' already solved at the start');
+      const end = new Cube().apply(setup).apply(solution ?? invertAlg(setup));
+      if (pg.goal === 'match') {
+        if (!goalMet(pg.goal, new Cube().apply(setup).apply(pg.target), target)) bad.push(where + ' target unreachable');
+      } else if (!goalMet(pg.goal, end)) bad.push(where + ' hint does not solve it');
+    });
+  assert.deepEqual(bad, []);
+});
+t('random crosses are really spoiled and the solver answer solves them', () => {
+  for (const k of [0, 0, 0, 3, 4]) {
+    const c = crossSetup(k);
+    assert.ok(c.best >= 1);
+    assert.equal(goalMet('cross', new Cube().apply(c.setup)), false);
+    assert.equal(goalMet('cross', new Cube().apply(c.setup).apply(c.solution)), true);
+    if (k === 0) assert.ok(c.best >= 5 && c.best <= 7);
+  }
 });
 console.log(passed + ' passed');

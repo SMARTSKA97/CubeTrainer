@@ -6,6 +6,7 @@ import {
   LEVELS,
   LEVEL_IDS,
   LevelCheck,
+  BATCH,
   LevelId,
   StepProgress,
   activeBatch,
@@ -59,6 +60,10 @@ export class LearnService {
   /** new algorithms taken in per day: memory sticks better when it is spread out */
   readonly perDay = usePref('learn.perDay', 6);
   private readonly dismissed = usePref('learn.dismissed', '');
+
+  /** remembered from memory here, or already fast in the trainer */
+  isKnown = (id: string): boolean =>
+    isRecalled(this.memory()[id]) || this.store.status()[id] === 'finished';
 
   caseIds = (step: CasesStep): string[] =>
     this.algs
@@ -149,7 +154,9 @@ export class LearnService {
       const blocked =
         cur.step.kind === 'cases' &&
         this.newLeft() === 0 &&
-        activeBatch(this.caseIds(cur.step), this.memory()).every((id) => !this.memory()[id]);
+        activeBatch(this.caseIds(cur.step), this.memory(), BATCH, this.isKnown).every(
+          (id) => !this.memory()[id],
+        );
       return {
         kind: 'learn',
         title: cur.step.title,

@@ -299,8 +299,8 @@ import { formatTime } from '@domain/stats';
 
     @if (learn.placement(); as p) {
       <p class="muted">
-        Level check: {{ p.timeMs === null ? 'could not solve it' : fmt(p.timeMs) + ' s' }}. Placed
-        at {{ names[p.level] }}.
+        Level check: {{ p.timeMs === null ? 'could not solve it' : timeText(p.timeMs) }}. Placed at
+        {{ names[p.level] }}.
         <a routerLink="/learn/placement">Take it again</a>
       </p>
     }
@@ -321,5 +321,5 @@ export class LearnPage {
   isNow = (r: StepProgress) =>
     this.learn.level() === this.shown() && this.learn.current()?.step.id === r.step.id;
   pct = (a: number, b: number) => (b ? Math.min(100, (a / b) * 100) : 0);
-  fmt = (ms: number) => formatTime(ms);
+  timeText = (ms: number) => (ms < 60000 ? formatTime(ms) + ' s' : formatTime(ms));
 }

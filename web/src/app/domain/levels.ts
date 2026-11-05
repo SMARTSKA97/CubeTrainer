@@ -1,3 +1,5 @@
+import { PAGES } from './lessons';
+import type { Page } from './lessons';
 import type { CaseMemory } from './memory';
 import { isRecalled } from './memory';
 import type { CaseStatus, Solve } from './stats';
@@ -13,12 +15,6 @@ import { effective } from './stats';
 export type LevelId = 'beginner' | 'intermediate' | 'advanced';
 export const LEVEL_IDS: LevelId[] = ['beginner', 'intermediate', 'advanced'];
 
-export interface LessonSection {
-  title: string;
-  /** plain text; lines starting with "- " are shown as a list */
-  body: string;
-}
-
 interface StepBase {
   id: string;
   title: string;
@@ -27,7 +23,8 @@ interface StepBase {
 }
 export interface LessonStep extends StepBase {
   kind: 'lesson';
-  sections: LessonSection[];
+  /** explain, then practise on a cube drawn on screen */
+  pages: Page[];
   /** a page that helps practise it (a route) */
   link?: { to: string; label: string };
 }
@@ -70,24 +67,7 @@ export const BEGINNER: Level = {
       kind: 'lesson',
       title: 'Meet the cube',
       short: 'Notation, centres and the three kinds of piece.',
-      sections: [
-        {
-          title: 'The centres never move',
-          body: 'Each face has one centre that is fixed to the cube’s core. White opposite yellow, green opposite blue, red opposite orange: that never changes, so the centres tell you which colour belongs where.',
-        },
-        {
-          title: 'Three kinds of piece',
-          body: '- Centres: one colour, fixed.\n- Edges: two colours, 12 of them.\n- Corners: three colours, 8 of them.\nA piece always stays its own kind: an edge can never become a corner.',
-        },
-        {
-          title: 'Notation: how algorithms are written',
-          body: '- A letter is a clockwise quarter turn of that face as you look at it: R right, L left, U up, D down, F front, B back.\n- A tick (R′) is the same turn anticlockwise. A 2 (R2) is a half turn.\n- Every algorithm in this app is written that way. You will type them from memory later.',
-        },
-        {
-          title: 'The plan',
-          body: 'You will build a white cross, fill the first layer, add the middle layer, then finish the yellow top layer in four short steps. Each step is small enough to learn in one sitting.',
-        },
-      ],
+      pages: PAGES['b-basics'],
     },
     {
       id: 'b-cross',
@@ -95,40 +75,14 @@ export const BEGINNER: Level = {
       title: 'The white cross',
       short: 'Four white edges around the white centre, matching the side centres.',
       link: { to: '/cross', label: 'Practise on the Cross page' },
-      sections: [
-        {
-          title: 'Goal',
-          body: 'A white plus sign on one face, and each white edge’s other colour matches the centre next to it (the side of the cross is, for example, green on the green centre).',
-        },
-        {
-          title: 'How',
-          body: '- Find a white edge. Turn the layers until it sits next to the white centre without disturbing the cross pieces you already placed.\n- Line its second colour up with its centre, then turn that face a half turn to drop it into place.\n- There is no algorithm here: it is looking and thinking. Take your time; speed comes later.',
-        },
-        {
-          title: 'You are done when',
-          body: 'You can build the cross from a scramble without help, every time.',
-        },
-      ],
+      pages: PAGES['b-cross'],
     },
     {
       id: 'b-corners',
       kind: 'lesson',
       title: 'First-layer corners',
       short: 'Fill the white layer with the corner trigger.',
-      sections: [
-        {
-          title: 'The one move you need',
-          body: 'Put the white cross on the bottom. Find a white corner on the top layer, turn the top until it is directly above its slot (between the two centres it matches), then repeat R′ D′ R D until it drops in with white facing down. One to five repeats; you will know it when the corner is solved.',
-        },
-        {
-          title: 'If a white corner is stuck in the bottom layer',
-          body: 'Put it above any slot, do R′ D′ R D once to lift it out, then place it as above.',
-        },
-        {
-          title: 'Check',
-          body: 'The whole white layer is solved and the row of colour around its edge matches the side centres.',
-        },
-      ],
+      pages: PAGES['b-corners'],
     },
     {
       id: 'b-layer2',
@@ -194,16 +148,14 @@ export const INTERMEDIATE: Level = {
       title: 'Plan the cross during inspection',
       short: 'Solve the cross in 8 moves or fewer, planned before you start.',
       link: { to: '/cross', label: 'Cross solver and trainer' },
-      sections: [
-        {
-          title: 'Look first, then move',
-          body: 'During the 15 s of inspection find the white edges and plan the whole cross. When the timer starts you only execute the plan. That is what makes the rest of the solve smooth.',
-        },
-        {
-          title: 'Habits that matter',
-          body: '- Aim for 8 moves or fewer; the cross solver on the Cross page shows what is possible.\n- Choose where the next F2L pair will be while you finish the cross.\n- Practise with the timer’s inspection switched on.',
-        },
-      ],
+      pages: PAGES['i-cross'],
+    },
+    {
+      id: 'i-f2l-idea',
+      kind: 'lesson',
+      title: 'F2L: the idea',
+      short: 'Pairs of corner and edge, and the three situations they can be in.',
+      pages: PAGES['i-f2l-idea'],
     },
     {
       id: 'i-f2l',
@@ -430,7 +382,10 @@ export function stepProgress(step: Step, inp: ProgressInput): StepProgress {
     return { ...base, count, done: count >= step.need };
   }
   const ids = inp.caseIds(step);
-  const recalled = ids.filter((id) => isRecalled(inp.memory[id])).length;
+  // a case that is already fast counts as known, even if it was never typed from memory here
+  const recalled = ids.filter(
+    (id) => isRecalled(inp.memory[id]) || inp.status[id] === 'finished',
+  ).length;
   const finished = ids.filter((id) => inp.status[id] === 'finished').length;
   return {
     ...base,
@@ -460,6 +415,7 @@ export function activeBatch(
   ids: string[],
   memory: Record<string, CaseMemory>,
   size = BATCH,
+  known: (id: string) => boolean = (id) => isRecalled(memory[id]),
 ): string[] {
-  return batchesOf(ids, size).find((b) => b.some((id) => !isRecalled(memory[id]))) ?? [];
+  return batchesOf(ids, size).find((b) => b.some((id) => !known(id))) ?? [];
 }
