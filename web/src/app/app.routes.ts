@@ -111,6 +111,12 @@ export const routes: Routes = [
     loadComponent: () => import('@features/settings/settings-page').then((m) => m.SettingsPage),
   },
   {
+    path: 'preferences',
+    title: title('Preferences'),
+    loadComponent: () =>
+      import('@features/preferences/preferences-page').then((m) => m.PreferencesPage),
+  },
+  {
     path: 'update',
     title: title('App updates'),
     loadComponent: () => import('@features/update/update-page').then((m) => m.UpdatePage),

@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { UpdateRefresh } from '@core/update/update-refresh';
 import { AppUpdateSection } from '../settings/app-update-section';
 
 /** Reachable without an account (guests use the app too). */
@@ -21,6 +22,11 @@ import { AppUpdateSection } from '../settings/app-update-section';
   template: `
     <h1>App updates</h1>
     <app-update-section />
+    <div class="row">
+      <button class="btn" type="button" (click)="r.hardRefresh()">Reload fresh</button>
+    </div>
   `,
 })
-export class UpdatePage {}
+export class UpdatePage {
+  readonly r = inject(UpdateRefresh);
+}

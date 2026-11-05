@@ -4,6 +4,7 @@ import { caseScramble } from '@domain/cube';
 import { usePref } from '@core/pref';
 import { CROSS_WHITE_HOLD, schemeHex } from '@domain/orientation';
 import { ScrambleNet } from '@shared/scramble-net';
+import { HapticsService } from '@core/haptics.service';
 
 interface Option {
   id: string;
@@ -145,7 +146,7 @@ const LL_KINDS = new Set(['oll', 'pll', 'coll', 'wv', 'll']);
       min-height: 170px;
       display: grid;
       place-items: center;
-      background: #0b0d12;
+      background: var(--bg);
       border-radius: 12px;
       padding: 12px;
     }
@@ -165,18 +166,18 @@ const LL_KINDS = new Set(['oll', 'pll', 'coll', 'wv', 'll']);
       padding: 12px 14px;
     }
     .opt.right {
-      background: #123b24;
-      border-color: #22c55e;
+      background: color-mix(in srgb, var(--good) 22%, var(--panel));
+      border-color: var(--good);
     }
     .opt.wrong {
-      background: #4a1d1d;
+      background: color-mix(in srgb, var(--bad) 18%, transparent);
       border-color: #ef4444;
     }
     .result {
       color: #ef4444;
     }
     .result.good {
-      color: #22c55e;
+      color: var(--good);
     }
     .chip {
       background: var(--bg);
@@ -189,6 +190,7 @@ const LL_KINDS = new Set(['oll', 'pll', 'coll', 'wv', 'll']);
 })
 export class DrillPage {
   readonly algs = inject(AlgService);
+  private readonly haptics = inject(HapticsService);
   readonly setId = usePref('drill.set', 'oll');
   readonly seconds = usePref('drill.seconds', 3);
   readonly answerWith = usePref<'name' | 'alg'>('drill.answer', 'name');
@@ -310,6 +312,8 @@ export class DrillPage {
     this.picked.set(o.id);
     this.answered.set(true);
     const ok = o.id === c.id;
+    if (ok) this.haptics.tap();
+    else this.haptics.error();
     this.sumMs.update((v) => v + (performance.now() - this.shownAt));
     this.session.update((s) => ({
       n: s.n + 1,

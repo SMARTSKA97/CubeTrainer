@@ -18,12 +18,12 @@ form {
   background: var(--bg);
 }
 .banner.error {
-  border-color: #7f1d1d;
-  color: #fca5a5;
+  border-color: color-mix(in srgb, var(--bad) 50%, transparent);
+  color: var(--bad);
 }
 .banner.success {
-  border-color: #14532d;
-  color: #86efac;
+  border-color: color-mix(in srgb, var(--good) 50%, transparent);
+  color: var(--good);
 }
 .links {
   display: flex;

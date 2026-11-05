@@ -504,7 +504,7 @@ interface QueueItem {
       font-size: 14px;
     }
     .hint-banner {
-      border-color: rgba(124, 156, 255, 0.5);
+      border-color: color-mix(in srgb, var(--accent) 50%, transparent);
       background: color-mix(in srgb, var(--accent) 10%, var(--panel));
     }
     .hint-chunks {
@@ -619,7 +619,7 @@ interface QueueItem {
       color: #f59e0b;
     }
     .status[data-s='finished'] {
-      color: #22c55e;
+      color: var(--good);
     }
     .last {
       display: flex;
@@ -638,7 +638,7 @@ interface QueueItem {
       color: var(--muted);
     }
     .msg.good {
-      color: #22c55e;
+      color: var(--good);
     }
     .plan-banner {
       display: flex;
@@ -648,7 +648,7 @@ interface QueueItem {
       border-color: var(--accent);
     }
     .good-text {
-      color: #22c55e;
+      color: var(--good);
     }
     .learn {
       margin-top: 6px;
@@ -664,7 +664,7 @@ interface QueueItem {
       color: #f59e0b;
     }
     .learn[data-s='finished'] b {
-      color: #22c55e;
+      color: var(--good);
     }
     .learn-row {
       margin-top: 8px;

@@ -217,7 +217,11 @@ import { formatTime } from '@domain/stats';
       gap: 8px 22px;
       align-items: center;
       background:
-        radial-gradient(120% 140% at 0% 0%, rgba(124, 156, 255, 0.16), transparent 60%),
+        radial-gradient(
+          120% 140% at 0% 0%,
+          color-mix(in srgb, var(--accent) 16%, transparent),
+          transparent 60%
+        ),
         var(--panel);
     }
     .ring {
@@ -238,7 +242,7 @@ import { formatTime } from '@domain/stats';
       stroke: var(--bg);
     }
     .ring .fill {
-      stroke: #22c55e;
+      stroke: var(--good);
       stroke-linecap: round;
       transition: stroke-dashoffset 0.5s ease;
     }
@@ -278,7 +282,7 @@ import { formatTime } from '@domain/stats';
     .bar i {
       display: block;
       height: 100%;
-      background: #22c55e;
+      background: var(--good);
       border-radius: 99px;
       transition: width 0.3s;
     }
@@ -360,7 +364,7 @@ import { formatTime } from '@domain/stats';
       font-size: 24px;
       color: #fff;
       background: linear-gradient(135deg, #7c9cff, #a78bfa);
-      box-shadow: 0 10px 24px -10px rgba(124, 156, 255, 0.8);
+      box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--accent) 80%, transparent);
     }
     .lvtext {
       display: grid;
@@ -464,8 +468,8 @@ import { formatTime } from '@domain/stats';
       color: #fff;
     }
     .done .state {
-      background: #22c55e;
-      border-color: #22c55e;
+      background: var(--good);
+      border-color: var(--good);
     }
     .who {
       display: grid;
@@ -516,8 +520,8 @@ import { formatTime } from '@domain/stats';
       border: 1px solid var(--muted);
     }
     .dots i.on {
-      background: #22c55e;
-      border-color: #22c55e;
+      background: var(--good);
+      border-color: var(--good);
     }
     .setup summary {
       cursor: pointer;

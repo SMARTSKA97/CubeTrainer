@@ -31,6 +31,7 @@ import { SolveTags } from '@shared/solve-tags';
 import { Hold, STANDARD_HOLD, schemeHex } from '@domain/orientation';
 import { TimerPanel, TimerResult } from '@shared/timer-panel';
 import { usePref } from '@core/pref';
+import { HapticsService } from '@core/haptics.service';
 
 @Component({
   selector: 'app-timer-page',
@@ -268,7 +269,7 @@ import { usePref } from '@core/pref';
       color: var(--muted);
     }
     .msg.good {
-      color: #22c55e;
+      color: var(--good);
     }
     .stats {
       display: grid;
@@ -311,6 +312,7 @@ export class TimerPage {
   private readonly store = inject(SolveStore);
   private readonly retryService = inject(RetryService);
   private readonly plan = inject(PlanService);
+  private readonly haptics = inject(HapticsService);
   private readonly route = inject(ActivatedRoute);
   /** this scramble is today's daily challenge */
   readonly isDaily = computed(() => this.scramble() === this.plan.dailyScramble());
@@ -412,8 +414,11 @@ export class TimerPage {
     });
     this.last.set(solve);
     this.compareMessage(solve, before);
+    if (solve.penalty === 'dnf') this.haptics.error();
+    else if (this.messageGood()) this.haptics.success();
     if (solve.scramble === this.plan.dailyScramble() && solve.penalty !== 'dnf') {
       this.messageGood.set(true);
+      this.haptics.success();
       this.message.set('Daily challenge complete! Come back tomorrow for a new scramble.');
     }
   }

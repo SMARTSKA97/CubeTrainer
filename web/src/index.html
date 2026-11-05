@@ -4,11 +4,48 @@
     <meta charset="utf-8" />
     <title>CubeTrainer</title>
     <base href="/" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#0b0d12" />
     <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <script>
+      /* Apply the saved look before the app starts so there is no flash of the wrong theme. */
+      (function () {
+        try {
+          var g = function (k, d) {
+            var v = localStorage.getItem('cubetrainer.pref.' + k);
+            return v === null ? d : JSON.parse(v);
+          };
+          var r = document.documentElement;
+          r.setAttribute('data-theme', g('theme', 'dark'));
+          var a = g('accent', 'default');
+          if (a !== 'default') r.setAttribute('data-accent', a);
+          if (g('highContrast', false)) r.setAttribute('data-contrast', 'high');
+          if (g('largeText', false)) r.setAttribute('data-large', 'true');
+          if (g('reduceMotion', false)) r.setAttribute('data-motion', 'reduced');
+        } catch (e) {}
+        /* No pinch or double-tap zoom: this is an app, not a page. */
+        ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (t) {
+          document.addEventListener(t, function (e) {
+            e.preventDefault();
+          });
+        });
+        var last = 0;
+        document.addEventListener(
+          'touchend',
+          function (e) {
+            var n = Date.now();
+            if (n - last < 300) e.preventDefault();
+            last = n;
+          },
+          { passive: false },
+        );
+      })();
+    </script>
   </head>
   <body>
     <app-root></app-root>

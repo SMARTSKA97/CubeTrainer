@@ -9,6 +9,8 @@ import { AppUpdateStore } from '@core/update/app-update-store';
 import { WebUpdateStore } from '@core/update/web-update-store';
 import { AppTour } from '@shared/app-tour';
 import { UpdatePrompt } from '@shared/update-prompt';
+import { HapticsService } from '@core/haptics.service';
+import { PreferencesService } from '@core/preferences';
 
 interface NavItem {
   path: string;
@@ -33,6 +35,8 @@ const ICONS = {
     'M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3',
   update: 'M12 3v12M7 10l5 5 5-5M4 21h16',
   settings: 'M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6',
+  preferences:
+    'M12 3a9 9 0 1 0 9 9c0-1-1-1.5-2-1.5h-2a2 2 0 0 1-2-2V6c0-1.5-1-3-3-3zM7.5 11h.01M9 7.5h.01M15 7.5h.01',
   more: 'M5 12h.01M12 12h.01M19 12h.01',
   tour: 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01',
 };
@@ -72,6 +76,15 @@ const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''):
         }
       </nav>
       <span class="spacer"></span>
+      <a
+        class="prefs-link"
+        routerLink="/preferences"
+        routerLinkActive="active"
+        title="Preferences"
+        aria-label="Preferences"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="icons.preferences" /></svg>
+      </a>
       <span class="badge" data-tour="sync" [attr.data-b]="store.sync()" [title]="badgeTitle()">
         <i class="dot"></i><span class="txt">{{ badge() }}</span>
       </span>
@@ -219,7 +232,7 @@ const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''):
       min-height: 64px;
       padding: calc(12px + var(--sat)) calc(20px + var(--sar)) 12px calc(20px + var(--sal));
       border-bottom: 1px solid var(--line-soft);
-      background: rgba(12, 14, 19, 0.82);
+      background: color-mix(in srgb, var(--bg) 84%, transparent);
       -webkit-backdrop-filter: blur(16px) saturate(1.3);
       backdrop-filter: blur(16px) saturate(1.3);
       position: sticky;
@@ -279,7 +292,7 @@ const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''):
     }
     nav.wide a:hover {
       color: var(--text);
-      background: rgba(255, 255, 255, 0.04);
+      background: color-mix(in srgb, var(--text) 5%, transparent);
     }
     nav.wide a.active {
       background: var(--accent-soft);
@@ -354,8 +367,8 @@ const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''):
       place-items: center;
       font-weight: 700;
       font-size: 14px;
-      color: #0a0d16;
-      background: linear-gradient(135deg, #8aa8ff, var(--accent-2));
+      color: var(--on-accent);
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
     }
     .nm {
       max-width: 14ch;
@@ -364,6 +377,33 @@ const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''):
       white-space: nowrap;
     }
 
+    .prefs-link {
+      display: none;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--muted);
+    }
+    .prefs-link svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .prefs-link:hover,
+    .prefs-link.active {
+      color: var(--text);
+      background: var(--accent-soft);
+    }
+    @media (min-width: 900px) {
+      .prefs-link {
+        display: grid;
+      }
+    }
     /* ---------- notices ---------- */
     .notices {
       max-width: var(--page-w);
@@ -382,9 +422,9 @@ const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''):
       flex-wrap: wrap;
       padding: 14px 16px 14px 20px;
       font-size: 14px;
-      color: #c3c9d8;
+      color: var(--muted);
       background: var(--accent-soft);
-      border: 1px solid rgba(124, 156, 255, 0.22);
+      border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
       border-radius: var(--radius);
     }
     .notice > span:first-child {
@@ -485,7 +525,7 @@ const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''):
         margin: 0 auto;
         z-index: 30;
         padding: 6px;
-        background: rgba(22, 26, 36, 0.9);
+        background: color-mix(in srgb, var(--panel) 92%, transparent);
         -webkit-backdrop-filter: blur(18px) saturate(1.4);
         backdrop-filter: blur(18px) saturate(1.4);
         border: 1px solid var(--line);
@@ -659,7 +699,7 @@ const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''):
       cursor: pointer;
     }
     .grid a.active {
-      border-color: rgba(124, 156, 255, 0.5);
+      border-color: color-mix(in srgb, var(--accent) 50%, transparent);
       background: var(--accent-soft);
     }
     .grid svg {
@@ -732,6 +772,8 @@ export class App {
   private readonly router = inject(Router);
   readonly bannerHidden = signal(sessionStorage.getItem('ct.guestBanner') === '0');
   readonly moreOpen = signal(false);
+  private readonly haptics = inject(HapticsService);
+  private readonly prefs = inject(PreferencesService);
   readonly icons = ICONS;
 
   /** The four tabs that stay one thumb-tap away. */
@@ -751,6 +793,7 @@ export class App {
 
   readonly moreNav = computed<NavItem[]>(() => [
     ...this.rest,
+    item('/preferences', 'Preferences', 'preferences'),
     item('/settings', 'Settings', 'settings'),
   ]);
   /** Desktop top bar: the same pages, in the long form. */
@@ -804,6 +847,23 @@ export class App {
     setTimeout(() => {
       if (!this.updates.prompt()) this.tour.maybeAutoStart();
     }, 1500);
+    this.prefs.theme(); // build the preferences service now so the saved look is applied at once
+    // A light tick under the finger for ordinary buttons and links (not the timer, the cube or the quiz answers, which have their own).
+    document.addEventListener(
+      'pointerdown',
+      (e) => {
+        const t = e.target as HTMLElement | null;
+        if (!t?.closest) return;
+        const hit = t.closest('a, button, [role="button"], [role="switch"], [role="radio"]');
+        if (
+          !hit ||
+          hit.closest('app-timer-panel, app-move-player, app-sheet, .opt, app-tour, [disabled]')
+        )
+          return;
+        this.haptics.tick();
+      },
+      { passive: true },
+    );
     // Drop focus after changing a dropdown / checkbox so Space goes to the timer, not to the control.
     document.addEventListener('change', (e) => (e.target as HTMLElement | null)?.blur?.());
   }

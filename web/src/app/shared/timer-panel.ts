@@ -1,4 +1,5 @@
 import {
+  inject,
   Component,
   HostListener,
   OnDestroy,
@@ -9,6 +10,7 @@ import {
 } from '@angular/core';
 import { Penalty, formatTime } from '@domain/stats';
 import { KeepAwake } from '@core/keep-awake';
+import { HapticsService } from '@core/haptics.service';
 
 export interface TimerResult {
   timeMs: number;
@@ -80,12 +82,12 @@ const INSPECTION_MS = 15000;
       min-height: 20px;
     }
     .armed {
-      background: #4a1d1d;
+      background: color-mix(in srgb, var(--bad) 18%, transparent);
       border-color: #ef4444;
     }
     .ready {
-      background: #123b24;
-      border-color: #22c55e;
+      background: color-mix(in srgb, var(--good) 22%, var(--panel));
+      border-color: var(--good);
     }
     .running {
       border-color: var(--accent);
@@ -96,6 +98,7 @@ const INSPECTION_MS = 15000;
   `,
 })
 export class TimerPanel implements OnDestroy {
+  private readonly haptics = inject(HapticsService);
   readonly inspection = input(false);
   readonly sound = input(false);
   readonly enabled = input(true);
@@ -248,6 +251,7 @@ export class TimerPanel implements OnDestroy {
     this.beeped.clear();
     this.phase.set('idle');
     this.inspectStart = performance.now();
+    this.haptics.tap();
     this.tick();
   }
 
@@ -259,6 +263,7 @@ export class TimerPanel implements OnDestroy {
     this.t0 = now;
     this.phase.set('running');
     this.started.emit();
+    this.haptics.place();
     this.tick();
   }
 
@@ -298,6 +303,7 @@ export class TimerPanel implements OnDestroy {
           if (el >= s * 1000 && !this.beeped.has(s)) {
             this.beeped.add(s);
             this.beep(s === 8 ? 660 : 880);
+            this.haptics.warning();
           }
         }
       } else if (el <= INSPECTION_MS + 2000) {

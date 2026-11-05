@@ -22,3 +22,12 @@ export function initNativeShell(
     await StatusBar.setBackgroundColor({ color: background });
   });
 }
+
+/** The status bar icons and colour follow the theme: light icons on a dark app, dark icons on a light one. */
+export function setStatusBar(dark: boolean, color: string): void {
+  if (!isNative()) return;
+  void import('@capacitor/status-bar').then(async ({ StatusBar, Style }) => {
+    await StatusBar.setStyle({ style: dark ? Style.Dark : Style.Light }).catch(() => undefined);
+    await StatusBar.setBackgroundColor({ color }).catch(() => undefined);
+  });
+}

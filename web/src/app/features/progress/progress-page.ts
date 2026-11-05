@@ -309,7 +309,7 @@ interface Cell {
       opacity: 0.75;
     }
     .day i.goal {
-      background: #22c55e;
+      background: var(--good);
       opacity: 1;
     }
     .day small {
@@ -349,7 +349,7 @@ interface Cell {
       padding: 8px 4px;
       border-radius: 10px;
       border: 2px solid transparent;
-      color: #0b0d12;
+      color: var(--on-accent);
       cursor: pointer;
       font: inherit;
     }
@@ -360,15 +360,15 @@ interface Cell {
       font-size: 11px;
     }
     .cell[data-s='finished'] {
-      border-color: #22c55e;
+      border-color: var(--good);
     }
     .cell[data-s='learning'] {
       border-color: #f59e0b;
     }
     .none,
     .k.none {
-      background: #2a3040;
-      color: #8b93a7;
+      background: var(--line);
+      color: var(--muted);
     }
     .great,
     .k.great {

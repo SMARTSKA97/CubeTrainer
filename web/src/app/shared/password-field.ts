@@ -91,7 +91,7 @@ import { STRENGTH_LABEL, passwordStrength } from '@core/auth/auth-utils';
       background: #84cc16;
     }
     .bar i[data-s='4'] {
-      background: #22c55e;
+      background: var(--good);
     }
   `,
 })

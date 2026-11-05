@@ -204,7 +204,7 @@ type Filter = 'all' | 'random' | 'case';
     }
     .avg {
       fill: none;
-      stroke: #22c55e;
+      stroke: var(--good);
       stroke-width: 2;
     }
     .stats {
@@ -267,7 +267,7 @@ type Filter = 'all' | 'random' | 'case';
       white-space: nowrap;
     }
     td.cmp .good {
-      color: #22c55e;
+      color: var(--good);
     }
     td.act {
       white-space: nowrap;

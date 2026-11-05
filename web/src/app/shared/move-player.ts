@@ -1,4 +1,5 @@
 import {
+  inject,
   ChangeDetectionStrategy,
   Component,
   OnDestroy,
@@ -21,6 +22,8 @@ import {
 } from '@domain/cube';
 import { Chunk, chunkAlg, insightsFor } from '@domain/patterns';
 import { Cube3d, ActiveTurn } from './cube-3d';
+import { HapticsService } from '@core/haptics.service';
+import { PreferencesService } from '@core/preferences';
 
 type Speed = 0.5 | 1 | 2 | 3 | 4;
 const SPEEDS: Speed[] = [0.5, 1, 2, 3, 4];
@@ -176,6 +179,9 @@ const ease = (k: number) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 
           <button class="chip" type="button" [class.on]="tick()" (click)="tick.set(!tick())">
             Tick
           </button>
+          <button class="chip" type="button" [class.on]="buzz()" (click)="buzz.set(!buzz())">
+            Buzz
+          </button>
           <button class="chip" type="button" [class.on]="voice()" (click)="toggleVoice()">
             Say moves
           </button>
@@ -276,10 +282,10 @@ const ease = (k: number) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 
     .ic.play {
       width: 52px;
       background: var(--accent);
-      color: #0a0d16;
+      color: var(--on-accent);
     }
     .ic.play:hover {
-      background: #98b3ff;
+      background: var(--accent-2);
     }
     .count {
       margin-left: 6px;
@@ -306,7 +312,7 @@ const ease = (k: number) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 
     .chip.on {
       color: var(--text);
       background: var(--accent-soft);
-      border-color: rgba(124, 156, 255, 0.45);
+      border-color: color-mix(in srgb, var(--accent) 45%, transparent);
     }
     .moves {
       display: flex;
@@ -341,7 +347,7 @@ const ease = (k: number) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 
       border-color: var(--line);
     }
     .chunk.on {
-      border-color: rgba(124, 156, 255, 0.55);
+      border-color: color-mix(in srgb, var(--accent) 55%, transparent);
     }
     .cname {
       border: 0;
@@ -387,12 +393,12 @@ const ease = (k: number) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 
       color: var(--muted);
     }
     .mv.next {
-      border-color: rgba(124, 156, 255, 0.6);
+      border-color: color-mix(in srgb, var(--accent) 60%, transparent);
     }
     .mv.cur {
       background: var(--accent);
       border-color: var(--accent);
-      color: #0a0d16;
+      color: var(--on-accent);
       transform: scale(1.1);
     }
     .mv.hid {
@@ -509,6 +515,9 @@ export class MovePlayer implements OnDestroy {
   readonly focus = signal(true);
   readonly hide = signal(false);
   readonly tick = signal(false);
+  readonly buzz = signal(false);
+  private readonly haptics = inject(HapticsService);
+  private readonly prefs = inject(PreferencesService);
   readonly voice = signal(false);
   private audio?: AudioContext;
   /** the move being animated right now (null between moves) */
@@ -658,6 +667,7 @@ export class MovePlayer implements OnDestroy {
 
   /** the beat: a short click and/or the move read aloud, as the turn starts */
   private cue(m: Move) {
+    if (this.buzz()) this.haptics.tick();
     if (this.tick()) {
       try {
         this.audio ??= new AudioContext();
@@ -744,7 +754,7 @@ export class MovePlayer implements OnDestroy {
   private run(move: Move, dir: 1 | -1, done: () => void) {
     const spec = moveSpec(move);
     if (dir === 1) this.cue(move);
-    const ms = TURN_MS / this.speed();
+    const ms = (TURN_MS / this.speed()) * (this.prefs.reduceMotion() ? 0.5 : 1);
     const t0 = performance.now();
     this.phase.set('turn');
     const tick = (now: number) => {

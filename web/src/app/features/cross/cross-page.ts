@@ -113,7 +113,7 @@ import { schemeHex } from '@domain/orientation';
       padding: 8px 12px;
     }
     .chipc.best {
-      border-color: #22c55e;
+      border-color: var(--good);
     }
     .dot {
       display: inline-block;

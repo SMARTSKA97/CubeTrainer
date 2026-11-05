@@ -35,8 +35,8 @@ form {
   margin: 0;
 }
 .banner.error {
-  border-color: #7f1d1d;
-  color: #fca5a5;
+  border-color: color-mix(in srgb, var(--bad) 50%, transparent);
+  color: var(--bad);
 }
 .sessions {
   list-style: none;
@@ -65,7 +65,7 @@ h2 {
   align-items: center;
 }
 .danger {
-  border-color: #7f1d1d;
+  border-color: color-mix(in srgb, var(--bad) 50%, transparent);
 }
 @media (max-width: 520px) {
   .grid2 {

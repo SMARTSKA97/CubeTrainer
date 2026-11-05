@@ -35,7 +35,7 @@ import { MISTAKES, Solve } from '@domain/stats';
       cursor: pointer;
     }
     .chip.on {
-      background: #3b2a0a;
+      background: color-mix(in srgb, var(--warn) 18%, transparent);
       color: #f59e0b;
       border-color: #f59e0b;
     }

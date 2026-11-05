@@ -348,7 +348,7 @@ type SortKey = 'order' | 'name' | 'group' | 'best' | 'avg';
       color: #f59e0b;
     }
     select.status[data-s='finished'] {
-      color: #22c55e;
+      color: var(--good);
     }
   `,
 })

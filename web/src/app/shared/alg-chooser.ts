@@ -85,7 +85,7 @@ import { AlgChoice } from '@core/data/alg-choice';
     .tab.on {
       color: var(--text);
       background: var(--accent-soft);
-      border-color: rgba(124, 156, 255, 0.45);
+      border-color: color-mix(in srgb, var(--accent) 45%, transparent);
     }
     .tab.add {
       border-style: dashed;

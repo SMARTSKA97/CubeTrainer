@@ -91,7 +91,7 @@ const MARGIN = 16;
       box-shadow:
         0 0 0 9999px rgba(5, 7, 12, 0.78),
         0 0 0 2px var(--accent),
-        0 0 24px 2px rgba(124, 156, 255, 0.5);
+        0 0 24px 2px color-mix(in srgb, var(--accent) 50%, transparent);
       transition:
         top 0.3s cubic-bezier(0.3, 0.7, 0.2, 1),
         left 0.3s cubic-bezier(0.3, 0.7, 0.2, 1),
@@ -115,7 +115,7 @@ const MARGIN = 16;
       font-size: 18px;
     }
     .tip p {
-      color: #c3c9d8;
+      color: var(--muted);
       font-size: 14.5px;
       line-height: 1.55;
     }
