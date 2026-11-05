@@ -34,6 +34,16 @@ export interface NextStep {
   cta: string;
 }
 
+export interface SessionItem {
+  id: 'recall' | 'learn' | 'coach';
+  title: string;
+  detail: string;
+  link: string;
+  done: boolean;
+}
+
+const dayKey = (d = new Date()): string => d.toLocaleDateString('en-CA');
+
 export interface Placement {
   at: number;
   /** the solve time that placed the person; null when they could not solve it */
@@ -60,6 +70,8 @@ export class LearnService {
   /** new algorithms taken in per day: memory sticks better when it is spread out */
   readonly perDay = usePref('learn.perDay', 6);
   private readonly dismissed = usePref('learn.dismissed', '');
+  /** days (YYYY-MM-DD, local) on which a coached solve was finished */
+  readonly coachDays = usePref<string[]>('learn.coachDays', []);
 
   /** remembered from memory here, or already fast in the trainer */
   isKnown = (id: string): boolean =>
@@ -175,6 +187,56 @@ export class LearnService {
       cta: 'Take a level check',
     };
   });
+
+  /** the steps of today's session, in order: memory check, new material, a coached solve */
+  readonly session = computed<SessionItem[]>(() => {
+    const due = this.due().length;
+    const cur = this.current();
+    const learnLink = cur ? `/learn/step/${cur.step.id}` : '/learn';
+    const learnedToday = this.newToday() > 0;
+    return [
+      {
+        id: 'recall',
+        title: due ? `Memory check (${due})` : 'Memory check',
+        detail: due ? 'Type each algorithm from memory.' : 'Nothing is due. Well remembered.',
+        link: '/learn/review',
+        done: due === 0,
+      },
+      {
+        id: 'learn',
+        title: cur ? cur.step.title : 'New material',
+        detail: cur ? cur.step.short : 'Every step of this level is done.',
+        link: learnLink,
+        done: !cur || learnedToday,
+      },
+      {
+        id: 'coach',
+        title: 'Coached solve',
+        detail: 'A real scramble, with the coach explaining each stage.',
+        link: '/coach',
+        done: this.coachDays().includes(dayKey()),
+      },
+    ];
+  });
+  /** consecutive days, ending today or yesterday, with a coached solve */
+  readonly streak = computed(() => {
+    const days = new Set(this.coachDays());
+    let n = 0;
+    const d = new Date();
+    if (!days.has(dayKey(d))) d.setDate(d.getDate() - 1);
+    while (days.has(dayKey(d))) {
+      n++;
+      d.setDate(d.getDate() - 1);
+    }
+    return n;
+  });
+
+  /** a coached solve was finished */
+  markCoach(): void {
+    const k = dayKey();
+    if (!this.coachDays().includes(k)) this.coachDays.update((l) => [...l, k].slice(-400));
+    this.haptics.success();
+  }
 
   // ---- actions --------------------------------------------------------------------------------
 

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { SessionCard } from '@shared/session-card';
 import { RouterLink } from '@angular/router';
 import { LearnService } from '@core/data/learn-service';
 import { LEVELS, LEVEL_IDS, LevelId, StepProgress } from '@domain/levels';
@@ -6,7 +7,7 @@ import { formatTime } from '@domain/stats';
 
 @Component({
   selector: 'app-learn-page',
-  imports: [RouterLink],
+  imports: [RouterLink, SessionCard],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host {
@@ -189,6 +190,10 @@ import { formatTime } from '@domain/stats';
   `,
   template: `
     <h1>Learn</h1>
+
+    @if (learn.level()) {
+      <app-session-card />
+    }
 
     @if (!learn.level()) {
       <section class="card intro">

@@ -126,6 +126,11 @@ export const routes: Routes = [
     loadComponent: () => import('@features/learn/review-page').then((m) => m.ReviewPage),
   },
   {
+    path: 'coach',
+    title: title('Coach me'),
+    loadComponent: () => import('@features/learn/coach-page').then((m) => m.CoachPage),
+  },
+  {
     path: 'learn/step/:id',
     title: title('Learn'),
     loadComponent: () => import('@features/learn/step-page').then((m) => m.StepPage),

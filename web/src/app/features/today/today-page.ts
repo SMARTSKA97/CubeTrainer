@@ -1,5 +1,6 @@
 import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { SessionCard } from '@shared/session-card';
 import { AlgService } from '@core/data/alg-service';
 import { PlanService } from '@core/data/plan-service';
 import { LearnService } from '@core/data/learn-service';
@@ -11,7 +12,7 @@ import { formatTime } from '@domain/stats';
 @Component({
   selector: 'app-today-page',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, SessionCard],
   template: `
     <section class="card next" [attr.data-kind]="learn.next().kind" data-tour="plan">
       <div class="label">
@@ -37,6 +38,10 @@ import { formatTime } from '@domain/stats';
         }
       </div>
     </section>
+
+    @if (learn.level()) {
+      <app-session-card />
+    }
 
     <section class="card hero">
       <div class="ring" role="img" [attr.aria-label]="goalText()">

@@ -62,6 +62,16 @@ const FACES = ['U', 'D', 'L', 'R', 'F', 'B'];
     button.k:active {
       background: var(--accent-soft);
     }
+    .more summary {
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--muted);
+      padding: 6px 0;
+    }
+    .more .keys {
+      grid-template-columns: repeat(6, 1fr);
+      margin-top: 6px;
+    }
     .done {
       min-height: 36px;
       display: flex;
@@ -130,19 +140,30 @@ const FACES = ['U', 'D', 'L', 'R', 'F', 'B'];
       }
     </div>
 
+    <details class="more" [open]="wide()">
+      <summary>Wide and middle-layer moves (r, f, M)</summary>
+      <div class="keys">
+        @for (m of extra; track m) {
+          <button type="button" class="k" [disabled]="ok()" (click)="press(m)">{{ m }}</button>
+        }
+      </div>
+    </details>
+
     <div class="row">
       <button class="btn" type="button" (click)="undo()" [disabled]="!moves().length">Undo</button>
       <button class="btn" type="button" (click)="reset()" [disabled]="!moves().length">
         Reset
       </button>
-      <button
-        class="btn"
-        type="button"
-        (click)="hint.update((h) => Math.min(2, h + 1))"
-        [disabled]="ok()"
-      >
-        Hint
-      </button>
+      @if (showHint()) {
+        <button
+          class="btn"
+          type="button"
+          (click)="hint.update((h) => Math.min(2, h + 1))"
+          [disabled]="ok()"
+        >
+          Hint
+        </button>
+      }
       <span class="count">{{ count() }} move{{ count() === 1 ? '' : 's' }}</span>
     </div>
 
@@ -181,8 +202,15 @@ export class PracticeCube {
   /** a case: done when the cube is as if the given algorithm had been done on the starting position */
   readonly alg = input('');
   readonly solved = output<{ moves: number }>();
+  /** every change of position: the whole scramble so far, and how many of your own moves are in it */
+  readonly state = output<{ scramble: string; moves: number }>();
+  /** hide the built-in hint button (the coach gives its own) */
+  readonly showHint = input(true);
+  /** show the wide and middle-layer keys open (the last layer needs them) */
+  readonly wide = input(false);
 
   readonly scheme = schemeHex(CROSS_WHITE_HOLD);
+  readonly extra = ['r', "r'", 'r2', 'f', "f'", 'f2', 'M', "M'", 'M2'];
   readonly keys = [...FACES, ...FACES.map((f) => f + "'"), ...FACES.map((f) => f + '2')];
   readonly Math = Math;
   readonly moves = signal<string[]>([]);
@@ -240,6 +268,11 @@ export class PracticeCube {
       this.target();
       this.alg();
       untracked(() => this.reset());
+    });
+    effect(() => {
+      const scramble = this.scramble();
+      const moves = this.count();
+      untracked(() => this.state.emit({ scramble, moves }));
     });
     effect(() => {
       if (this.ok() && !this.emitted) {

@@ -804,6 +804,7 @@ export class App {
     item('/progress', 'Progress', 'progress', 'progress'),
   ];
   private readonly rest: NavItem[] = [
+    item('/coach', 'Coach me', 'learn'),
     item('/trainer', 'Case trainer', 'trainer', 'trainer'),
     item('/drill', 'Drill', 'drill'),
     item('/cross', 'Cross', 'cross'),
@@ -826,9 +827,10 @@ export class App {
     this.rest[1],
     this.rest[2],
     this.rest[3],
-    this.tabs[3],
     this.rest[4],
+    this.tabs[3],
     this.rest[5],
+    this.rest[6],
   ]);
 
   private readonly url = toSignal(
