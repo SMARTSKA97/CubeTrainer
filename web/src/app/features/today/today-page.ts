@@ -2,6 +2,8 @@ import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/c
 import { Router, RouterLink } from '@angular/router';
 import { AlgService } from '@core/data/alg-service';
 import { PlanService } from '@core/data/plan-service';
+import { LearnService } from '@core/data/learn-service';
+import { LEVELS } from '@domain/levels';
 import { INTERVAL_DAYS } from '@domain/plan';
 import { XP } from '@domain/xp';
 import { formatTime } from '@domain/stats';
@@ -11,7 +13,32 @@ import { formatTime } from '@domain/stats';
   standalone: true,
   imports: [RouterLink],
   template: `
-    <section class="card hero" data-tour="plan">
+    <section class="card next" [attr.data-kind]="learn.next().kind" data-tour="plan">
+      <div class="label">
+        {{ learn.level() ? levelName() + ' · next step' : 'Start here' }}
+      </div>
+      <h2>{{ learn.next().title }}</h2>
+      <p class="muted">{{ learn.next().detail }}</p>
+      <div class="loop" aria-label="Today's learning loop">
+        <a routerLink="/learn/review" class="chip" [class.on]="learn.due().length > 0">
+          <b>{{ learn.due().length }}</b> to recall
+        </a>
+        <a routerLink="/learn" class="chip" [class.on]="learn.newLeft() > 0">
+          <b>{{ learn.newToday() }}</b> / {{ learn.perDay() }} new today
+        </a>
+        <a routerLink="/trainer" class="chip">
+          <b>{{ plan.progress().done }}</b> / {{ plan.progress().total }} speed reps
+        </a>
+      </div>
+      <div class="row">
+        <a class="btn primary big" [routerLink]="learn.next().link">{{ learn.next().cta }}</a>
+        @if (learn.level()) {
+          <a class="btn" routerLink="/learn">Your path</a>
+        }
+      </div>
+    </section>
+
+    <section class="card hero">
       <div class="ring" role="img" [attr.aria-label]="goalText()">
         <svg viewBox="0 0 80 80" aria-hidden="true">
           <circle class="track" cx="40" cy="40" r="34" />
@@ -30,7 +57,7 @@ import { formatTime } from '@domain/stats';
         </div>
       </div>
       <div class="heroText">
-        <div class="label">Today</div>
+        <div class="label">Speed practice</div>
         <h2>
           {{
             plan.progress().total === 0
@@ -118,8 +145,13 @@ import { formatTime } from '@domain/stats';
         <div class="muted">Loading…</div>
       } @else if (!plan.plan().length) {
         <div class="muted">
-          No case is due. Pick the sets you are learning below, or do free practice in the Case
-          trainer.
+          @if (learn.level()) {
+            Nothing to speed-practise yet. Algorithms you have learned on the Learn page appear
+            here.
+          } @else {
+            No case is due. Pick the sets you are learning below, or do free practice in the Case
+            trainer.
+          }
         </div>
       } @else {
         <ul class="items">
@@ -158,20 +190,24 @@ import { formatTime } from '@domain/stats';
 
     <details class="card setup">
       <summary>Plan settings</summary>
-      <div class="label">Sets in my plan</div>
-      <div class="row sets">
-        @for (s of algs.sets(); track s.id) {
-          <label class="check">
-            <input
-              type="checkbox"
-              [checked]="plan.activeSets().includes(s.id)"
-              (change)="toggle(s.id)"
-            />
-            <span class="nm">{{ s.label }}</span>
-            <small class="muted">{{ s.count }}</small>
-          </label>
-        }
-      </div>
+      @if (!learn.level()) {
+        <div class="label">Sets in my plan</div>
+      }
+      @if (!learn.level()) {
+        <div class="row sets">
+          @for (s of algs.sets(); track s.id) {
+            <label class="check">
+              <input
+                type="checkbox"
+                [checked]="plan.activeSets().includes(s.id)"
+                (change)="toggle(s.id)"
+              />
+              <span class="nm">{{ s.label }}</span>
+              <small class="muted">{{ s.count }}</small>
+            </label>
+          }
+        </div>
+      }
       <div class="row" style="margin-top:12px">
         <label class="field"
           >Daily goal (solves)
@@ -541,6 +577,49 @@ import { formatTime } from '@domain/stats';
       margin-top: 4px;
     }
     /* Wide screens: the daily challenge and the algorithm plan sit side by side. */
+    .next {
+      display: grid;
+      gap: 10px;
+      border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+      background:
+        radial-gradient(120% 140% at 0% 0%, var(--accent-soft), transparent 60%), var(--panel);
+    }
+    .next h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+    .next p {
+      margin: 0;
+    }
+    .next .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .loop {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .loop .chip {
+      display: inline-flex;
+      gap: 5px;
+      align-items: baseline;
+      padding: 6px 12px;
+      border-radius: 99px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      color: var(--muted);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .loop .chip b {
+      color: var(--text);
+    }
+    .loop .chip.on {
+      border-color: var(--accent);
+      color: var(--text);
+    }
     :host {
       display: grid;
       gap: var(--gap);
@@ -550,6 +629,7 @@ import { formatTime } from '@domain/stats';
       :host {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
+      :host > .next,
       :host > .hero,
       :host > .stats3,
       :host > .setup {
@@ -607,6 +687,8 @@ import { formatTime } from '@domain/stats';
 })
 export class TodayPage {
   readonly algs = inject(AlgService);
+  readonly learn = inject(LearnService);
+  readonly levelName = () => (this.learn.level() ? LEVELS[this.learn.level()!].name : '');
   readonly plan = inject(PlanService);
   private readonly router = inject(Router);
 

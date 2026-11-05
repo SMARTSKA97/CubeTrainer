@@ -865,6 +865,9 @@ export class TrainerPage {
           }));
           this.push(c);
         } else {
+          // ?set= comes from the Learn path: practise that whole set
+          const set = this.route.snapshot.queryParamMap.get('set');
+          if (set && this.algs.sets().some((x) => x.id === set)) this.setId.set(set);
           if (this.route.snapshot.queryParamMap.get('plan')) this.planMode.set(true);
           this.next();
         }

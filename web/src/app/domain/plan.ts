@@ -38,6 +38,8 @@ export interface PlanInput {
   tzOffsetMin?: number;
   maxItems?: number;
   maxNew?: number;
+  /** when given, a case never practised before only enters the plan if it is in this set (it has been learned) */
+  learned?: Set<string>;
 }
 
 const DAY = 86400000;
@@ -87,6 +89,7 @@ export function buildPlan(inp: PlanInput): PlanItem[] {
     const target = inp.targetMs(c.set);
 
     if (all.length === 0) {
+      if (inp.learned && !inp.learned.has(c.id)) continue;
       fresh.push({
         caseId: c.id,
         setId: c.set,

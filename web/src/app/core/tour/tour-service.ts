@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AuthStore } from '@core/auth/auth-store';
 
 /** Bump when the tour changes enough that people who finished it should see it again. */
-const TOUR_VERSION = '1';
+const TOUR_VERSION = '2';
 const STORAGE_KEY = 'ct.tourDone';
 
 export interface TourContext {
@@ -54,11 +54,11 @@ const STEPS: TourStep[] = [
         : 'Press and hold the big timer until it turns green, then let go to start. Tap to stop.',
   },
   {
-    id: 'trainer',
-    target: 'trainer',
-    title: () => 'Case trainer',
+    id: 'learn',
+    target: 'learn',
+    title: () => 'Learn',
     body: () =>
-      'Practise one case at a time with its picture and algorithm. Say how it went and the next review is scheduled for you.',
+      'Your path for Beginner, Intermediate or Advanced. Each algorithm is shown, then typed from memory, then checked again after 1, 3, 7, 14 and 30 days so it stays.',
   },
   {
     id: 'progress',

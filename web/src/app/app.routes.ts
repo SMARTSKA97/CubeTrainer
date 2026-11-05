@@ -111,6 +111,26 @@ export const routes: Routes = [
     loadComponent: () => import('@features/settings/settings-page').then((m) => m.SettingsPage),
   },
   {
+    path: 'learn',
+    title: title('Learn'),
+    loadComponent: () => import('@features/learn/learn-page').then((m) => m.LearnPage),
+  },
+  {
+    path: 'learn/placement',
+    title: title('Level check'),
+    loadComponent: () => import('@features/learn/placement-page').then((m) => m.PlacementPage),
+  },
+  {
+    path: 'learn/review',
+    title: title('Memory check'),
+    loadComponent: () => import('@features/learn/review-page').then((m) => m.ReviewPage),
+  },
+  {
+    path: 'learn/step/:id',
+    title: title('Learn'),
+    loadComponent: () => import('@features/learn/step-page').then((m) => m.StepPage),
+  },
+  {
     path: 'preferences',
     title: title('Preferences'),
     loadComponent: () =>

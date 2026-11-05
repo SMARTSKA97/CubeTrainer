@@ -7,6 +7,8 @@ import { longestStreak } from '@domain/badges';
 import { xpSummary } from '@domain/xp';
 import { usePref } from '@core/pref';
 import { SolveStore } from './solve-store';
+import { LearnService } from './learn-service';
+import { isRecalled } from '@domain/memory';
 import { Solve } from '@domain/stats';
 
 /** Today's practice plan (spaced repetition), daily goal and streak, shared by the Today page and the Trainer. */
@@ -15,6 +17,7 @@ export class PlanService {
   private readonly algs = inject(AlgService);
   private readonly store = inject(SolveStore);
   private readonly learning = inject(LearningSettings);
+  private readonly learn = inject(LearnService);
 
   /** sets that take part in the plan */
   readonly activeSets = usePref<string[]>('plan.sets', ['2lookoll', '2lookpll']);
@@ -39,7 +42,15 @@ export class PlanService {
       solvesByCase: this.caseSolves(),
       statuses: this.store.status(),
       targetMs: (setId) => this.learning.targetMs(setId),
-      activeSets: this.activeSets(),
+      // on the learning path every set can take part: a case only enters the plan once it has been learned
+      activeSets: this.learn.level() ? this.algs.sets().map((x) => x.id) : this.activeSets(),
+      learned: this.learn.level()
+        ? new Set(
+            Object.entries(this.learn.memory())
+              .filter(([, m]) => isRecalled(m))
+              .map(([id]) => id),
+          )
+        : undefined,
       now: Date.now(),
       tzOffsetMin: new Date().getTimezoneOffset(),
       maxItems: this.maxItems(),

@@ -24,6 +24,7 @@ interface NavItem {
 const ICONS = {
   today:
     'M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM9 16l2 2 4-4',
+  learn: 'M2 9l10-5 10 5-10 5-10-5zM6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5',
   timer: 'M10 2h4M12 14l3-3M12 22a8 8 0 1 0 0-16 8 8 0 0 0 0 16z',
   trainer: 'M12 2l9 5v10l-9 5-9-5V7l9-5zM12 12l9-5M12 12v10M12 12L3 7',
   drill: 'M13 2L3 14h8l-1 8 10-12h-8l1-8z',
@@ -798,11 +799,12 @@ export class App {
   /** The four tabs that stay one thumb-tap away. */
   readonly tabs: NavItem[] = [
     item('/today', 'Today', 'today', 'today'),
+    item('/learn', 'Learn', 'learn', 'learn'),
     item('/timer', 'Timer', 'timer', 'timer'),
-    item('/trainer', 'Trainer', 'trainer', 'trainer'),
     item('/progress', 'Progress', 'progress', 'progress'),
   ];
   private readonly rest: NavItem[] = [
+    item('/trainer', 'Case trainer', 'trainer', 'trainer'),
     item('/drill', 'Drill', 'drill'),
     item('/cross', 'Cross', 'cross'),
     item('/algorithms', 'Algorithms', 'algorithms'),
@@ -819,13 +821,14 @@ export class App {
   readonly allNav = computed<NavItem[]>(() => [
     this.tabs[0],
     this.tabs[1],
-    { ...this.tabs[2], label: 'Case trainer' },
+    this.tabs[2],
     this.rest[0],
     this.rest[1],
     this.rest[2],
-    this.tabs[3],
     this.rest[3],
+    this.tabs[3],
     this.rest[4],
+    this.rest[5],
   ]);
 
   private readonly url = toSignal(
