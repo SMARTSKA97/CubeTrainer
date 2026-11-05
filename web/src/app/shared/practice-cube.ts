@@ -14,9 +14,7 @@ import { GoalId, goalMet } from '@domain/lessons';
 import { CROSS_WHITE_HOLD, schemeHex } from '@domain/orientation';
 import { ScrambleNet } from './scramble-net';
 
-type Turn = 1 | 2 | 3;
 const FACES = ['U', 'D', 'L', 'R', 'F', 'B'];
-const SUFFIX: Record<Turn, string> = { 1: '', 2: '2', 3: "'" };
 
 /**
  * A cube drawn on screen that you turn with buttons, with the goal checked for you. The cube is held
@@ -47,35 +45,21 @@ const SUFFIX: Record<Turn, string> = { 1: '', 2: '2', 3: "'" };
       grid-template-columns: repeat(6, 1fr);
       gap: 6px;
     }
-    .mode {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-    }
-    button.k,
-    button.m {
-      min-height: 48px;
+    button.k {
+      min-height: 46px;
       border-radius: 12px;
       border: 1px solid var(--line);
       background: var(--panel-2);
       color: var(--text);
       font: inherit;
-      font-size: 19px;
+      font-size: 17px;
       font-weight: 650;
       cursor: pointer;
     }
+    button.k:disabled {
+      opacity: 0.5;
+    }
     button.k:active {
-      background: var(--accent-soft);
-    }
-    button.m {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--muted);
-      min-height: 40px;
-    }
-    button.m.on {
-      color: var(--text);
-      border-color: var(--accent);
       background: var(--accent-soft);
     }
     .done {
@@ -136,26 +120,13 @@ const SUFFIX: Record<Turn, string> = { 1: '', 2: '2', 3: "'" };
       @for (m of moves(); track $index) {
         <span class="mv">{{ m }}</span>
       } @empty {
-        <span class="hint-text">Pick a direction, then tap a face to turn it.</span>
+        <span class="hint-text">Tap a move to turn the cube.</span>
       }
     </div>
 
-    <div class="mode" role="group" aria-label="Direction">
-      <button type="button" class="m" [class.on]="turn() === 1" (click)="turn.set(1)">
-        Clockwise
-      </button>
-      <button type="button" class="m" [class.on]="turn() === 3" (click)="turn.set(3)">
-        Anticlockwise
-      </button>
-      <button type="button" class="m" [class.on]="turn() === 2" (click)="turn.set(2)">
-        Half turn
-      </button>
-    </div>
-    <div class="keys" role="group" aria-label="Faces">
-      @for (f of faces; track f) {
-        <button type="button" class="k" [disabled]="ok()" (click)="press(f)">
-          {{ f }}{{ suffix() }}
-        </button>
+    <div class="keys" role="group" aria-label="Moves">
+      @for (m of keys; track m) {
+        <button type="button" class="k" [disabled]="ok()" (click)="press(m)">{{ m }}</button>
       }
     </div>
 
@@ -212,10 +183,8 @@ export class PracticeCube {
   readonly solved = output<{ moves: number }>();
 
   readonly scheme = schemeHex(CROSS_WHITE_HOLD);
-  readonly faces = FACES;
+  readonly keys = [...FACES, ...FACES.map((f) => f + "'"), ...FACES.map((f) => f + '2')];
   readonly Math = Math;
-  readonly turn = signal<Turn>(1);
-  readonly suffix = computed(() => SUFFIX[this.turn()]);
   readonly moves = signal<string[]>([]);
   readonly hint = signal(0);
   private emitted = false;
@@ -281,9 +250,9 @@ export class PracticeCube {
     });
   }
 
-  press(face: string) {
+  press(move: string) {
     if (this.ok()) return;
-    this.moves.update((m) => [...m, face + SUFFIX[this.turn()]]);
+    this.moves.update((m) => [...m, move]);
     this.hint.set(0);
   }
   undo() {

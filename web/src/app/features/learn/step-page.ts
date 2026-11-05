@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
@@ -287,28 +295,27 @@ type Phase = 'intro' | 'learn' | 'recall' | 'done';
                       </span>
                     }
                   </div>
-                  <ul class="tips">
-                    <li>Say the pieces out loud: the rhythm is what you remember.</li>
-                    <li>Watch it once, then try it on your own cube before moving on.</li>
-                  </ul>
-                  <app-move-player
-                    [moves]="c.alg"
-                    [stages]="c.stages ?? null"
-                    [start]="inverse(c.alg)"
-                    [scheme]="scheme"
-                    [learn]="true"
-                  />
                   <div class="row">
+                    <button class="btn" type="button" (click)="watch.set(!watch())">
+                      {{ watch() ? 'Hide the demonstration' : 'Watch it' }}
+                    </button>
                     <button class="btn" type="button" (click)="tryIt.set(!tryIt())">
-                      {{ tryIt() ? 'Hide the practice cube' : 'Try it on the screen' }}
+                      {{ tryIt() ? 'Hide the practice cube' : 'Try it' }}
                     </button>
                   </div>
+                  @if (watch()) {
+                    @for (k of [c.id]; track k) {
+                      <app-move-player
+                        [moves]="c.alg"
+                        [stages]="c.stages ?? null"
+                        [start]="inverse(c.alg)"
+                        [scheme]="scheme"
+                        [learn]="true"
+                      />
+                    }
+                  }
                   @if (tryIt()) {
                     @for (k of [c.id]; track k) {
-                      <p class="muted">
-                        Do the algorithm yourself. The cube starts in the case; you are done when it
-                        is solved.
-                      </p>
                       <app-practice-cube
                         [setup]="c.setup ?? inverse(c.alg)"
                         [alg]="c.alg"
@@ -318,6 +325,9 @@ type Phase = 'intro' | 'learn' | 'recall' | 'done';
                     }
                   }
                   <div class="row">
+                    <button class="btn" type="button" (click)="skipToRecall()">
+                      I know these: memory check
+                    </button>
                     <button class="btn primary" type="button" (click)="nextLook()">
                       {{
                         idx() + 1 < session().length ? 'Next algorithm' : 'Start the memory check'
@@ -463,6 +473,7 @@ export class StepPage {
 
   readonly phase = signal<Phase>('intro');
   readonly tryIt = signal(false);
+  readonly watch = signal(false);
   readonly session = signal<string[]>([]);
   readonly idx = signal(0);
   readonly queue = signal<string[]>([]);
@@ -471,6 +482,17 @@ export class StepPage {
   readonly remembered = computed(() => this.passed().length);
   readonly current = computed(() => this.algs.byId().get(this.session()[this.idx()] ?? ''));
   readonly chunks = computed(() => chunkAlg(this.current()?.alg ?? ''));
+
+  constructor() {
+    // no extra tap: as soon as there are new algorithms for today, start with the first
+    effect(() => {
+      if (this.phase() === 'intro' && this.today().length && !this.autoDone) {
+        this.autoDone = true;
+        untracked(() => this.begin());
+      }
+    });
+  }
+  private autoDone = false;
 
   state = (id: string) => recallState(this.learn.memory()[id]);
   fast = (id: string) => this.store.status()[id] === 'finished';
@@ -493,6 +515,7 @@ export class StepPage {
   }
   nextLook() {
     this.tryIt.set(false);
+    this.watch.set(false);
     if (this.idx() + 1 < this.session().length) {
       this.idx.update((i) => i + 1);
       this.learn.see(this.session()[this.idx()]);

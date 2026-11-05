@@ -4,7 +4,7 @@ import { AlgService } from '@core/data/alg-service';
 import { LearnService } from '@core/data/learn-service';
 import { invertAlg } from '@domain/cube';
 import { LessonStep } from '@domain/levels';
-import { Page, TryPage, crossSetup } from '@domain/lessons';
+import { Page, crossSetup } from '@domain/lessons';
 import { CROSS_WHITE_HOLD, schemeHex } from '@domain/orientation';
 import { MovePlayer } from '@shared/move-player';
 import { PracticeCube } from '@shared/practice-cube';
@@ -83,6 +83,9 @@ interface Drill {
       font: inherit;
       padding: 4px 0;
     }
+    .task {
+      font-weight: 600;
+    }
     .after {
       margin: 0;
       padding: 10px 12px;
@@ -108,7 +111,7 @@ interface Drill {
 
       @if (page(); as pg) {
         <h2>{{ pg.title }}</h2>
-        @if (pg.kind === 'read') {
+        @if (blocks().length) {
           <div class="body">
             @for (b of blocks(); track $index) {
               @if (b.list) {
@@ -122,23 +125,28 @@ interface Drill {
               }
             }
           </div>
-          @if (demo(); as d) {
+        }
+        @if (demo(); as d) {
+          <button class="btn" type="button" (click)="watch.set(!watch())">
+            {{ watch() ? 'Hide the demonstration' : 'Watch it' }}
+          </button>
+          @if (watch()) {
             <app-move-player [moves]="d.moves" [start]="d.start" [scheme]="scheme" />
             @if (d.caption) {
               <p class="cap">{{ d.caption }}</p>
             }
           }
-        } @else {
-          <p>{{ $any(pg).prompt }}</p>
+        }
+        @if (pg.practice; as pr) {
+          <p class="task">{{ pr.prompt }}</p>
           @if (drill(); as d) {
             @for (k of [attempt()]; track k) {
               <app-practice-cube
                 [setup]="d.setup"
-                [goal]="$any(pg).goal"
-                [target]="$any(pg).target ?? ''"
+                [goal]="pr.goal"
+                [target]="pr.target ?? ''"
                 [solution]="d.solution ?? ''"
-                [alg]="d.alg ?? ''"
-                [crossHint]="$any(pg).randomCross !== undefined"
+                [crossHint]="pr.randomCross !== undefined"
                 [limit]="d.limit"
                 [best]="d.best"
                 (solved)="pass()"
@@ -146,12 +154,12 @@ interface Drill {
             }
           }
           @if (passed().includes(i())) {
-            @if ($any(pg).after; as a) {
+            @if (pr.after; as a) {
               <p class="after" role="status">{{ a }}</p>
             }
           } @else {
             <div class="row">
-              @if ($any(pg).randomCross !== undefined) {
+              @if (pr.randomCross !== undefined) {
                 <button class="skip" type="button" (click)="another()">
                   Try a different scramble
                 </button>
@@ -184,6 +192,8 @@ export class LessonRunner {
   readonly i = signal(0);
   readonly passed = signal<number[]>([]);
   readonly attempt = signal(0);
+  /** the demonstration is hidden until asked for: the page stays short */
+  readonly watch = signal(false);
   private readonly generated = signal<Record<number, ReturnType<typeof crossSetup>>>({});
 
   readonly pages = computed<Page[]>(() => this.step().pages);
@@ -191,9 +201,9 @@ export class LessonRunner {
   readonly last = computed(() => this.i() === this.pages().length - 1);
 
   readonly blocks = computed(() => {
-    const pg = this.page();
-    if (!pg || pg.kind !== 'read') return [];
-    return pg.body.split('\n\n').map((b) => {
+    const body = this.page()?.body;
+    if (!body) return [];
+    return body.split('\n\n').map((b) => {
       const lines = b.split('\n');
       return lines.every((l) => l.startsWith('- '))
         ? { text: '', list: lines.map((l) => l.slice(2)) }
@@ -202,9 +212,8 @@ export class LessonRunner {
   });
 
   readonly demo = computed(() => {
-    const pg = this.page();
-    if (!pg || pg.kind !== 'read' || !pg.demo) return null;
-    const d = pg.demo;
+    const d = this.page()?.demo;
+    if (!d) return null;
     if (d.caseId) {
       const c = this.algs.byId().get(d.caseId);
       return c ? { moves: c.alg, start: c.setup ?? invertAlg(c.alg), caption: d.caption } : null;
@@ -213,9 +222,8 @@ export class LessonRunner {
   });
 
   readonly drill = computed<Drill | null>(() => {
-    const pg = this.page();
-    if (!pg || pg.kind !== 'try') return null;
-    const t = pg as TryPage;
+    const t = this.page()?.practice;
+    if (!t) return null;
     if (t.randomCross !== undefined) {
       const g = this.generated()[this.i()];
       return g
@@ -237,9 +245,8 @@ export class LessonRunner {
   });
 
   readonly canNext = computed(() => {
-    const pg = this.page();
     return (
-      pg?.kind === 'read' ||
+      !this.page()?.practice ||
       this.passed().includes(this.i()) ||
       this.learn.stepsDone().includes(this.step().id)
     );
@@ -250,24 +257,25 @@ export class LessonRunner {
   }
 
   private prepare() {
-    const pg = this.page();
-    if (pg?.kind === 'try' && pg.randomCross !== undefined && !this.generated()[this.i()])
-      this.generated.update((g) => ({ ...g, [this.i()]: crossSetup(pg.randomCross!) }));
+    const k = this.page()?.practice?.randomCross;
+    if (k !== undefined && !this.generated()[this.i()])
+      this.generated.update((g) => ({ ...g, [this.i()]: crossSetup(k) }));
   }
 
   pass() {
     if (!this.passed().includes(this.i())) this.passed.update((p) => [...p, this.i()]);
   }
   another() {
-    const pg = this.page();
-    if (pg?.kind !== 'try' || pg.randomCross === undefined) return;
-    this.generated.update((g) => ({ ...g, [this.i()]: crossSetup(pg.randomCross!) }));
+    const k = this.page()?.practice?.randomCross;
+    if (k === undefined) return;
+    this.generated.update((g) => ({ ...g, [this.i()]: crossSetup(k) }));
     this.attempt.update((n) => n + 1);
   }
   back() {
     if (this.i() > 0) {
       this.i.update((n) => n - 1);
       this.attempt.update((n) => n + 1);
+      this.watch.set(false);
     }
   }
   next() {
@@ -278,6 +286,7 @@ export class LessonRunner {
     }
     this.i.update((n) => n + 1);
     this.attempt.update((n) => n + 1);
+    this.watch.set(false);
     this.prepare();
   }
 }

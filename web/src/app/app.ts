@@ -181,7 +181,7 @@ const item = (path: string, label: string, icon: keyof typeof ICONS, tour = ''):
             <a [routerLink]="n.path" routerLinkActive="active" (click)="moreOpen.set(false)">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="n.icon" /></svg>
               <span>{{ n.label }}</span>
-              @if (n.path === '/settings' && updates.available()) {
+              @if ((n.path === '/settings' || n.path === '/preferences') && updates.available()) {
                 <i class="pip" aria-label="new version"></i>
               }
             </a>

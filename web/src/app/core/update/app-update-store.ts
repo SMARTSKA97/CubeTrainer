@@ -17,7 +17,7 @@ export type UpdateState =
 const LAST_CHECK = 'ct.updateCheckedAt';
 const LAST_FOUND = 'ct.updateFound';
 /** Opening the app checks GitHub, but reopening within this window reuses the last answer. */
-const RECHECK_AFTER = 10 * 60 * 1000;
+const RECHECK_AFTER = 2 * 60 * 1000;
 
 /**
  * In-app updates for the sideloaded Android app. Looks at the GitHub releases of the configured repository,

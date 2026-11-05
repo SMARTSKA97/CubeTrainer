@@ -4,10 +4,11 @@ import { HapticsService } from '@core/haptics.service';
 import { UpdateRefresh } from '@core/update/update-refresh';
 import { Segmented, SegOption } from '@shared/segmented';
 import { Switch } from '@shared/switch';
+import { AppUpdateSection } from '../settings/app-update-section';
 
 @Component({
   selector: 'app-preferences-page',
-  imports: [Segmented, Switch],
+  imports: [Segmented, Switch, AppUpdateSection],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host {
@@ -100,6 +101,8 @@ import { Switch } from '@shared/switch';
         [(value)]="p.reduceMotion"
       />
     </section>
+
+    <app-update-section />
 
     <section class="card">
       <h2>Vibration</h2>

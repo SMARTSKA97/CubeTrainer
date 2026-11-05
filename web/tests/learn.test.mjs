@@ -150,26 +150,25 @@ t('every practice page starts unsolved and its hint solves it', () => {
   for (const [step, pages] of Object.entries(PAGES))
     pages.forEach((pg, i) => {
       const where = step + '#' + i + ' ' + pg.title;
-      if (pg.kind === 'read') {
-        if (pg.demo?.caseId && !byId.has(pg.demo.caseId)) bad.push(where + ' demo case missing');
-        return;
-      }
-      let setup = pg.setup ?? '';
-      let solution = pg.solution;
-      if (pg.caseId) {
-        const c = byId.get(pg.caseId);
+      if (pg.demo?.caseId && !byId.has(pg.demo.caseId)) bad.push(where + ' demo case missing');
+      const pr = pg.practice;
+      if (!pr) return;
+      let setup = pr.setup ?? '';
+      let solution = pr.solution;
+      if (pr.caseId) {
+        const c = byId.get(pr.caseId);
         if (!c) return bad.push(where + ' case missing');
         setup = c.setup ?? invertAlg(c.alg);
         solution = c.alg;
       }
-      if (pg.randomCross !== undefined) return;
-      const target = pg.target ? new Cube().apply(pg.target) : undefined;
+      if (pr.randomCross !== undefined) return;
+      const target = pr.target ? new Cube().apply(pr.target) : undefined;
       const start = new Cube().apply(setup);
-      if (goalMet(pg.goal, start, target)) bad.push(where + ' already solved at the start');
+      if (goalMet(pr.goal, start, target)) bad.push(where + ' already solved at the start');
       const end = new Cube().apply(setup).apply(solution ?? invertAlg(setup));
-      if (pg.goal === 'match') {
-        if (!goalMet(pg.goal, new Cube().apply(setup).apply(pg.target), target)) bad.push(where + ' target unreachable');
-      } else if (!goalMet(pg.goal, end)) bad.push(where + ' hint does not solve it');
+      if (pr.goal === 'match') {
+        if (!goalMet(pr.goal, new Cube().apply(setup).apply(pr.target), target)) bad.push(where + ' target unreachable');
+      } else if (!goalMet(pr.goal, end)) bad.push(where + ' hint does not solve it');
     });
   assert.deepEqual(bad, []);
 });
